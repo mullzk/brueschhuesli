@@ -1,0 +1,42 @@
+# == Schema Information
+#
+# Table name: users
+#
+#  id                  :bigint(8)        not null, primary key
+#  email               :string
+#  hasToChangePassword :boolean
+#  hashed_password     :string
+#  miteigentuemer      :boolean
+#  name                :string
+#  salt                :string
+#  telefon             :string
+#  created_at          :datetime         not null
+#  updated_at          :datetime         not null
+#
+
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+stefan:
+    name: Stefan Mueller
+    miteigentuemer: false
+    salt: asdf
+    hashed_password: <%= User.encrypted_password("password", "asdf") %>
+
+ruth:
+    name: Ruth Mueller
+    miteigentuemer: true
+    salt: asdf
+    hashed_password: <%= User.encrypted_password("password", "asdf") %>
+    
+kaspar: 
+    name: Kaspar Bernhard
+    miteigentuemer: true
+    salt: asdf
+    hashed_password: <%= User.encrypted_password("password", "asdf") %>
+
+markus:
+    name: Markus Curau
+    miteigentuemer: false
+    salt: asdf
+    hashed_password: <%= User.encrypted_password("password", "asdf") %>
+

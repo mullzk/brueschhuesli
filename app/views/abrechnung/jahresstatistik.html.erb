@@ -1,0 +1,25 @@
+<h1>Jahresabrechnung Brüschhüsli-Nutzungen</h1>
+<p>Abrechnungsperiode <%= @listed_year.beginning_of_year.strftime("%d.%m.%Y") %> - <%= @listed_year.end_of_year.strftime("%d.%m.%Y") %></p>
+
+<table class="nutzungen">
+	<tr align="left">
+		<th>Wer</th>
+		<th>#Reservation</th>
+		<th>Kosten</th>
+	</tr>
+	<% for stat in @stats -%>
+		<tr>
+			<td><%= link_to stat[0].name, :action => "benutzer", :id => stat[0], :year => @listed_year.year %></td>
+			<td align="right"><%= stat[1] %></td>
+			<td align="right"><%= "%i.-" % stat[2] %></td>
+		</tr>
+	<% end -%>
+</table>
+<p style="text-align:right; font-size:xx-small;">
+	<%= link_to "Excel", :year => @listed_year.year, :format => :xls %> -
+	Alle Daten gemäss DB-Stand vom <%= Date.today.strftime("%d.%m.%Y")%>
+</p>
+<hr />
+<%= link_to "Vorheriges Jahr", :action => "jahresstatistik", :year => @listed_year.year-1 %> - 
+<%= link_to "Detailansicht", :action => "detailliste", :year => @listed_year.year %> - 
+<%= link_to "Nächstes Jahr", :action => "jahresstatistik", :year => @listed_year.year+1 %>

@@ -1,0 +1,3 @@
+page.select("div#notice").each { |div| div.hide}
+page.replace_html("calendarNewReservationBox", :partial => "new_reservation_in_ajax", :object => @reservation)
+page[:calendarNewReservationBox].visual_effect :appear, :duration => 0.25

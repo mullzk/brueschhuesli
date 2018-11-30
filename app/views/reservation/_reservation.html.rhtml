@@ -1,0 +1,24 @@
+<div style="margin-bottom:1em;">
+	<label class="legend">Wer:</label> <%= form.select :user_id, @users %>
+</div>
+
+<div id="new_reservation_dates">
+<div id="new_reservation_von">
+	<label class="legend">Von:</label>
+	<div>Tag: <%= date_select("reservation", "start", :order => [:day, :month, :year]) %></div>
+	<div>Zeit: <%= time_select("reservation", "start", {:minute_step => 60, :ignore_date => true}) %></div>
+</div>
+<div id="new_reservation_bis">
+	<label class="legend">Bis:</label>
+	<div>Tag: <%= date_select("reservation", "finish", :order => [:day, :month, :year]) %></div>
+	<div>Zeit: <%= time_select("reservation", "finish", {:minute_step => 60, :ignore_date => true}) %></div>
+</div>
+</div>
+<div style="clear:left;margin-bottom:1em;">
+	<label class="legend">Reservations-Typ: </label>
+	<%= form.select :typeOfReservation, Reservation.reservation_types.map {|key, value| value}, :prompt => "Type" %>
+	<%= form.select :isExclusive, [["Exklusiv", true],["Offen", false]]%>
+</div>
+<div style="vertical-align:top;">
+	<label style="vertical-align:top;" class="legend">Kommentar: </label><%= form.text_area :comment, :size => "40x3"%>
+</div>

@@ -1,0 +1,47 @@
+<!DOCTYPE html PUBLIC "-//W3C/DTD HTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+	<title><%= @page_title || "Brüschhüsli-Reservierungen"%></title>
+	<link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
+	<%= stylesheet_link_tag "emmental", :media => "all" %>
+	<%= stylesheet_link_tag "iphone", :media => "only screen and (max-device-width: 480px)"%>
+	<%= javascript_include_tag :defaults %>
+</head>
+<body id="emmental-app">
+	<div id="banner">
+		<%= @page_title || "Brüschhüsli-Reservierungen" %>
+	</div>
+	<div id="columns">
+		<div id="side">
+			<ul>
+				<% if session[:user_id] -%>
+					<li><%= link_to "Reservationen", :controller => "reservation", :action => "index" %></li>
+					<li><%= link_to "Benutzer", :controller => "login", :action => "list_users" %></li>
+					<li><%= link_to "Abrechnung", :controller => "abrechnung", :action => "jahresstatistik"%></li>
+					<br />
+<!--				<li><%= link_to "Reservations- und Entschädigungsregelung", :controller => "public", :action => "reservationsregelung" %></li>	-->
+<!-- 				<li><%= link_to "Hausordnung", :controller => "public", :action => "hausordnung"%></li> 										-->
+					<li><%= link_to "Reservations- und Entschädigungsregelung", "/reservationsregelung.pdf" %></li>	
+ 					<li><%= link_to "Hausordnung",  "/hausordnung.pdf" %></li> 										
+				<% end -%>
+<!--				<li><%= link_to "Anfahrt", :controller => "public", :action => "anfahrt"%></li> 				-->
+				<br />
+				<% unless session[:user_id] -%>
+<!-- 					<li><%= link_to "Login", :controller => "login", :action => "login" %></li>  				-->
+				<% else  -%>
+<!--				<li><%= link_to "Hilfe", :controller => "reservation", :action => "hilfe" %></li> 				-->
+					<li><%= link_to "Passwort ändern", :controller => "login", :action => "change_password"%></li>
+					<li><%= link_to "Logout", :controller => "login", :action => "logout" %></li>
+				<% end -%>
+			</ul>
+		</div>
+		<div id="main">
+			<% if flash[:notice] -%>
+				<div id="notice">
+					<%= flash[:notice] %>
+				</div>
+			<% end -%>
+			<%= yield :layout %>
+		</div>
+	</div>
+</body>

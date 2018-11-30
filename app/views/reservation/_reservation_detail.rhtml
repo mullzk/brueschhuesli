@@ -1,0 +1,30 @@
+<table class="reservation-detail" width="100%	">
+	<tr>
+		<td class="legend">Wer:</td>
+		<td class="data"><%= mail_to @reservation.user.email, @reservation.user.name %></td>
+		<td style="text-align:right;"><input type="reset" onclick="document.getElementById('calendarDetailsBox').style.display='none';document.getElementById('calendarNewReservationBox').style.display='none';" style="border:solid 1px black;" value="x" /></td>
+	</tr>
+	<tr>
+		<td class="legend">Von:</td>
+		<td class="data"><%= @reservation.start.strftime("%d. %b %Y, %H:%M") %></td>
+	</tr>
+	<tr>
+		<td class="legend">Bis:</td>
+		<td class="data"><%= @reservation.finish.strftime("%d. %b %Y, %H:%M") %></td>
+	</tr>
+	<tr>
+		<td class="legend">Typ</td>
+		<td class="data"><%= @reservation.typeOfReservation %></td>
+	</tr>
+	<tr>
+		<td class="legend">Offen?</td>
+		<td class="data"><%= if @reservation.isExclusive then "Exklusiv" else "Offen für andere" end %></td>
+	</tr>
+	<tr>
+		<td class="legend">Kommentar:</td>
+		<td class="data"><%= @reservation.comment %>
+	</tr>
+</table>
+<br /><%= link_to "Reservierung löschen", {:action => "destroy", :id => @reservation.id}, {:confirm => "Reservation wirklich löschen?"} %> 
+ - <%= link_to "Reservierung bearbeiten", {:action => "edit", :id => @reservation.id} %> 
+ - <a href="" onclick="document.getElementById('calendarDetailsBox').style.display='none';document.getElementById('calendarNewReservationBox').style.display='none';" >Schliessen</a>
