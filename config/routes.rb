@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  root 'reservation#index'
+
   get 'reservation/index'
   get 'reservation/show_detail'
   get 'reservation/update'

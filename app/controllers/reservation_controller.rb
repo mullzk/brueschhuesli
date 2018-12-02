@@ -1,6 +1,6 @@
 class ReservationController < ApplicationController
   require "DateGermanAdditions"
-  before_filter :authorize
+  before_action :authorize
   
   def index
     if params[:date]

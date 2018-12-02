@@ -1,4 +1,6 @@
 class AbrechnungController < ApplicationController
+  before_action :authorize
+
   def index
     redirect_to :action => "jahresstatistik"
   end
