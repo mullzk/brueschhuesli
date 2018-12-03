@@ -1,0 +1,65 @@
+table#calendar-table {
+	width:100%;
+	border-collapse:collapse;
+
+	th {
+		border: solid 2px black;
+	}
+	
+	a {
+		text-decoration:none;
+		color:black;
+	}
+
+
+
+	td.calendar-day {
+		padding:0px;
+		width:14%;
+		height:80px;
+		vertical-align:top;
+		border: solid 2px black;
+		div {
+			margin:0.5px;
+		}
+		div.header {
+			border-bottom: solid thin black;
+			height:17px;
+		}
+		div.openhouse {
+			background-color:silver;
+			border-bottom: dotted thin gray;
+			a { color:black;}
+		}
+		div.complete {
+			height:61px;
+		}
+		div.exclusive {
+			background-color:rgb(76, 76, 76);
+			border-bottom: dotted thin gray;
+			a, span {color:white;}
+		}
+		div span.timeslothint {
+			font-size:0.6em;
+		}
+	}
+	td.active-month { background-color:#FFFCC1;}
+	td.inactive-month { background-color:#FAE0DF;}
+	td.current-day {background-color:#FFFC67;}
+	
+	
+	
+}
+
+
+
+
+table.reservation-detail td.legend {
+	text-align:right;
+	font-weight:bold;
+	vertical-align:top;
+}
+table.reservation-detail td.data {
+	text-align:left;
+	vertical-align:top;
+}

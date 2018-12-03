@@ -1,30 +1,5 @@
-@include media-breakpoint-up(sd) {
-div#side {
-	width:100%;
-}
-div#side li {
-	font-size:1.25em;
-	margin-bottom:0.5em;
-}
-div#main {
-	margin-left:0em;
-}
-table#calendar-table {
-	width:100%;
-	border-collapse:collapse;
-}
-a {
-	margin-top:3em;
-	margin-bottom:3em;
-}
-div#loginpage {
-	width:100%;
-}
-div#loginpage img {
-	display:none;
-}
 
-}
+
 
 
 
@@ -39,31 +14,7 @@ body {
   background-color: #f0f0f0;
   font: bold smaller sans-serif;
 }
-#banner {
-  background: #9c9;
-  padding-top: 10px;
-  padding-bottom: 10px;
-  border-bottom: 2px solid;
-  font: small-caps 40px/40px "Times New Roman", serif;
-  color: #282;
-  text-align: center;
-  height:40px;
-}
-#main {
-  margin-left: 21%;
-  padding-top: 1ex;
-  padding-left: 2em;
-  background: white;
-}
 
-#side {
-  float: left;
-  padding-top: 1em;
-  padding-left: 1em;
-  padding-bottom: 1em;
-  width: 20%;
-  background: #141;
-}
 #side a {
 	color:#FFFCC1;
 }
@@ -72,86 +23,7 @@ body {
 }
 
 
-table#calendar-table {
-	width:90%;
-	border-collapse:collapse;
-}
-tr.calendar-nagivation td {
-	text-align:center;
-}
 
-tr.calendar-header th {
-	border: solid 2px black;
-}
-table#calendar-table a {
-	text-decoration:none;
-	color:black;
-}
-
-
-table#calendar-table td.calendar-day {
-	padding:0px;
-	width:14%;
-	height:80px;
-	vertical-align:top;
-	border: solid 2px black;
-}
-table#calendar-table td.active-month {
-	background-color:#FFFCC1;
-}
-table#calendar-table td.inactive-month {
-	background-color:#FAE0DF;
-}
-table#calendar-table td.current-day {
-	background-color:#FFFC67;
-}
-
-td.calendar-day div {
-	margin:0.5px;
-}
-td.calendar-day div.header {
-	border-bottom: solid thin black;
-	height:17px;
-}
-td.calendar-day div.openhouse {
-	background-color:silver;
-	border-bottom: dotted thin gray;
-}
-td.calendar-day div.complete {
-	height:61px;
-}
-td.calendar-day div span.timeslothint {
-	font-size:0.6em;
-}
-table#calendar-table td.calendar-day div.openhouse a {
-	color:black;
-}
-td.calendar-day div.exclusive {
-	background-color:rgb(76, 76, 76);
-	border-bottom: dotted thin gray;
-}
-table#calendar-table td.calendar-day div.exclusive a, table#calendar-table td.calendar-day div.exclusive span {
-	color:white;
-}
-
-
-
-
-td.calendar-day div.Tagsüber {
-}
-td.calendar-day div.Abends {
-	border-top: 1px dotted gray;
-}
-
-table.reservation-detail td.legend {
-	text-align:right;
-	font-weight:bold;
-	vertical-align:top;
-}
-table.reservation-detail td.data {
-	text-align:left;
-	vertical-align:top;
-}
 #calendarDetailsBox {
 	position:absolute;
 	top:240px;

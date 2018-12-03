@@ -1,11 +1,11 @@
 class LoginController < ApplicationController
   layout "reservation"
   
-  before_filter :authorize, :except => :login
+  before_action :authorize, :except => :login
   
   def add_user
     @user = User.new(params[:user])
-    initial_password = ActiveSupport::SecureRandom.base64(6)
+    initial_password = SecureRandom.hex(8)
     if request.post? and @user.save
       @user.password = params[:user][:password] || initial_password
       flash.now[:notice] = "Benutzer #{@user.name} erstellt"
@@ -67,7 +67,7 @@ class LoginController < ApplicationController
   end
 
   def list_users
-    @all_users = User.find(:all).sort
+    @all_users = User.all.sort
   end
   
   def change_password

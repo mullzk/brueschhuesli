@@ -1,13 +1,12 @@
 Rails.application.routes.draw do
-  root 'reservation#index'
 
-  get 'reservation/index'
-  get 'reservation/show_detail'
-  get 'reservation/update'
-  get 'reservation/new'
-  get 'reservation/new_reservation_in_ajax'
-  get 'reservation/destroy'
+  root 'reservations#index'
+
+  resources "reservations"
+  
+  
   get 'login/add_user'
+  post 'login/add_user'
   get 'login/login'
   get 'login/logout'
   get 'login/edit_user'

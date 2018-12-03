@@ -1,2 +1,43 @@
-<h1>Login#add_user</h1>
-<p>Find me in app/views/login/add_user.html.erb</p>
+<div>
+    <% if @user.errors.any? %>
+      <div id="error_explanation">
+        <h2><%= pluralize(@user.errors.count, "error") %> prohibited this reservation from being saved:</h2>
+
+        <ul>
+        <% @user.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+        </ul>
+      </div>
+    <% end %>
+	
+	
+	<fieldset>
+		<legend>Benutzer Details:</legend>
+		<%= form_with model:@user, url:{controller:"login", action:"add_user"} do |form |%>
+		<table class="reservation-detail">
+			<tr>
+				<td class="legend">Name:</td>
+				<td class="data"><%= form.text_field :name, :size => 40 %></td>
+			</tr>
+			<tr>
+				<td class="legend">MiteigentümerIn:</td>
+				<td class="data"><%= form.check_box :miteigentuemer %></td>
+			</tr>
+			<tr>
+				<td class="legend">eMail:</td>
+				<td class="data"><%= form.text_field :email, :size=>40 %></td>
+			</tr>
+			<tr>
+				<td class="legend">Natel:</td>
+				<td class="data"><%= form.text_field :telefon, :size=>40 %></td>
+			</tr>
+			<tr>
+				<td class="legend">Initial-Passwort:</td>
+				<td class="data"><%= form.text_field :password, :size=>40 %></td>
+			</tr>
+		</table>
+		<%= submit_tag "Benutzer hinzufügen", :class => "submit" %>
+		<%end%>
+	</fieldset>
+</div>

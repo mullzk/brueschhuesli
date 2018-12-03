@@ -1,2 +1,19 @@
-<h1>Login#login</h1>
-<p>Find me in app/views/login/login.html.erb</p>
+<div id="loginpage">
+	<%= image_tag "/images/brueschhuesli.png", :title => "brueschhuesli", :class => "welcomepicture" %>
+	<fieldset>
+		<legend>Bitte einloggen</legend>
+		<% form_with  do |form| %>
+			<table class="reservation-detail">
+				<tr>
+					<td class="legend">Name:</td>
+					<td class="data"><%= text_field_tag :name, params[:name]%></td>
+				</tr>
+				<tr>
+					<td class="legend">Passwort:</td>
+					<td class="data"><%= password_field_tag :password, params[:password]%></td>
+				</tr>
+			</table>
+			<%= submit_tag "Login" %>
+		<%end%>
+	</fieldset>
+</div>

@@ -1,18 +1,18 @@
 <h1>Brüschhüsli-Reservationen im <%= @listed_month.strftime_german("%B %Y")%></h1>
-<div id="calendar-body">
-	<table id="calendar-table" onclick="document.getElementById('calendarDetailsBox').style.display='none';document.getElementById('calendarNewReservationBox').style.display='none';">
-		<tr class="calendar-nagivation">
-			<td>&gt;<%= link_to_month @listed_month.last_month %></td>
-			<td colspan="5"><%= link_to "Neue Reservation", :action => "new" %></td>
-			<td>&gt;<%= link_to_month @listed_month.next_month %></td>
-		<tr class="calendar-header">
-			<th>Montag</th>
-			<th>Dienstag</th>
-			<th>Mittwoch</th>
-			<th>Donnerstag</th>
-			<th>Freitag</th>
-			<th>Samstag</th>
-			<th>Sonntag</th>
+<div>
+	<div  style="background-color:blue;">
+		<div class="col-6 ">&gt;<%= link_to_month @listed_month.last_month %></div>
+		<div class="col-6 ">&gt;<%= link_to_month @listed_month.next_month %></div>
+	</div>
+	<table id="calendar-table"  onclick="document.getElementById('calendarDetailsBox').style.display='none';document.getElementById('calendarNewReservationBox').style.display='none';">
+		<tr>
+			<th>Mo</th>
+			<th>Di</th>
+			<th>Mi</th>
+			<th>Do</th>
+			<th>Fr</th>
+			<th>Sa</th>
+			<th>So</th>
 		</tr>
 		<tr class="week">
 		<% for day in @days -%>

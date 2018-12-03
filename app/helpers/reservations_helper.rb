@@ -1,4 +1,4 @@
-module ReservationHelper
+module ReservationsHelper
   def tagged_form_for(name, *args, &block)
     options = args.last.is_a?(Hash) ? args.pop : {}
     options = options.merge(:builder => TaggedBuilder)
@@ -37,7 +37,7 @@ module ReservationHelper
   end
   
   def ajax_link_to_new_reservation(date)
-    "onclick=\"" + remote_function(:url => {:action => "new_reservation_in_ajax", :date => date}) + "\""
+    "onclick=\"" + link_to(:url => {:action => "new_reservation_in_ajax", :date => date}) + "\""
   end
   
   def help_div_with_class_and_link_to_reservation(reservation_class, reservation, day)
