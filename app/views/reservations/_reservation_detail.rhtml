@@ -14,11 +14,11 @@
 	</tr>
 	<tr>
 		<td class="legend">Typ</td>
-		<td class="data"><%= @reservation.typeOfReservation %></td>
+		<td class="data"><%= @reservation.type_of_reservation %></td>
 	</tr>
 	<tr>
 		<td class="legend">Offen?</td>
-		<td class="data"><%= if @reservation.isExclusive then "Exklusiv" else "Offen für andere" end %></td>
+		<td class="data"><%= if @reservation.is_exclusive then "Exklusiv" else "Offen für andere" end %></td>
 	</tr>
 	<tr>
 		<td class="legend">Kommentar:</td>

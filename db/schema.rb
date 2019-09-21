@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_11_30_213135) do
+ActiveRecord::Schema.define(version: 2019_09_21_150621) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -18,10 +18,10 @@ ActiveRecord::Schema.define(version: 2018_11_30_213135) do
   create_table "reservations", force: :cascade do |t|
     t.bigint "user_id"
     t.text "comment"
-    t.boolean "isExclusive"
+    t.boolean "is_exclusive"
     t.datetime "start"
     t.datetime "finish"
-    t.string "typeOfReservation"
+    t.string "type_of_reservation"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["user_id"], name: "index_reservations_on_user_id"
@@ -33,7 +33,7 @@ ActiveRecord::Schema.define(version: 2018_11_30_213135) do
     t.string "telefon"
     t.string "hashed_password"
     t.string "salt"
-    t.boolean "hasToChangePassword"
+    t.boolean "has_to_change_password"
     t.boolean "miteigentuemer"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

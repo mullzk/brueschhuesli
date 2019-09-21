@@ -73,8 +73,8 @@ xml.Workbook({
           xml.e_cell_datetime reservation.start
           xml.e_cell_datetime reservation.finish
           xml.e_cell_number(reservation.duration_rounded_to_hours/(60*60), "ap_int_precision")
-          xml.e_cell(h reservation.typeOfReservation)
-          xml.e_cell(reservation.isExclusive ? "Excl." : "Offen")
+          xml.e_cell(h reservation.type_of_reservation)
+          xml.e_cell(reservation.is_exclusive ? "Excl." : "Offen")
           xml.e_cell_number(reservation.billed_fee, "ap_int_precision")
   			  xml.e_cell("")
           xml.e_cell(h reservation.comment)

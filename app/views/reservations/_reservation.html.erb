@@ -16,8 +16,8 @@
 </div>
 <div style="clear:left;margin-bottom:1em;">
 	<label class="legend">Reservations-Typ: </label>
-	<%= form.select :typeOfReservation, Reservation.reservation_types.map {|key, value| value}, :prompt => "Type" %>
-	<%= form.select :isExclusive, [["Exklusiv", true],["Offen", false]]%>
+	<%= form.select :type_of_reservation, Reservation.reservation_types.map {|key, value| value}, :prompt => "Type" %>
+	<%= form.select :is_exclusive, [["Exklusiv", true],["Offen", false]]%>
 </div>
 <div style="vertical-align:top;">
 	<label style="vertical-align:top;" class="legend">Kommentar: </label><%= form.text_area :comment, :size => "40x3"%>

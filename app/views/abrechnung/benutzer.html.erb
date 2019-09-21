@@ -12,7 +12,7 @@
 		<tr>
 			<td><%= reservation.start.strftime("%d.%m.%Y %H:%M") %> - <%= reservation.finish.strftime("%d.%m.%Y %H:%M") %></td>
 			<td align="right"><%= time_component_string_of(reservation.duration_rounded_to_hours) %></td>
-			<td align="right"><%= reservation.typeOfReservation %><%= ", exklusiv" if reservation.isExclusive? && (reservation.typeOfReservation==Reservation::FERIENAUFENTHALT || reservation.typeOfReservation==Reservation::KURZAUFENTHALT) %></td>
+			<td align="right"><%= reservation.type_of_reservation %><%= ", exklusiv" if reservation.is_exclusive? && (reservation.type_of_reservation==Reservation::FERIENAUFENTHALT || reservation.type_of_reservation==Reservation::KURZAUFENTHALT) %></td>
 			<td align="right"><%= reservation.billed_fee.to_i %>.-</td>
 			<td style="text-align:left; font-size:0.6em;"><%= h reservation.comment %></td>
 		</tr>

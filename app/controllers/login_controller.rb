@@ -21,7 +21,7 @@ class LoginController < ApplicationController
       user = User.authenticate(params[:name], params[:password])
       if user
         session[:user_id] = user.id
-        if user.hasToChangePassword
+        if user.has_to_change_password
           flash[:notice] = "Ein neues Passwort muss gesetzt werden"
           redirect_to :action => "change_password"
         else
@@ -76,7 +76,7 @@ class LoginController < ApplicationController
       user = User.authenticate(@user.name, params[:old_password])
       if user
         if @user.update_attributes(params[:user])
-          @user.hasToChangePassword = false
+          @user.has_to_change_password = false
           @user.save
           flash[:notice] = 'Password geändert'
           redirect_to :action => 'list_users'

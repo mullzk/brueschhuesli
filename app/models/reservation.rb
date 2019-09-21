@@ -2,15 +2,15 @@
 #
 # Table name: reservations
 #
-#  id                :bigint(8)        not null, primary key
-#  comment           :text
-#  finish            :datetime
-#  isExclusive       :boolean
-#  start             :datetime
-#  typeOfReservation :string
-#  created_at        :datetime         not null
-#  updated_at        :datetime         not null
-#  user_id           :bigint(8)
+#  id                  :bigint(8)        not null, primary key
+#  comment             :text
+#  finish              :datetime
+#  is_exclusive        :boolean
+#  start               :datetime
+#  type_of_reservation :string
+#  created_at          :datetime         not null
+#  updated_at          :datetime         not null
+#  user_id             :bigint(8)
 #
 # Indexes
 #
@@ -23,7 +23,7 @@
 
 class Reservation < ApplicationRecord
   belongs_to :user
-  validates_presence_of :start, :finish, :typeOfReservation
+  validates_presence_of :start, :finish, :type_of_reservation
 
   KURZAUFENTHALT = "Kurzaufenthalt"
   FERIENAUFENTHALT = "Ferienaufenthalt"
@@ -69,7 +69,7 @@ class Reservation < ApplicationRecord
   
   def paid_blocks
     blocks = duration_in_8_hour_blocks
-    if user.miteigentuemer? && !isExclusive?
+    if user.miteigentuemer? && !is_exclusive?
       if blocks <= 6
         0
       else
@@ -81,11 +81,11 @@ class Reservation < ApplicationRecord
   end
   
   def billed_fee
-    if typeOfReservation.eql?(Reservation::KURZAUFENTHALT) || typeOfReservation.eql?(Reservation::FERIENAUFENTHALT)
+    if type_of_reservation.eql?(Reservation::KURZAUFENTHALT) || type_of_reservation.eql?(Reservation::FERIENAUFENTHALT)
       paid_blocks * 15
-    elsif typeOfReservation.eql?(Reservation::GROSSANLASS)
+    elsif type_of_reservation.eql?(Reservation::GROSSANLASS)
       200
-    elsif typeOfReservation.eql?(Reservation::EXTERNE_NUTZUNG)
+    elsif type_of_reservation.eql?(Reservation::EXTERNE_NUTZUNG)
       duration_in_days * 100   #duration_in_days_returns_seconds !!!!
     end
   end
@@ -99,8 +99,8 @@ class Reservation < ApplicationRecord
     self.date= Date.parse_german_string(str)
   end
   
-  def typeOfReservation
-    saved_reservation_type = self[:typeOfReservation]
+  def type_of_reservation
+    saved_reservation_type = self[:type_of_reservation]
     if saved_reservation_type.eql?(Reservation::KURZAUFENTHALT) && duration > 60*60*48 
       Reservation::FERIENAUFENTHALT
     elsif saved_reservation_type.eql?(Reservation::FERIENAUFENTHALT) && duration < 60*60*48 

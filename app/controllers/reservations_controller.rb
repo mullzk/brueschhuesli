@@ -39,8 +39,8 @@ class ReservationsController < ApplicationController
       start: startDateTime,
       finish: finishDateTime,
       user_id: session[:user_id],
-      typeOfReservation: Reservation::KURZAUFENTHALT,
-      isExclusive: true
+      type_of_reservation: Reservation::KURZAUFENTHALT,
+      is_exclusive: true
     )
   end
 

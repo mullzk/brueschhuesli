@@ -41,7 +41,7 @@ module ReservationsHelper
   end
   
   def help_div_with_class_and_link_to_reservation(reservation_class, reservation, day)
-    excl = if reservation.isExclusive then "exclusive" else "openhouse" end
+    excl = if reservation.is_exclusive then "exclusive" else "openhouse" end
     complete = if reservation.fills_complete_day?(day) then "complete" else "partial" end
     str = "<div class=\"#{reservation_class} #{excl} #{complete}\""
     str += "onclick=\"" +  remote_function(:url => {:action => "show_detail", :id => reservation.id}) + "\">"

@@ -2,15 +2,15 @@
 #
 # Table name: reservations
 #
-#  id                :bigint(8)        not null, primary key
-#  comment           :text
-#  finish            :datetime
-#  isExclusive       :boolean
-#  start             :datetime
-#  typeOfReservation :string
-#  created_at        :datetime         not null
-#  updated_at        :datetime         not null
-#  user_id           :bigint(8)
+#  id                  :bigint(8)        not null, primary key
+#  comment             :text
+#  finish              :datetime
+#  is_exclusive        :boolean
+#  start               :datetime
+#  type_of_reservation :string
+#  created_at          :datetime         not null
+#  updated_at          :datetime         not null
+#  user_id             :bigint(8)
 #
 # Indexes
 #
@@ -29,14 +29,14 @@ class ReservationTest < ActiveSupport::TestCase
     assert_equal reservations(:ruth_on_3_2_2010).user, users(:ruth)
     assert_valid reservations(:kaspar_on_1_2_2010_evening)
     ruth = users(:ruth)
-    assert_valid Reservation.new(:user => ruth, :isExclusive => true, :start => DateTime.new(2010,2,1,19), :finish => DateTime.new(2010,2,1,20), :typeOfReservation => Reservation::KURZAUFENTHALT)
-    assert_invalid Reservation.new(:user => ruth, :isExclusive => true, :start => DateTime.new(2010,2,1,20), :finish => DateTime.new(2010,2,1,19), :typeOfReservation => Reservation::KURZAUFENTHALT)
+    assert_valid Reservation.new(:user => ruth, :is_exclusive => true, :start => DateTime.new(2010,2,1,19), :finish => DateTime.new(2010,2,1,20), :type_of_reservation => Reservation::KURZAUFENTHALT)
+    assert_invalid Reservation.new(:user => ruth, :is_exclusive => true, :start => DateTime.new(2010,2,1,20), :finish => DateTime.new(2010,2,1,19), :type_of_reservation => Reservation::KURZAUFENTHALT)
   end
   
 
   test "overlapping Reservations" do
-    r2 = Reservation.new(:user => users(:ruth), :isExclusive => false, :start => DateTime.new(2010,2,6,8,15), :finish => DateTime.new(2010,2,6,10), :typeOfReservation => Reservation::KURZAUFENTHALT)
-    r3 = Reservation.new(:user => users(:stefan), :isExclusive => false, :start => DateTime.new(2010,2,2,8,15), :finish => DateTime.new(2010,2,5,10), :typeOfReservation => Reservation::KURZAUFENTHALT)
+    r2 = Reservation.new(:user => users(:ruth), :is_exclusive => false, :start => DateTime.new(2010,2,6,8,15), :finish => DateTime.new(2010,2,6,10), :type_of_reservation => Reservation::KURZAUFENTHALT)
+    r3 = Reservation.new(:user => users(:stefan), :is_exclusive => false, :start => DateTime.new(2010,2,2,8,15), :finish => DateTime.new(2010,2,5,10), :type_of_reservation => Reservation::KURZAUFENTHALT)
 
 
     r1 = reservations(:ruth_on_3_2_2010)
@@ -152,24 +152,24 @@ class ReservationTest < ActiveSupport::TestCase
     r3 = Reservation.new(:start => DateTime.new(2010,6,1,12), :finish => DateTime.new(2010,6,8,13))
     [r1, r2, r3].each do |r|
       r.user = users(:ruth)
-      r.typeOfReservation = Reservation::KURZAUFENTHALT
+      r.type_of_reservation = Reservation::KURZAUFENTHALT
     end
     assert_valid(r1)
     assert_valid(r2)
     assert_invalid(r3)
     
-    r1 = Reservation.new(:start => DateTime.new(2010,6,1,12), :finish => DateTime.new(2010,6,8,11), :typeOfReservation => Reservation::KURZAUFENTHALT)
-    assert_equal r1.typeOfReservation, Reservation::FERIENAUFENTHALT
-    r1 = Reservation.new(:start => DateTime.new(2010,6,1,12), :finish => DateTime.new(2010,6,3,12), :typeOfReservation => Reservation::KURZAUFENTHALT)
-    assert_equal r1.typeOfReservation, Reservation::KURZAUFENTHALT
-    r1 = Reservation.new(:start => DateTime.new(2010,6,1,12), :finish => DateTime.new(2010,6,3,13), :typeOfReservation => Reservation::KURZAUFENTHALT)
-    assert_equal r1.typeOfReservation, Reservation::FERIENAUFENTHALT
-    r1 = Reservation.new(:start => DateTime.new(2010,6,1,12), :finish => DateTime.new(2010,6,2,11), :typeOfReservation => Reservation::FERIENAUFENTHALT)
-    assert_equal r1.typeOfReservation, Reservation::KURZAUFENTHALT
-    r1 = Reservation.new(:start => DateTime.new(2010,6,1,12), :finish => DateTime.new(2010,6,3,12), :typeOfReservation => Reservation::FERIENAUFENTHALT)
-    assert_equal r1.typeOfReservation, Reservation::FERIENAUFENTHALT
-    r1 = Reservation.new(:start => DateTime.new(2010,6,1,12), :finish => DateTime.new(2010,6,3,11), :typeOfReservation => Reservation::FERIENAUFENTHALT)
-    assert_equal r1.typeOfReservation, Reservation::KURZAUFENTHALT
+    r1 = Reservation.new(:start => DateTime.new(2010,6,1,12), :finish => DateTime.new(2010,6,8,11), :type_of_reservation => Reservation::KURZAUFENTHALT)
+    assert_equal r1.type_of_reservation, Reservation::FERIENAUFENTHALT
+    r1 = Reservation.new(:start => DateTime.new(2010,6,1,12), :finish => DateTime.new(2010,6,3,12), :type_of_reservation => Reservation::KURZAUFENTHALT)
+    assert_equal r1.type_of_reservation, Reservation::KURZAUFENTHALT
+    r1 = Reservation.new(:start => DateTime.new(2010,6,1,12), :finish => DateTime.new(2010,6,3,13), :type_of_reservation => Reservation::KURZAUFENTHALT)
+    assert_equal r1.type_of_reservation, Reservation::FERIENAUFENTHALT
+    r1 = Reservation.new(:start => DateTime.new(2010,6,1,12), :finish => DateTime.new(2010,6,2,11), :type_of_reservation => Reservation::FERIENAUFENTHALT)
+    assert_equal r1.type_of_reservation, Reservation::KURZAUFENTHALT
+    r1 = Reservation.new(:start => DateTime.new(2010,6,1,12), :finish => DateTime.new(2010,6,3,12), :type_of_reservation => Reservation::FERIENAUFENTHALT)
+    assert_equal r1.type_of_reservation, Reservation::FERIENAUFENTHALT
+    r1 = Reservation.new(:start => DateTime.new(2010,6,1,12), :finish => DateTime.new(2010,6,3,11), :type_of_reservation => Reservation::FERIENAUFENTHALT)
+    assert_equal r1.type_of_reservation, Reservation::KURZAUFENTHALT
 
   end  
   
@@ -266,8 +266,8 @@ class ReservationTest < ActiveSupport::TestCase
   test "Tariffing-System" do
     r = Reservation.new(:start => DateTime.new(2010,6,1,14), :finish => DateTime.new(2010,6,3,15))
     r.user = users(:stefan)
-    r.isExclusive = false
-    r.typeOfReservation = Reservation::KURZAUFENTHALT
+    r.is_exclusive = false
+    r.type_of_reservation = Reservation::KURZAUFENTHALT
     
     assert_equal r.duration_in_8_hour_blocks, 7
     assert_equal r.paid_blocks, 7
@@ -276,13 +276,13 @@ class ReservationTest < ActiveSupport::TestCase
     assert_equal r.duration_in_8_hour_blocks, 7
     assert_equal r.paid_blocks, 1
     
-    r.isExclusive = true 
+    r.is_exclusive = true 
     assert_equal r.paid_blocks, 7
 
     r = Reservation.new(:start => DateTime.new(2010,6,1,14), :finish => DateTime.new(2010,6,3,14))
     r.user = users(:ruth)
-    r.isExclusive = false
-    r.typeOfReservation = Reservation::KURZAUFENTHALT
+    r.is_exclusive = false
+    r.type_of_reservation = Reservation::KURZAUFENTHALT
     assert_equal r.duration_in_8_hour_blocks, 6
     assert_equal r.paid_blocks, 0
     
@@ -292,15 +292,15 @@ class ReservationTest < ActiveSupport::TestCase
     rate_event = 200
     
     assert_equal r.billed_fee, 0*rate_hourly
-    r.isExclusive = true
+    r.is_exclusive = true
     assert_equal r.billed_fee, 6*rate_hourly
     r.user = users(:stefan)
     assert_equal r.billed_fee, 6*rate_hourly
-    r.typeOfReservation = Reservation::FERIENAUFENTHALT
+    r.type_of_reservation = Reservation::FERIENAUFENTHALT
     assert_equal r.billed_fee, 6*rate_hourly
-    r.typeOfReservation = Reservation::GROSSANLASS
+    r.type_of_reservation = Reservation::GROSSANLASS
     assert_equal r.billed_fee, rate_event   ##### Is this a bug? GROSSANLASS should be maxed to 32 hours, this one is 48 hours ! Who cares
-    r.typeOfReservation = Reservation::EXTERNE_NUTZUNG
+    r.type_of_reservation = Reservation::EXTERNE_NUTZUNG
     assert_equal r.billed_fee, 3*rate_daily    
   end
 end
