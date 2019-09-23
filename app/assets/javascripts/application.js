@@ -13,4 +13,8 @@
 //= require rails-ujs
 //= require activestorage
 //= require turbolinks
-//= require_tree .
+//= require bootstrap
+//= require_tree ./behaviors
+//= require abrechnung
+//= require login
+//= require reservation
