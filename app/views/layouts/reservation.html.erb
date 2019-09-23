@@ -28,7 +28,7 @@
 				<div class="collapse navbar-collapse" id="navbarSupportedContent">
 					<ul class="navbar-nav mr-auto" >
 						<% if session[:user_id] -%>
-							<li><%= link_to "Reservationen", {:controller => "reservation", :action => "index"}, :class => "nav-link"  %></li>
+							<li><%= link_to "Reservationen", {:controller => "reservations", :action => "index"}, :class => "nav-link"  %></li>
 							<li><%= link_to "Benutzer", :controller => "login", :action => "list_users" %></li>
 							<li><%= link_to "Abrechnung", :controller => "abrechnung", :action => "jahresstatistik"%></li>
 							<br />

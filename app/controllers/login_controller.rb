@@ -16,6 +16,8 @@ class LoginController < ApplicationController
   end
 
   def login
+    logger.debug "Flash:"
+    logger.debug flash.inspect
     session[:user_id] = nil
     if request.post?
       user = User.authenticate(params[:name], params[:password])
@@ -25,7 +27,7 @@ class LoginController < ApplicationController
           flash[:notice] = "Ein neues Passwort muss gesetzt werden"
           redirect_to :action => "change_password"
         else
-          redirect_to :controller => "reservation", :action => "index"
+          redirect_to :controller => "reservations", :action => "index"
         end
       else
         flash[:notice] = "Ungültige Benutzer/Passwort Kombination"

@@ -1,6 +1,7 @@
 Rails.application.routes.draw do
 
   root 'reservations#index'
+  get 'reservations/index/' => "reservations#index"
 
   resources "reservations"
   
@@ -8,6 +9,7 @@ Rails.application.routes.draw do
   get 'login/add_user'
   post 'login/add_user'
   get 'login/login'
+  post 'login/login'
   get 'login/logout'
   get 'login/edit_user'
   get 'login/update_user'
@@ -18,5 +20,8 @@ Rails.application.routes.draw do
   get 'abrechnung/jahresstatistik'
   get 'abrechnung/detailliste'
   get 'abrechnung/benutzer'
+  
+  
+  
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 end
