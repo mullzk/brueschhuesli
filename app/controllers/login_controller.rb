@@ -4,20 +4,22 @@ class LoginController < ApplicationController
   before_action :authorize, :except => :login
   
   def add_user
+    params.permit!
+    
     @user = User.new(params[:user])
+        
     initial_password = SecureRandom.hex(8)
     if request.post? and @user.save
       @user.password = params[:user][:password] || initial_password
       flash.now[:notice] = "Benutzer #{@user.name} erstellt"
       redirect_to :action => "list_users"
     else 
+      flash.now[:notice] = "Benutzer konnte nicht erstellt werden"
       @user.password = initial_password
     end
   end
 
   def login
-    logger.debug "Flash:"
-    logger.debug flash.inspect
     session[:user_id] = nil
     if request.post?
       user = User.authenticate(params[:name], params[:password])
@@ -46,8 +48,10 @@ class LoginController < ApplicationController
   end
   
   def update_user
+    params.permit!
+
     @user = User.find(params[:id])
-    if @user.update_attributes(params[:user])
+    if @user.update(params[:user])
       flash.now[:notice] = 'Benutzer-Angaben gespeichert.'
       redirect_to :action => "list_users"
     else
@@ -77,10 +81,11 @@ class LoginController < ApplicationController
     if request.post?
       user = User.authenticate(@user.name, params[:old_password])
       if user
-        if @user.update_attributes(params[:user])
+        params.permit!
+        if @user.update(params[:user])
           @user.has_to_change_password = false
           @user.save
-          flash[:notice] = 'Password geändert'
+          flash[:notice] = 'Passwort geändert'
           redirect_to :action => 'list_users'
         end
       else
@@ -88,4 +93,10 @@ class LoginController < ApplicationController
       end
     end
   end
+  
+  private
+  def user_params
+    params.fetch(:user, {}).permit(:name, :password)
+  end
+  
 end
