@@ -17,12 +17,39 @@
 require 'test_helper'
 
 class UserTest < ActiveSupport::TestCase
-  test "basic fixtures functionality" do
-    assert users(:ruth).name.eql?("Ruth Mueller")
+  test "Unknown User is not found" do
+    dbuser = User.find_by_name("rumpelstilzchen")
+    assert_not dbuser
+  end
+
+  test "User gets created, Passwort is not stored in clear-text" do
+    user = FactoryBot.build(:user, name:"Stefan", email:"test@mail.com")
+    user.password="test1234"
+    user.save
+    dbuser = User.find_by_name("Stefan")
+    assert dbuser
+    assert_not dbuser.password=="test1234"
+  end
+
+
+  test "authentication with correct password should pass" do
+    user = FactoryBot.build(:user, name:"Stefan", email:"test@mail.com")
+    user.password="test1234"
+    user.save
+    assert User.authenticate("Stefan", "test1234")
+  end
+
+  test "authentifcation with wrong password should be rejected" do
+    user = FactoryBot.build(:user, name:"Stefan", email:"test@mail.com")
+    user.password="test1234"
+    user.save
+    assert_not User.authenticate("Stefan", "test")
   end
   
-  test "Authentification and Password Hashing" do
-    assert_equal User.authenticate("Stefan Mueller", "password"), users(:stefan)
-    assert_nil User.authenticate("Stefan Mueller", "wrong_password")
+  test "authentification with no password should be rejected" do
+    user = FactoryBot.build(:user, name:"Stefan", email:"test@mail.com")
+    user.password="test1234"
+    user.save
+    assert_not User.authenticate("Stefan", "")
   end
  end

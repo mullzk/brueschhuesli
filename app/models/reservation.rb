@@ -24,6 +24,7 @@
 class Reservation < ApplicationRecord
   belongs_to :user
   validates_presence_of :start, :finish, :type_of_reservation
+  validate :is_timeslot_exclusive?, :is_timeslot_positive?, :is_reservation_not_longer_than_a_week?
 
   KURZAUFENTHALT = "Kurzaufenthalt"
   FERIENAUFENTHALT = "Ferienaufenthalt"
@@ -222,12 +223,21 @@ class Reservation < ApplicationRecord
     start <=> other.start
   end
 
-  def validate
-    errors.add(:finish, "muss zeitlich hinter dem Reservations-Beginn sein") if finish <= start
-    errors.add_to_base("Anfang und Ende liegen zu weit auseinander. Das Brüschhüsli kann für maximal 7 Tage reserviert werden") if duration > 60 * 60 * 24 * 7
+
+  def is_timeslot_exclusive?
     conflicting_reservations = Reservation.find_reservations_in_timeslot(start, finish)
     conflicting_reservations.delete(self) # Needed for validation on Updates, otherwise we conflict with our old version
-    errors.add_to_base("Dieser Zeitabschnitt überlappt mit einer bestehenden Reservation") unless conflicting_reservations.empty?
+    errors.add(:start, "Dieser Zeitabschnitt überlappt mit einer bestehenden Reservation") unless conflicting_reservations.empty?
+    errors.add(:finish, "Dieser Zeitabschnitt überlappt mit einer bestehenden Reservation") unless conflicting_reservations.empty?
+  end
+    
+  def is_timeslot_positive?
+    errors.add(:finish, "muss zeitlich hinter dem Reservations-Beginn sein") if finish <= start
+  end
+
+
+  def is_reservation_not_longer_than_a_week?
+    errors.add(:finish, "Anfang und Ende liegen zu weit auseinander. Das Brüschhüsli kann für maximal 7 Tage reserviert werden") if duration > 60 * 60 * 24 * 7
   end
 
 end

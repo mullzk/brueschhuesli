@@ -24,6 +24,53 @@
 require 'test_helper'
 
 class ReservationTest < ActiveSupport::TestCase
+  setup do 
+    @user = FactoryBot.create(:user, name:"Stefan", email:"test@mail.com", password:"test1234")
+    
+  end
+
+  test "Keine negativen oder überlangen Reservationen" do
+    assert Reservation.new(:user => @user, :is_exclusive => true, :start => DateTime.new(2019,2,1,8,00), :finish=>DateTime.new(2019,2,1,10,00), :type_of_reservation => Reservation::KURZAUFENTHALT).valid?
+    assert_not Reservation.new(:user => @user, :is_exclusive => true, :start => DateTime.new(2019,2,1,10,00), :finish=>DateTime.new(2019,2,1,8,00), :type_of_reservation => Reservation::KURZAUFENTHALT).valid?
+    assert_not Reservation.new(:user => @user, :is_exclusive => true, :start => DateTime.new(2019,2,1,10,00), :finish=>DateTime.new(2019,2,10,8,00), :type_of_reservation => Reservation::KURZAUFENTHALT).valid?
+    
+  end
+  
+  
+
+  test "overlapping Reservations" do
+    reservation_afternoon = FactoryBot.create(:reservation, user:@user, start:DateTime.new(2019,2,1,14,00), finish:DateTime.new(2019,2,1,18,00), :type_of_reservation => Reservation::KURZAUFENTHALT)
+    
+    assert Reservation.new(:user => @user, :is_exclusive => true, :start => DateTime.new(2019,2,1,8,00), :finish=>DateTime.new(2019,2,1,10,00), :type_of_reservation => Reservation::KURZAUFENTHALT).valid?
+    assert_not Reservation.new(:user => @user, :is_exclusive => true, :start => DateTime.new(2019,2,1,8,00), :finish=>DateTime.new(2019,2,1,15,00), :type_of_reservation => Reservation::KURZAUFENTHALT).valid?
+    assert_not Reservation.new(:user => @user, :is_exclusive => true, :start => DateTime.new(2019,2,1,8,00), :finish=>DateTime.new(2019,2,1,21,00), :type_of_reservation => Reservation::KURZAUFENTHALT).valid?
+    assert_not Reservation.new(:user => @user, :is_exclusive => true, :start => DateTime.new(2019,2,1,17,00), :finish=>DateTime.new(2019,2,1,21,00), :type_of_reservation => Reservation::KURZAUFENTHALT).valid?
+    assert Reservation.new(:user => @user, :is_exclusive => true, :start => DateTime.new(2019,2,1,19,00), :finish=>DateTime.new(2019,2,1,21,00), :type_of_reservation => Reservation::KURZAUFENTHALT).valid?
+    assert_not Reservation.new(:user => @user, :is_exclusive => true, :start => DateTime.new(2019,1,31,19,00), :finish=>DateTime.new(2019,2,3,21,00), :type_of_reservation => Reservation::KURZAUFENTHALT).valid?
+    
+  end
+  
+  test "find all reservations an a day" do
+    
+  end
+  
+  test "find reservations that span multiple days" do
+    
+  end
+  
+  test "find reservations in timeslot on one day" do
+    
+  end
+  
+  test "calculate duration of reservations" do
+    
+  end
+  
+  test "calculare timespans on one particular day" do 
+    
+  end
+  
+=begin
 
   test "basic fixtures functionality" do
     assert_equal reservations(:ruth_on_3_2_2010).user, users(:ruth)
@@ -33,7 +80,6 @@ class ReservationTest < ActiveSupport::TestCase
     assert_invalid Reservation.new(:user => ruth, :is_exclusive => true, :start => DateTime.new(2010,2,1,20), :finish => DateTime.new(2010,2,1,19), :type_of_reservation => Reservation::KURZAUFENTHALT)
   end
   
-
   test "overlapping Reservations" do
     r2 = Reservation.new(:user => users(:ruth), :is_exclusive => false, :start => DateTime.new(2010,2,6,8,15), :finish => DateTime.new(2010,2,6,10), :type_of_reservation => Reservation::KURZAUFENTHALT)
     r3 = Reservation.new(:user => users(:stefan), :is_exclusive => false, :start => DateTime.new(2010,2,2,8,15), :finish => DateTime.new(2010,2,5,10), :type_of_reservation => Reservation::KURZAUFENTHALT)
@@ -303,4 +349,6 @@ class ReservationTest < ActiveSupport::TestCase
     r.type_of_reservation = Reservation::EXTERNE_NUTZUNG
     assert_equal r.billed_fee, 3*rate_daily    
   end
+  
+=end
 end
