@@ -14,7 +14,7 @@
 	
 	<fieldset>
 		<legend>Benutzer Details:</legend>
-		<%= form_with model:@user, url:{controller:"login", action:"add_user"} do |form |%>
+		<%= form_with  model:@user, url:{controller:"login", action:"add_user"} , local: true do |form |%>
 		<table class="reservation-detail">
 			<tr>
 				<td class="legend">Name:</td>

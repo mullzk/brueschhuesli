@@ -14,7 +14,9 @@ class LoginController < ApplicationController
       flash.now[:notice] = "Benutzer #{@user.name} erstellt"
       redirect_to :action => "list_users"
     else 
-      flash.now[:notice] = "Benutzer konnte nicht erstellt werden"
+      if request.post? 
+        flash.now[:notice] = "Benutzer konnte nicht erstellt werden"
+      end
       @user.password = initial_password
     end
   end
