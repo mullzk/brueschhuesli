@@ -25,6 +25,11 @@ FactoryBot.define do
   factory :reservation do
 
     association :user, factory: :user
+    
+    factory :kurzaufenthalt_for_testuser do 
+      association :user, factory: :valid_user
+      type_of_reservation {Reservation::FERIENAUFENTHALT}
+    end
   end
   
 end

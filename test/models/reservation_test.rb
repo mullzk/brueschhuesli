@@ -150,6 +150,19 @@ class ReservationTest < ActiveSupport::TestCase
       
   end
   
+  test "Reservations should be ordered by Start date" do 
+
+    r1 = FactoryBot.create(:kurzaufenthalt_for_testuser, :start => DateTime.new(2010,6,5,12), :finish => DateTime.new(2010,6,6,12))
+    r2 = FactoryBot.create(:kurzaufenthalt_for_testuser, :start => DateTime.new(2010,6,1,12), :finish => DateTime.new(2010,6,3,11))
+    r3 = FactoryBot.create(:kurzaufenthalt_for_testuser, :start => DateTime.new(2010,6,3,19), :finish => DateTime.new(2010,6,4,20))
+    r4 = FactoryBot.create(:kurzaufenthalt_for_testuser, :start => DateTime.new(2010,6,3,12), :finish => DateTime.new(2010,6,3,18))
+    reservations = Reservation.find_reservations_in_timeslot(Date.new(2010,6,1), Date.new(2010,6,10))
+    assert_equal reservations.first, r2
+    assert_equal reservations[1], r4
+    assert_equal reservations[2], r3
+    assert_equal reservations.last, r1
+  end
+  
   test "calculare timespans on one particular day" do 
     r = Reservation.new(:start => DateTime.new(2010,6,1,12), :finish => DateTime.new(2010,6,3,11))    
     assert_equal r.begin_on_day(Date.new(2010,6,1)).hour, 12

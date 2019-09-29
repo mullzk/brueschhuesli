@@ -184,7 +184,7 @@ class Reservation < ApplicationRecord
         interval_finish = (time_b+(1.day)).to_s(:db)
       end
     end    
-    self.where("(start <= '#{interval_start}' AND finish > '#{interval_start}') OR ('#{interval_start}' <= start AND '#{interval_finish}' > start)")    
+    self.where("(start <= '#{interval_start}' AND finish > '#{interval_start}') OR ('#{interval_start}' <= start AND '#{interval_finish}' > start)").order(:start)    
   end
   
   def begin_on_day(day)
