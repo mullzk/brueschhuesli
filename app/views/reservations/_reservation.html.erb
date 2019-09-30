@@ -1,1 +1,19 @@
-asdfdf
+<div class="reservation">
+	<div><span>Wer:</span> <%= mail_to(reservation.user.email, reservation.user.name)%></div>
+	<div>
+		<span>Wann:</span> 
+		<% if reservation.start.day.equal? reservation.finish.day %>
+			<%= reservation.start.strftime("%d.%m., %H:%M")%> bis <%= reservation.finish.strftime("%H:%M")%>
+		<% else %>
+			<%= reservation.start.strftime("%d.%m., %H:%M")%> bis <%= reservation.finish.strftime("%d.%m., %H:%M")%></div>
+		<% end %>
+	<div><span>Wie:</span> <%= reservation.type_of_reservation %>, <%= reservation.is_exclusive ? "exklusiv" : "offen" %></div>
+	<% unless reservation.comment.empty? %>
+		<div><span>Kommentar:</span> <%= reservation.comment %></div>
+	<% end %>
+	
+    <div class="actions">
+		<%= link_to 'Bearbeiten', edit_reservation_path(reservation) %> - 
+    	<%= link_to 'Löschen', reservation, method: :delete, data: { confirm: 'Are you sure?' } %>
+	</div>
+</div>

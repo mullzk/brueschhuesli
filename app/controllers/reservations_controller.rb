@@ -36,10 +36,9 @@ class ReservationsController < ApplicationController
   end
   
   def new
-    # See also #new_reservation_in_ajax
     @users = User.all.sort.map {|user| [user.name, user.id]}
     if params[:date]
-      day = Date.params[:date]
+      day = Date.parse(params[:date])
     else 
       day = Date.today
     end
@@ -57,7 +56,7 @@ class ReservationsController < ApplicationController
 
 
   def create
-    @reservation = Reservation.new(params[:reservation])
+    @reservation = Reservation.new(reservation_params)
     if @reservation.save
       flash[:notice] = "Reservation wurde gespeichert"
       redirect_to :action => "index", :date => @reservation.start
@@ -80,8 +79,8 @@ class ReservationsController < ApplicationController
 
   def update
     @reservation = Reservation.find(params[:id])
-    @users = User.find(:all).sort.map {|user| [user.name, user.id]}
-    if @reservation.update_attributes(params[:reservation])
+    @users = User.all.sort.map {|user| [user.name, user.id]}
+    if @reservation.update(reservation_params)
       flash[:notice] = 'Änderungen gespeichert.'
       redirect_to :action => "index", :date => @reservation.start
     else
@@ -109,4 +108,9 @@ class ReservationsController < ApplicationController
     end
     date
   end
+  
+  def reservation_params
+    params.fetch(:reservation, {}).permit(:user_id, :start, :finish, :type_of_reservation, :is_exclusive, :comment)
+  end
+  
 end

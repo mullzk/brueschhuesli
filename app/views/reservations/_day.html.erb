@@ -1,5 +1,5 @@
 <% if day[:reservations].count.equal? 0 %>
-	<td class="free <%= day[:in_month] ? 'active' : 'inactive' %> "><%= day[:date].day %></td>
+	<td class="free <%= day[:in_month] ? 'active' : 'inactive' %> " onClick="window.location.href='<%= url_for controller:"reservations", action:"new", date:day[:date] %>';"><%= day[:date].day %></td>
 <% else %>
 	<td class="occupied <%= day[:in_month] ? 'active' : 'inactive' %>" onClick="window.location.href='<%= url_for controller:"reservations", action:"on_day", date:day[:date] %>';">
 		<%= day[:date].day %>

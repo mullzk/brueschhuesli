@@ -1,0 +1,45 @@
+<div class="container-fluid reservationform">
+	<div class="row">
+	<%= form_with(model: reservation, local: true) do |form| %>
+		<% if reservation.errors.any? %>
+	    	<div class="row" id="error_explanation">
+	     		<h2><%= pluralize(reservation.errors.count, "error") %> verhinderte, dass die Reservation gesichert werden konnte:</h2>
+	      	 	<ul>
+	      		  <% reservation.errors.full_messages.each do |message| %>
+				  	<li><%= message %></li>
+	      		  <% end %>
+	      		</ul>
+	    	</div>
+	  	<% end %>
+	</div>
+	<div class="row">
+	    <label class="legend">Wer:</label> <%= form.select :user_id, @users %>
+	</div>
+
+	<div class="row datebox">
+		<div class="datebox_left">
+	        <label class="legend">Von:</label>
+	        <div>Tag: <%= date_select("reservation", "start", :order => [:day, :month, :year]) %></div>
+	        <div>Zeit: <%= time_select("reservation", "start", {:minute_step => 60, :ignore_date => true}) %></div>
+		</div>
+		<div class="datebox_right">
+	        <label class="legend">Bis:</label>
+	        <div>Tag: <%= date_select("reservation", "finish", :order => [:day, :month, :year]) %></div>
+	        <div>Zeit: <%= time_select("reservation", "finish", {:minute_step => 60, :ignore_date => true}) %></div>
+		</div>
+	</div>
+	<div class="row">
+		<label class="legend">Reservations-Typ: </label>
+		<div>
+	    	<%= form.select :type_of_reservation, Reservation.reservation_types.map {|key, value| value}, :prompt => "Type" %>&nbsp; 
+			<%= form.select :is_exclusive, [["Exklusiv", true],["Offen", false]]%>
+		</div>
+	</div>
+	<div class="row" style="vertical-align:top;">
+		<label style="vertical-align:top;" class="legend">Kommentar: </label><%= form.text_area :comment, :size => "40x3"%>
+	</div>
+	<div class="row">
+		<%= submit_tag "Speichern", :class => "submit" %>
+	</div>
+<% end%>
+</div>
