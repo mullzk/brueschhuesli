@@ -36,6 +36,9 @@ gem 'jbuilder', '~> 2.5'
 # Reduces boot times through caching; required in config/boot.rb
 gem 'bootsnap', '>= 1.1.0', require: false
 
+
+
+
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
@@ -65,9 +68,8 @@ gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
 # Gems for this project, added by mullzk
 gem 'will_paginate', '~> 3.1.0', git:'https://github.com/mislav/will_paginate.git'
-gem 'bootstrap', '~> 4.3.1'
-gem 'jquery-rails' # Used for bootstrap
-gem 'mini_racer' # otherwise bootstrap-subgem Autoprefixer crashes
+gem 'bootstrap'
+
 
 group :development do
   gem 'annotate'

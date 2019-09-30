@@ -15,6 +15,3 @@
 //= require turbolinks
 //= require bootstrap
 //= require_tree ./behaviors
-//= require abrechnung
-//= require login
-//= require reservation
