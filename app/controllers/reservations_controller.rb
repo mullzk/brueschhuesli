@@ -3,25 +3,16 @@ class ReservationsController < ApplicationController
   before_action :authorize
   
   def index
-    if params[:date]
-      @listed_month = Date.parse(params[:date])
-    elsif params[:month] 
-      @listed_month = month_and_year_as_time(params[:month])
-    else 
-      @listed_month = Date.today
-    end
+    @listed_month = parse_date_param
     
-    @months = (0..2).collect { |i| Date.today.at_beginning_of_month + i.months }.collect { |first_of_month|
-      all_days_in_calendar = first_of_month.beginning_of_month.beginning_of_week.upto first_of_month.end_of_month.end_of_week
-      
-      all_days_in_calendar = all_days_in_calendar.collect { |day|
-        reservations = Reservation.find_reservations_on_date(day)
-        {date:day, in_month:day.month.equal?(first_of_month.month), reservations:reservations}
-      }
-      
-      weeks = all_days_in_calendar.in_groups_of(7)
-      {first_of_month:first_of_month, name:first_of_month.german_month, weeks:weeks }
-    }    
+    presented_months = (0..2).collect { |i| Date.today.at_beginning_of_month + i.months }
+    @months = presented_months.collect {|month| get_calendar_for_month month}
+  end
+  
+  def month
+    @listed_month = parse_date_param
+    @month = get_calendar_for_month @listed_month
+    render partial:"month", object:@month
   end
   
  
@@ -111,6 +102,28 @@ class ReservationsController < ApplicationController
   
   def reservation_params
     params.fetch(:reservation, {}).permit(:user_id, :start, :finish, :type_of_reservation, :is_exclusive, :comment)
+  end
+  
+  def parse_date_param
+    if params[:date]
+      return Date.parse(params[:date])
+    elsif params[:month] 
+      return month_and_year_as_time(params[:month])
+    else 
+      return Date.today
+    end
+  end
+  
+  def get_calendar_for_month (first_of_month)
+    all_days_in_calendar = first_of_month.beginning_of_month.beginning_of_week.upto first_of_month.end_of_month.end_of_week
+  
+    all_days_in_calendar = all_days_in_calendar.collect { |day|
+      reservations = Reservation.find_reservations_on_date(day)
+      {date:day, in_month:day.month.equal?(first_of_month.month), reservations:reservations}
+    }
+  
+    weeks = all_days_in_calendar.in_groups_of(7)
+    return {first_of_month:first_of_month, name:first_of_month.german_month, weeks:weeks }
   end
   
 end

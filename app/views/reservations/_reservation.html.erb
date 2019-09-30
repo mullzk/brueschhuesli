@@ -1,4 +1,4 @@
-<div class="reservation" onClick="window.location.href='<%= url_for edit_reservation_path(reservation) %>';">
+<div class="reservation" data-js-enter-href="<%= url_for edit_reservation_path(reservation) %>">
 	<div><span>Wer:</span> <%= mail_to(reservation.user.email, reservation.user.name)%></div>
 	<div>
 		<span>Wann:</span> 
