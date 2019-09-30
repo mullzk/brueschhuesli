@@ -42,4 +42,10 @@
 		<%= submit_tag "Speichern", :class => "submit" %>
 	</div>
 <% end%>
+	<div class="row">
+		<%= button_to 'Zurück zum Kalender', {controller:"reservations", action:"index"}, method: :get %>&nbsp;
+		<%unless reservation.id.nil?%>
+			<%= button_to 'Reservation Löschen', reservation, method: :delete, data: { confirm: 'Are you sure?' } %>
+		<%end%>
+	</div>
 </div>
