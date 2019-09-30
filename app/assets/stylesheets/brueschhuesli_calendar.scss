@@ -11,8 +11,10 @@
 			td.inactive {
 				color:silver;
 			}
+			td.free {
+			}
 			td.occupied {
-				color:red;
+				background-color:rgb(240, 240, 240);
 			}
 			th, td {
 				width:14%;
@@ -20,8 +22,15 @@
 				border: 1px black solid;
 				padding:0;
 				p {
+					overflow:ellipsis;
 					margin:0;
 					font-size:0.5em;
+				}
+				p.open {
+					background-color:rgb(230, 255, 254);
+				}
+				p.closed {
+					background-color:rgb(229, 252, 180);
 				}
 			}
 		}

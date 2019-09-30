@@ -1,0 +1,23 @@
+<h2><%= month[:name] %></h2>
+<table class="calendar">
+	<thead>
+		<tr>
+			<th>Mo</th>
+			<th>Di</th>
+			<th>Mi</th>
+			<th>Do</th>
+			<th>Fr</th>
+			<th>Sa</th>
+			<th>So</th>
+		</tr>
+	</thead>
+	<tbody>
+	<% for week in month[:weeks] %>
+		<tr>
+			<% for day in week %>
+				<%= render partial: "day", locals: {day:day, in_month:day[:date].month.equal?(month[:first_of_month].month)} %>
+			<% end %>
+		</tr>
+	<%end%>
+	</tbody>
+</table>

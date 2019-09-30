@@ -1,0 +1,10 @@
+<% if day[:reservations].count.equal? 0 %>
+	<td class="free <%= day[:in_month] ? 'active' : 'inactive' %> "><%= day[:date].day %></td>
+<% else %>
+	<td class="occupied <%= day[:in_month] ? 'active' : 'inactive' %>">
+		<%= day[:date].day %>
+		<% for reservation in day[:reservations] %>
+			<p class="<%= reservation.is_exclusive ? 'closed' : 'open' %>"><%= reservation.user.name %></p>
+		<% end %>	
+	</td>
+<% end %>

@@ -16,11 +16,11 @@ class ReservationsController < ApplicationController
       
       all_days_in_calendar = all_days_in_calendar.collect { |day|
         reservations = Reservation.find_reservations_on_date(day)
-        {in_month:day.month.equal?(first_of_month.month), reservations:reservations, has_reservations:!reservations.empty?, number:day.day}
+        {date:day, in_month:day.month.equal?(first_of_month.month), reservations:reservations}
       }
       
       weeks = all_days_in_calendar.in_groups_of(7)
-      {name:first_of_month.german_month, weeks:weeks }
+      {first_of_month:first_of_month, name:first_of_month.german_month, weeks:weeks }
     }
     
 

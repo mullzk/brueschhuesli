@@ -225,7 +225,7 @@ class Reservation < ApplicationRecord
 
 
   def is_timeslot_exclusive?
-    conflicting_reservations = Reservation.find_reservations_in_timeslot(start, finish)
+    conflicting_reservations = Reservation.find_reservations_in_timeslot(start, finish).to_a
     conflicting_reservations.delete(self) # Needed for validation on Updates, otherwise we conflict with our old version
     errors.add(:start, "Dieser Zeitabschnitt überlappt mit einer bestehenden Reservation") unless conflicting_reservations.empty?
     errors.add(:finish, "Dieser Zeitabschnitt überlappt mit einer bestehenden Reservation") unless conflicting_reservations.empty?

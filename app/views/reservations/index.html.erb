@@ -1,33 +1,3 @@
 <div class="container" id="reservationskalender">
-	<% for month in @months %>
-		<h2><%= month[:name] %></h2>
-		<table class="calendar">
-			<thead>
-				<tr>
-					<th>Mo</th>
-					<th>Di</th>
-					<th>Mi</th>
-					<th>Do</th>
-					<th>Fr</th>
-					<th>Sa</th>
-					<th>So</th>
-				</tr>
-			</thead>
-			<tbody>
-			<% for week in month[:weeks] %>
-				<tr>
-					<% for day in week %>
-						<td class="<%= day[:in_month] ? 'active' : 'inactive' %>  
-							<%= day[:has_reservations] ? 'occupied' : 'free' %>">
-							<%= day[:number] %>
-							<% if day[:has_reservations] %>
-								<p>XXX</p>
-							<% end%>
-						</td>
-					<% end %>
-				</tr>
-			<%end%>
-			</tbody>
-		</table>
-	<% end %>
+	<%= render partial: "month", collection: @months, as: :month %>
 </div>
