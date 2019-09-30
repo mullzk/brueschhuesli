@@ -2,6 +2,7 @@ Rails.application.routes.draw do
 
   root 'reservations#index'
   get 'reservations/index/' => "reservations#index"
+  get 'reservations/on_day/:date', controller: "reservations", action: "on_day"
 
   resources "reservations"
   

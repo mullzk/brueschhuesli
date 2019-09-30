@@ -21,27 +21,18 @@ class ReservationsController < ApplicationController
       
       weeks = all_days_in_calendar.in_groups_of(7)
       {first_of_month:first_of_month, name:first_of_month.german_month, weeks:weeks }
-    }
-    
-
-
-    @months.each {
-      
-    }
-    
-    
-    
-    first_day = @listed_month.at_beginning_of_month.at_beginning_of_week
-    last_day = @listed_month.at_end_of_month.at_beginning_of_week + 6.days
-    
-    @days = []
-    first_day.to_date.upto(last_day.to_date) { |date|
-      reservation_day = {}
-      reservation_day[:datum] = date
-      reservation_day[:reservations] = Reservation.find_reservations_on_date(date)
-      reservation_day[:empty_day] = reservation_day[:reservations].empty?
-      @days << reservation_day
-    }
+    }    
+  end
+  
+ 
+  def on_day
+    if params[:date]
+      @day = Date.parse(params[:date])
+    else
+      flash[:notice] = "Etwas ist schief gelaufen, on_day benötigt einen Datums-Parameter"
+      redirect_to :action => "index"
+    end
+    @reservations = Reservation.find_reservations_on_date @day
   end
   
   def new
