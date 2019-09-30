@@ -92,6 +92,10 @@ class Date
   def medium_german_std
     self.strftime_german("%d. %b %Y")
   end
+
+  def german_month
+    self.strftime_german("%B %Y")
+  end
     
 end
 

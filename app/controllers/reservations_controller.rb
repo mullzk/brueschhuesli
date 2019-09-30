@@ -11,6 +11,26 @@ class ReservationsController < ApplicationController
       @listed_month = Date.today
     end
     
+    @months = (0..2).collect { |i| Date.today.at_beginning_of_month + i.months }.collect { |first_of_month|
+      all_days_in_calendar = first_of_month.beginning_of_month.beginning_of_week.upto first_of_month.end_of_month.end_of_week
+      
+      all_days_in_calendar = all_days_in_calendar.collect { |day|
+        reservations = Reservation.find_reservations_on_date(day)
+        {in_month:day.month.equal?(first_of_month.month), reservations:reservations, has_reservations:!reservations.empty?, number:day.day}
+      }
+      
+      weeks = all_days_in_calendar.in_groups_of(7)
+      {name:first_of_month.german_month, weeks:weeks }
+    }
+    
+
+
+    @months.each {
+      
+    }
+    
+    
+    
     first_day = @listed_month.at_beginning_of_month.at_beginning_of_week
     last_day = @listed_month.at_end_of_month.at_beginning_of_week + 6.days
     

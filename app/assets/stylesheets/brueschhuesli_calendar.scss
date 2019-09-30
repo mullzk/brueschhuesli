@@ -1,0 +1,29 @@
+#reservationskalender {
+	padding:0;
+	table {
+		width:100%;
+		max-width:800px;
+		table-layout:fixed;
+		border-collapse:collapse;
+		tr {
+			vertical-align:top;
+			height:3em;
+			td.inactive {
+				color:silver;
+			}
+			td.occupied {
+				color:red;
+			}
+			th, td {
+				width:14%;
+				text-align:center;
+				border: 1px black solid;
+				padding:0;
+				p {
+					margin:0;
+					font-size:0.5em;
+				}
+			}
+		}
+	}
+}
