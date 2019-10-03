@@ -1,3 +1,4 @@
 <div class="container" id="reservationskalender">
 	<%= render partial: "month", collection: @months, as: :month %>
 </div>
+<div data-js-append-new-month="<%= url_for controller:'reservations', action:'month', date:(@months.last[:first_of_month] + 1.month) %>">xx</div>
