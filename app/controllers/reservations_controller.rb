@@ -12,7 +12,7 @@ class ReservationsController < ApplicationController
   def month
     @listed_month = parse_date_param
     @month = get_calendar_for_month @listed_month
-    render partial:"month", object:@month
+#    render partial:"month", object:@month
   end
   
  
