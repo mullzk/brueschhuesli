@@ -70,6 +70,7 @@ gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 gem 'will_paginate', '~> 3.1.0', git:'https://github.com/mislav/will_paginate.git'
 gem 'bootstrap', '~> 4.3.1'
 gem 'jquery-rails' # Used for bootstrap
+gem 'react-rails'
 
 
 group :development do
