@@ -7,7 +7,6 @@
 
 	<link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
 	<meta name="viewport" content="width=device-width, initial-scale=0.75" />
-
     <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
     <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
 
@@ -24,11 +23,16 @@
 				<% end -%>
 				<%= yield %>
 			</div>
+			
+			
 			<nav class="navbar navbar-expand-lg fixed-top navbar-dark bg-dark">
+
 				<a class="navbar-brand" href="/">Brüschhüsli</a>
-  				<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-					<span class="navbar-toggler-icon"></span>
-				</button>
+				
+				<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    				<span class="navbar-toggler-icon"></span>
+  			  	</button>
+
 				<div class="collapse navbar-collapse" id="navbarSupportedContent">
 					<ul class="navbar-nav mr-auto" >
 						<li class="nav-item"><%= link_to "Reservationen", {:controller => "reservations", :action => "index"}, :class => "nav-link" %></li>
@@ -38,7 +42,8 @@
 						<li class="nav-item"><%= link_to "Benutzer", {:controller=>"login", :action=>"list_users"}, :class => "nav-link" %></li>
 						<li class="nav-item"><%= link_to "Passwort ändern", {:controller => "login", :action => "change_password"}, :class => "nav-link" %></li>
 						<li class="nav-item"><%= link_to "Abmelden", {:controller => "login", :action => "logout"}, :class => "nav-link" %></li>
-				</ul>
+					</ul>
+				</div>
 			
 			
 			</nav>
