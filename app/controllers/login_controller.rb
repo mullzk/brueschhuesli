@@ -34,7 +34,7 @@ class LoginController < ApplicationController
           redirect_to :controller => "reservations", :action => "index"
         end
       else
-        flash[:notice] = "Ungültige Benutzer/Passwort Kombination"
+        flash.now[:notice] = "Ungültige Benutzer/Passwort Kombination"
       end
     end
   end
