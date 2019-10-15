@@ -1,3 +1,4 @@
 Reservationen am <%= @day.long_german_std %>
 <%= render partial: @reservations %>
-<%= link_to "Neue Reservation", controller:"reservations", action:"new" %>
+<%= link_to "Neue Reservation", controller:"reservations", action:"new" %> <br /> <br />
+<%= link_to "Zurück zur Übersicht", controller:"reservations", action:"index", date:@day %>

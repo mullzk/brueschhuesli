@@ -3,6 +3,9 @@
 	h2 {
 		margin:1em 0 0.25em 4em;
 	}
+	h2:first-child {
+		margin:0em 0 0.25em 4em;		
+	};
 	table {
 		width:100%;
 		max-width:800px;

@@ -5,14 +5,14 @@ class ReservationsController < ApplicationController
   def index
     @listed_month = parse_date_param
     
-    presented_months = (0..2).collect { |i| Date.today.at_beginning_of_month + i.months }
+    presented_months = (0..2).collect { |i| @listed_month.at_beginning_of_month + i.months }
     @months = presented_months.collect {|month| get_calendar_for_month month}
   end
   
   def month
     @listed_month = parse_date_param
     @month = get_calendar_for_month @listed_month
-    render partial:"month", object:@month
+    render partial:"month", object:@month, template:"reservations"
   end
   
  
