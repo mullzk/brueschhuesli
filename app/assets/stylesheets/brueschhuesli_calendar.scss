@@ -1,5 +1,8 @@
 #reservationskalender {
 	padding:0;
+	h2 {
+		margin:1em 0 0.25em 4em;
+	}
 	table {
 		width:100%;
 		max-width:800px;
@@ -33,6 +36,20 @@
 					background-color:rgb(229, 252, 180);
 				}
 			}
+		}
+	}
+	.month-navigation {
+		width:100%;
+		max-width:800px;
+		p:first-child {
+			float:left;
+		};
+		p:last-child {
+			float:right;
+		};
+		clear:both;
+		a {
+			color:black;
 		}
 	}
 }

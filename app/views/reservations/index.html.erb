@@ -1,3 +1,8 @@
+<div class="month-navigation">
+	<p><%= link_to ">" + (@months.first[:first_of_month] - 1.month).german_month, {controller:"reservations", action:"month", date:(@months.first[:first_of_month] - 1.month)}, "data-loading-preceding-month-link"=>"false" -%></p>
+	<p><%= link_to ">"+(@months.last[:first_of_month] + 1.month).german_month, {controller:"reservations", action:"month", date:(@months.last[:first_of_month] + 1.month)}, "data-loading-succeeding-month-link"=>"false" -%></p>
+</div>
 <div class="container" id="reservationskalender">
 	<%= render partial: "month", collection: @months, as: :month %>
 </div>
+<div id="loadinghint">loading...</div>

@@ -114,16 +114,19 @@ class ReservationsController < ApplicationController
     end
   end
   
-  def get_calendar_for_month (first_of_month)
-    all_days_in_calendar = first_of_month.beginning_of_month.beginning_of_week.upto first_of_month.end_of_month.end_of_week
-  
+  def get_calendar_for_month (day_in_month)
+    # Get 4-6 complete weeks in our calendar, meaning als the last days of the previous and the first days of the next months
+    all_days_in_calendar = day_in_month.beginning_of_month.beginning_of_week.upto day_in_month.end_of_month.end_of_week
+
+    # For each day, get the reservations. Days of the pre- or succedding month should be marked. 
     all_days_in_calendar = all_days_in_calendar.collect { |day|
       reservations = Reservation.find_reservations_on_date(day)
-      {date:day, in_month:day.month.equal?(first_of_month.month), reservations:reservations}
+      {date:day, in_month:day.month.equal?(day_in_month.month), reservations:reservations}
     }
-  
+    
+    # Create 2D-Array of weeks
     weeks = all_days_in_calendar.in_groups_of(7)
-    return {first_of_month:first_of_month, name:first_of_month.german_month, weeks:weeks }
+    return {first_of_month:day_in_month.beginning_of_month, name:day_in_month.german_month, weeks:weeks }
   end
   
 end
