@@ -1,6 +1,6 @@
 document.addEventListener "turbolinks:load", (event) ->
 	window.addEventListener "scroll", (scrollEvent) ->
-		if window.scrollY < -5
+		if window.scrollY < 1
 			# Once the user initiated infite scrolling to the top, we do not show the Month-Navigation-Links anymore
 			document.querySelector(".month-navigation").style.display="none"
 
