@@ -37,8 +37,8 @@
 					<ul class="navbar-nav mr-auto" >
 						<li class="nav-item"><%= link_to "Reservationen", {:controller => "reservations", :action => "index"}, :class => "nav-link" %></li>
 						<li class="nav-item"><%= link_to "Abrechnung", {:controller => "abrechnung", :action => "jahresstatistik"}, :class => "nav-link" %></li>
-						<li class="nav-item"><%= link_to "Reservations- und Entschädigungsregelgung", {}, :class => "nav-link" %></li>
-						<li class="nav-item"><%= link_to "Hausordnung", {}, :class => "nav-link" %></li>
+						<li class="nav-item"><%= link_to "Reservations- und Entschädigungsregelgung", "/reservationsregelung.pdf", :class => "nav-link" %></li>
+						<li class="nav-item"><%= link_to "Hausordnung", "/hausordnung.pdf", :class => "nav-link" %></li>
 						<li class="nav-item"><%= link_to "Benutzer", {:controller=>"login", :action=>"list_users"}, :class => "nav-link" %></li>
 						<li class="nav-item"><%= link_to "Passwort ändern", {:controller => "login", :action => "change_password"}, :class => "nav-link" %></li>
 						<li class="nav-item"><%= link_to "Abmelden", {:controller => "login", :action => "logout"}, :class => "nav-link" %></li>
