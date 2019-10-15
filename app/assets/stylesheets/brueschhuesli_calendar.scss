@@ -1,3 +1,12 @@
+$light-blue  : rgb(230, 255, 254);
+$dark-blue   : rgb(114, 200, 200);
+$light-red   : rgb(247, 215, 214);
+$light-green : rgb(229, 252, 180);
+$light-gray  : rgb(240, 240, 240);
+$dark-gray   : rgb(175, 175, 175);
+$almost-black: rgb(59, 59, 59);
+
+
 #reservationskalender {
 	padding:0;
 	h2 {
@@ -16,11 +25,14 @@
 			height:3.5em;
 			td.inactive {
 				color:silver;
+				p {
+					color:$almost-black;
+				}
 			}
 			td.free {
 			}
 			td.occupied {
-				background-color:rgb(240, 240, 240);
+				background-color:$light-gray
 			}
 			th, td {
 				width:14%;
@@ -33,10 +45,10 @@
 					font-size:0.7em;
 				}
 				p.open {
-					background-color:rgb(230, 255, 254);
+					background-color:$light-blue;
 				}
 				p.closed {
-					background-color:rgb(229, 252, 180);
+					background-color:$dark-blue
 				}
 			}
 		}
