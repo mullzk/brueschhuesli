@@ -4,6 +4,7 @@ $light-red   : rgb(247, 215, 214);
 $light-green : rgb(229, 252, 180);
 $light-gray  : rgb(240, 240, 240);
 $dark-gray   : rgb(175, 175, 175);
+$light-yellow: rgb(255, 255, 185);
 $almost-black: rgb(59, 59, 59);
 
 
@@ -32,7 +33,10 @@ $almost-black: rgb(59, 59, 59);
 			td.free {
 			}
 			td.occupied {
-				background-color:$light-gray
+				background-color:$light-gray;
+			}
+			td.today {
+				background-color:$light-yellow;
 			}
 			th, td {
 				width:14%;
