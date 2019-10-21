@@ -1,6 +1,7 @@
 $light-blue  : rgb(230, 255, 254);
 $dark-blue   : rgb(114, 200, 200);
-$light-red   : rgb(247, 215, 214);
+$light-red   : rgb(237, 205, 204);
+$dark-red    : rgb(152, 24, 24);
 $light-green : rgb(229, 252, 180);
 $light-gray  : rgb(240, 240, 240);
 $dark-gray   : rgb(175, 175, 175);
@@ -49,10 +50,11 @@ $almost-black: rgb(59, 59, 59);
 					font-size:0.7em;
 				}
 				p.open {
-					background-color:$light-blue;
+					background-color:$light-red;
 				}
 				p.closed {
-					background-color:$dark-blue
+					background-color:$dark-red;
+					color:white;
 				}
 			}
 		}
