@@ -34,7 +34,6 @@ class AbrechnungController < ApplicationController
 
 private
   def respond_to_html_and_excel(filename)
-    Mime::Type.register "application/excel", :xls
     respond_to do |format|
       format.html # show.html.erb
       format.xls   {
