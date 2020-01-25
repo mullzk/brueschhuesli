@@ -18,9 +18,9 @@ document.addEventListener "turbolinks:load", (event) ->
 					window.scrollBy(0, document.querySelector(".calendar").scrollHeight)
 
 					# We search for the first calendar-item and add event-listeners to its href-nodes
-					allCalendars = document.querySelector("#reservationskalender .calendar")
-					lastCalendar = allCalendars[0]
-					lastCalendar.querySelectorAll("[data-js-enter-reservation-href]").forEach (node) ->
+					allCalendars = document.querySelectorAll("#reservationskalender .calendar")
+					firstCalendar = allCalendars[0]
+					firstCalendar.querySelectorAll("[data-js-enter-reservation-href]").forEach (node) ->
 						node.addEventListener "click", (e) -> 
 							window.location.href = node.getAttribute("data-js-enter-reservation-href")
 
