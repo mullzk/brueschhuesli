@@ -17,6 +17,14 @@ document.addEventListener "turbolinks:load", (event) ->
 					document.querySelector("#reservationskalender").insertAdjacentHTML("afterbegin", html)
 					window.scrollBy(0, document.querySelector(".calendar").scrollHeight)
 
+					# We search for the first calendar-item and add event-listeners to its href-nodes
+					allCalendars = document.querySelector("#reservationskalender .calendar")
+					lastCalendar = allCalendars[0]
+					lastCalendar.querySelectorAll("[data-js-enter-reservation-href]").forEach (node) ->
+						node.addEventListener "click", (e) -> 
+							window.location.href = node.getAttribute("data-js-enter-reservation-href")
+
+
 					# We adjust the URL of the [data-loading-preceding-month-link]-Link to one month before the newly inserted month
 					previousMonthUrl = document.querySelector("[data-prev-month-url]").getAttribute("data-prev-month-url")
 					loader.setAttribute("href", previousMonthUrl)
@@ -38,6 +46,14 @@ document.addEventListener "turbolinks:load", (event) ->
 
 					# We insert the next month at the bottom
 					document.querySelector("#reservationskalender").insertAdjacentHTML("beforeend", html)
+					
+					# We search for the last calendar-item and add event-listeners to its href-nodes
+					allCalendars = document.querySelectorAll("#reservationskalender .calendar")
+					lastCalendar = allCalendars[allCalendars.length-1]
+					lastCalendar.querySelectorAll("[data-js-enter-reservation-href]").forEach (node) ->
+						node.addEventListener "click", (e) -> 
+							window.location.href = node.getAttribute("data-js-enter-reservation-href")
+
 
 					# We adjust the URL of the [data-loading-succeding-month-link]-Link to one month after the newly inserted month
 					nextMonthNodes = document.querySelectorAll("[data-next-month-url]")					
