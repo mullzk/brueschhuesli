@@ -15,6 +15,7 @@ Rails.application.routes.draw do
   get 'login/logout'
   get 'login/edit_user'
   post 'login/update_user'
+  patch 'login/update_user'
   get 'login/delete_user'
   post 'login/delete_user'
   get 'login/list_users'
