@@ -128,17 +128,17 @@ class Reservation < ApplicationRecord
   def self.find_reservations_beginning_in_timeslot(time_a, time_b)
     if time_a > time_b
       if time_a.respond_to?(:hour)
-        interval_finish = time_a.to_s(:db)
+        interval_finish = time_a.to_formatted_s(:db)
       else # End-time is a day, so we look for reservations including this day
         interval_finish = (time_a+(1.day)).to_s(:db)
       end
-      interval_start = time_b.to_s(:db)
+      interval_start = time_b.to_formatted_s(:db)
     else 
-      interval_start = time_a.to_s(:db)
+      interval_start = time_a.to_formatted_s(:db)
       if time_b.respond_to?(:hour)
-        interval_finish = time_b.to_s(:db)
+        interval_finish = time_b.to_formatted_s(:db)
       else # End-time is a day, so we look for reservations including this day
-        interval_finish = (time_b+(1.day)).to_s(:db)
+        interval_finish = (time_b+(1.day)).to_formatted_s(:db)
       end
     end    
     self.where("(start >= '#{interval_start}' AND start <= '#{interval_finish}')")
@@ -171,17 +171,17 @@ class Reservation < ApplicationRecord
   def self.find_reservations_in_timeslot(time_a, time_b)
     if time_a > time_b
       if time_a.respond_to?(:hour)
-        interval_finish = time_a.to_s(:db)
+        interval_finish = time_a.to_formatted_s(:db)
       else # End-time is a day, so we look for reservations including this day
-        interval_finish = (time_a+(1.day)).to_s(:db)
+        interval_finish = (time_a+(1.day)).to_formatted_s(:db)
       end
-      interval_start = time_b.to_s(:db)
+      interval_start = time_b.to_formatted_s(:db)
     else 
-      interval_start = time_a.to_s(:db)
+      interval_start = time_a.to_formatted_s(:db)
       if time_b.respond_to?(:hour)
-        interval_finish = time_b.to_s(:db)
+        interval_finish = time_b.to_formatted_s(:db)
       else # End-time is a day, so we look for reservations including this day
-        interval_finish = (time_b+(1.day)).to_s(:db)
+        interval_finish = (time_b+(1.day)).to_formatted_s(:db)
       end
     end    
     self.where("(start <= '#{interval_start}' AND finish > '#{interval_start}') OR ('#{interval_start}' <= start AND '#{interval_finish}' > start)").order(:start)    
