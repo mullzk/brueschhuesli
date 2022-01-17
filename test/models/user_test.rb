@@ -2,14 +2,14 @@
 #
 # Table name: users
 #
-#  id                     :bigint(8)        not null, primary key
-#  email                  :string
-#  has_to_change_password :boolean
-#  hashed_password        :string
-#  miteigentuemer         :boolean
+#  id                     :integer          not null, primary key
 #  name                   :string
-#  salt                   :string
+#  email                  :string
 #  telefon                :string
+#  hashed_password        :string
+#  salt                   :string
+#  has_to_change_password :boolean
+#  miteigentuemer         :boolean
 #  created_at             :datetime         not null
 #  updated_at             :datetime         not null
 #
