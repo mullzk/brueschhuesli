@@ -85,4 +85,4 @@ gem "bundler-audit", "~> 0.9.1"
 
 gem "brakeman", "~> 5.4"
 
-gem "rubocop", "~> 1.39"
+gem 'rubocop-rails', require: false
