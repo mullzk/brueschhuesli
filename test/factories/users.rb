@@ -15,17 +15,14 @@
 #
 
 FactoryBot.define do
-  factory :user do 
-    
+  factory :user do
     factory :valid_user do
       sequence :name do |n|
         "Test-User Nr #{n}"
       end
-      email {"test@mail.com"}
-      salt {"pseudosalt"}
-      hashed_password {"pseudo-pw, not valid for login"}
+      email { 'test@mail.com' }
+      salt { 'pseudosalt' }
+      hashed_password { 'pseudo-pw, not valid for login' }
     end
-    
   end
-  
 end

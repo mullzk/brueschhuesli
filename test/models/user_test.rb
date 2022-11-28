@@ -17,39 +17,38 @@
 require 'test_helper'
 
 class UserTest < ActiveSupport::TestCase
-  test "Unknown User is not found" do
-    dbuser = User.find_by_name("rumpelstilzchen")
+  test 'Unknown User is not found' do
+    dbuser = User.find_by_name('rumpelstilzchen')
     assert_not dbuser
   end
 
-  test "User gets created, Passwort is not stored in clear-text" do
-    user = FactoryBot.build(:user, name:"Stefan", email:"test@mail.com")
-    user.password="test1234"
+  test 'User gets created, Passwort is not stored in clear-text' do
+    user = FactoryBot.build(:user, name: 'Stefan', email: 'test@mail.com')
+    user.password = 'test1234'
     user.save
-    dbuser = User.find_by_name("Stefan")
+    dbuser = User.find_by_name('Stefan')
     assert dbuser
-    assert_not dbuser.password=="test1234"
+    assert_not dbuser.password == 'test1234'
   end
 
-
-  test "authentication with correct password should pass" do
-    user = FactoryBot.build(:user, name:"Stefan", email:"test@mail.com")
-    user.password="test1234"
+  test 'authentication with correct password should pass' do
+    user = FactoryBot.build(:user, name: 'Stefan', email: 'test@mail.com')
+    user.password = 'test1234'
     user.save
-    assert User.authenticate("Stefan", "test1234")
+    assert User.authenticate('Stefan', 'test1234')
   end
 
-  test "authentifcation with wrong password should be rejected" do
-    user = FactoryBot.build(:user, name:"Stefan", email:"test@mail.com")
-    user.password="test1234"
+  test 'authentifcation with wrong password should be rejected' do
+    user = FactoryBot.build(:user, name: 'Stefan', email: 'test@mail.com')
+    user.password = 'test1234'
     user.save
-    assert_not User.authenticate("Stefan", "test")
+    assert_not User.authenticate('Stefan', 'test')
   end
-  
-  test "authentification with no password should be rejected" do
-    user = FactoryBot.build(:user, name:"Stefan", email:"test@mail.com")
-    user.password="test1234"
+
+  test 'authentification with no password should be rejected' do
+    user = FactoryBot.build(:user, name: 'Stefan', email: 'test@mail.com')
+    user.password = 'test1234'
     user.save
-    assert_not User.authenticate("Stefan", "")
+    assert_not User.authenticate('Stefan', '')
   end
- end
+end

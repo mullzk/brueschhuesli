@@ -1,13 +1,11 @@
 Rails.application.routes.draw do
-
   root 'reservations#index'
-  get 'reservations/index/' => "reservations#index"
-  get 'reservations/on_day/:date', controller: "reservations", action: "on_day"
-  get 'reservations/month/:date', controller: "reservations", action: "month"
+  get 'reservations/index/' => 'reservations#index'
+  get 'reservations/on_day/:date', controller: 'reservations', action: 'on_day'
+  get 'reservations/month/:date', controller: 'reservations', action: 'month'
 
-  resources "reservations"
-  
-  
+  resources 'reservations'
+
   get 'login/add_user'
   post 'login/add_user'
   get 'login/login'
@@ -25,8 +23,6 @@ Rails.application.routes.draw do
   get 'abrechnung/jahresstatistik'
   get 'abrechnung/detailliste'
   get 'abrechnung/benutzer'
-  
-  
-  
+
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 end
