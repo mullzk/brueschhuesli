@@ -21,10 +21,10 @@ class User < ApplicationRecord
 
   attr_accessor :password_confirmation
 
-  validates_confirmation_of :password
-  validates_uniqueness_of :name
+  validates :password, confirmation: true
+  validates :name, uniqueness: true
 
-  validates_presence_of :name, :email, :hashed_password, :salt
+  validates :name, :email, :hashed_password, :salt, presence: true
 
   def validate
     errors.add_to_base('Missing Passwort') if hashed_password.blank?
@@ -56,7 +56,7 @@ class User < ApplicationRecord
   end
 
   def self.authenticate(name, password)
-    user = find_by_name(name)
+    user = find_by(name:)
     if user
       expected_password = encrypted_password(password, user.salt)
       user = nil if user.hashed_password != expected_password

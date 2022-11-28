@@ -79,7 +79,7 @@ class LoginController < ApplicationController
   end
 
   def change_password
-    @user = User.find_by_id(session[:user_id])
+    @user = User.find_by(id: session[:user_id])
     return unless request.post?
 
     user = User.authenticate(@user.name, params[:old_password])

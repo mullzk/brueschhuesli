@@ -27,6 +27,10 @@ class ReservationsController < ApplicationController
     @reservations = Reservation.find_reservations_on_date @day
   end
 
+  def show
+    @reservation = Reservation.find(params[:id])
+  end
+
   def new
     @users = User.all.sort.map { |user| [user.name, user.id] }
     day = if params[:date]
@@ -34,7 +38,7 @@ class ReservationsController < ApplicationController
           else
             Date.today
           end
-    startDateTime = DateTime.new(day.year, day.month, day.day, Time.now.hour)
+    startDateTime = DateTime.new(day.year, day.month, day.day, Time.zone.now.hour)
     finishDateTime = startDateTime + 1.day
 
     @reservation = Reservation.new(
@@ -46,6 +50,11 @@ class ReservationsController < ApplicationController
     )
   end
 
+  def edit
+    @reservation = Reservation.find(params[:id])
+    @users = User.all.sort.map { |user| [user.name, user.id] }
+  end
+
   def create
     @reservation = Reservation.new(reservation_params)
     if @reservation.save
@@ -54,15 +63,6 @@ class ReservationsController < ApplicationController
     else
       flash[:notice] = 'Reservation konnte nicht gespeichert werden'
     end
-  end
-
-  def show
-    @reservation = Reservation.find(params[:id])
-  end
-
-  def edit
-    @reservation = Reservation.find(params[:id])
-    @users = User.all.sort.map { |user| [user.name, user.id] }
   end
 
   def update

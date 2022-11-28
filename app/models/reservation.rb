@@ -21,7 +21,7 @@
 
 class Reservation < ApplicationRecord
   belongs_to :user
-  validates_presence_of :start, :finish, :type_of_reservation
+  validates :start, :finish, :type_of_reservation, presence: true
   validate :is_timeslot_exclusive?, :is_timeslot_positive?, :is_reservation_not_longer_than_a_week?
 
   KURZAUFENTHALT = 'Kurzaufenthalt'
@@ -125,17 +125,17 @@ class Reservation < ApplicationRecord
   def self.find_reservations_beginning_in_timeslot(time_a, time_b)
     if time_a > time_b
       interval_finish = if time_a.respond_to?(:hour)
-                          time_a.to_formatted_s(:db)
+                          time_a.to_fs(:db)
                         else # End-time is a day, so we look for reservations including this day
-                          (time_a + 1.day).to_s(:db)
+                          (time_a + 1.day).to_fs(:db)
                         end
-      interval_start = time_b.to_formatted_s(:db)
+      interval_start = time_b.to_fs(:db)
     else
-      interval_start = time_a.to_formatted_s(:db)
+      interval_start = time_a.to_fs(:db)
       interval_finish = if time_b.respond_to?(:hour)
-                          time_b.to_formatted_s(:db)
+                          time_b.to_fs(:db)
                         else # End-time is a day, so we look for reservations including this day
-                          (time_b + 1.day).to_formatted_s(:db)
+                          (time_b + 1.day).to_fs(:db)
                         end
     end
     where("(start >= '#{interval_start}' AND start <= '#{interval_finish}')")
@@ -171,17 +171,17 @@ class Reservation < ApplicationRecord
   def self.find_reservations_in_timeslot(time_a, time_b)
     if time_a > time_b
       interval_finish = if time_a.respond_to?(:hour)
-                          time_a.to_formatted_s(:db)
+                          time_a.to_fs(:db)
                         else # End-time is a day, so we look for reservations including this day
-                          (time_a + 1.day).to_formatted_s(:db)
+                          (time_a + 1.day).to_fs(:db)
                         end
-      interval_start = time_b.to_formatted_s(:db)
+      interval_start = time_b.to_fs(:db)
     else
-      interval_start = time_a.to_formatted_s(:db)
+      interval_start = time_a.to_fs(:db)
       interval_finish = if time_b.respond_to?(:hour)
-                          time_b.to_formatted_s(:db)
+                          time_b.to_fs(:db)
                         else # End-time is a day, so we look for reservations including this day
-                          (time_b + 1.day).to_formatted_s(:db)
+                          (time_b + 1.day).to_fs(:db)
                         end
     end
     where("(start <= '#{interval_start}' AND finish > '#{interval_start}') OR ('#{interval_start}' <= start AND '#{interval_finish}' > start)").order(:start)
