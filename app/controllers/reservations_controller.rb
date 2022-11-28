@@ -102,12 +102,8 @@ class ReservationsController < ApplicationController
 
   def parse_date_param
     return Date.parse(params[:date]) if params[:date]
-      
-     params[:month]
-      month_and_year_as_time(params[:month])
-    else
-      Date.today
-    
+    return month_and_year_as_time(params[:month]) if params[:month]
+    return Date.today
   end
 
   def get_calendar_for_month(day_in_month)
