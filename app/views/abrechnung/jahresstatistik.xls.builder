@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 adding_excel_methods_to_builder(xml)
 xml.instruct! :xml, version: '1.0', encoding: 'UTF-8'
 xml.Workbook({
@@ -60,13 +62,13 @@ xml.Workbook({
         xml.e_cell('Total Kosten')
       end
 
-      for stat in @stats
+      @stats.each do |stat|
         xml.Row do
           xml.e_cell(h(stat[0].name))
           xml.e_cell_number(stat[1], 'ap_int_precision')
           xml.e_cell_number(stat[2], 'ap_int_precision')
         end
-         end
+      end
       xml.Row 'ss:StyleID' => 'ap_bold' do
         xml.e_cell('Total')
         xml.e_sum_above(@stats.size)

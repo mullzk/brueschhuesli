@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class LoginController < ApplicationController
   layout 'reservation'
 
@@ -9,7 +11,7 @@ class LoginController < ApplicationController
     @user = User.new(params[:user])
 
     initial_password = SecureRandom.hex(8)
-    if request.post? and @user.save
+    if request.post? && @user.save
       @user.password = params[:user][:password] || initial_password
       flash.now[:notice] = "Benutzer #{@user.name} erstellt"
       redirect_to action: 'list_users'
@@ -66,7 +68,7 @@ class LoginController < ApplicationController
         user.destroy
         flash[:notice] = "Benutzer #{user.name} gelöscht"
       rescue Exception => e
-        flash[:notice] = "#{e.message}"
+        flash[:notice] = e.message.to_s
       end
     end
     redirect_to action: 'list_users'

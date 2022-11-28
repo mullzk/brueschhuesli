@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 adding_excel_methods_to_builder(xml)
 xml.instruct! :xml, version: '1.0', encoding: 'UTF-8'
 xml.Workbook({
@@ -65,7 +67,7 @@ xml.Workbook({
         xml.e_cell('Kommentar')
       end
 
-      for reservation in @reservations do
+      @reservations.each do |reservation|
         xml.Row do
           xml.e_cell_datetime reservation.start
           xml.e_cell_datetime reservation.finish

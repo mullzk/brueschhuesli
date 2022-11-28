@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ApplicationHelper
   def time_components_of(numeric)
     (reminder, secs) = numeric.divmod(60)
@@ -12,7 +14,7 @@ module ApplicationHelper
     days = comps[:days]
     hours = comps[:hours]
 
-    if days > 0
+    if days.positive?
       format('%id %.2ih', days, hours)
     else
       format('%.ih', hours)

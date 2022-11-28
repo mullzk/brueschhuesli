@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ReservationsController < ApplicationController
   require 'DateGermanAdditions'
   before_action :authorize
@@ -20,7 +22,7 @@ class ReservationsController < ApplicationController
       @day = Date.parse(params[:date])
     else
       flash[:notice] = 'Etwas ist schief gelaufen, on_day benötigt einen Datums-Parameter'
-      redirect_to :action => 'index'
+      redirect_to action: 'index'
     end
     @reservations = Reservation.find_reservations_on_date @day
   end
@@ -28,9 +30,9 @@ class ReservationsController < ApplicationController
   def new
     @users = User.all.sort.map { |user| [user.name, user.id] }
     day = if params[:date]
-      Date.parse(params[:date])
-    else
-      Date.today
+            Date.parse(params[:date])
+          else
+            Date.today
           end
     startDateTime = DateTime.new(day.year, day.month, day.day, Time.now.hour)
     finishDateTime = startDateTime + 1.day
@@ -48,12 +50,10 @@ class ReservationsController < ApplicationController
     @reservation = Reservation.new(reservation_params)
     if @reservation.save
       flash[:notice] = 'Reservation wurde gespeichert'
-      redirect_to :action => 'index', :date => @reservation.start
+      redirect_to action: 'index', date: @reservation.start
     else
       flash[:notice] = 'Reservation konnte nicht gespeichert werden'
     end
-
-
   end
 
   def show
@@ -70,20 +70,18 @@ class ReservationsController < ApplicationController
     @users = User.all.sort.map { |user| [user.name, user.id] }
     if @reservation.update(reservation_params)
       flash[:notice] = 'Änderungen gespeichert.'
-      redirect_to :action => 'index', :date => @reservation.start
+      redirect_to action: 'index', date: @reservation.start
     else
       flash.now[:notice] = 'Änderungen konnten nicht gespeichert werden.'
-      render :action => 'edit'
+      render action: 'edit'
     end
   end
 
   def destroy
     Reservation.find(params[:id]).destroy
     flash[:notice] = 'Reservierung gelöscht'
-    redirect_to :action => 'index'
+    redirect_to action: 'index'
   end
-
-
 
   private
 
@@ -103,7 +101,8 @@ class ReservationsController < ApplicationController
   def parse_date_param
     return Date.parse(params[:date]) if params[:date]
     return month_and_year_as_time(params[:month]) if params[:month]
-    return Date.today
+
+    Date.today
   end
 
   def get_calendar_for_month(day_in_month)
@@ -113,12 +112,11 @@ class ReservationsController < ApplicationController
     # For each day, get the reservations. Days of the pre- or succedding month should be marked.
     all_days_in_calendar = all_days_in_calendar.collect do |day|
       reservations = Reservation.find_reservations_on_date(day)
-      { date: day, in_month: day.month.equal?(day_in_month.month), reservations: reservations }
+      { date: day, in_month: day.month.equal?(day_in_month.month), reservations: }
     end
 
     # Create 2D-Array of weeks
     weeks = all_days_in_calendar.in_groups_of(7)
-    { first_of_month: day_in_month.beginning_of_month, name: day_in_month.german_month, weeks: weeks }
+    { first_of_month: day_in_month.beginning_of_month, name: day_in_month.german_month, weeks: }
   end
-
 end

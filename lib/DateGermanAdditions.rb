@@ -1,24 +1,26 @@
+# frozen_string_literal: true
+
 class Date
   EN_TO_GERMAN_MONTHS = {
     'January' => 'Januar', 'February' => 'Februar', 'March' => 'Maerz', 'April' => 'April',
     'May' => 'Mai', 'June' => 'Juni', 'July' => 'Juli', 'August' => 'August',
     'September' => 'September', 'October' => 'Oktober', 'November' => 'November', 'December' => 'Dezember'
-  }
+  }.freeze
   EN_TO_GERMAN_DAYS = {
     'Sunday' => 'Sonntag', 'Monday' => 'Montag', 'Tuesday' => 'Dienstag', 'Wednesday' => 'Mittwoch',
     'Thursday' => 'Donnerstag', 'Friday' => 'Freitag', 'Saturday' => 'Samstag'
-  }
+  }.freeze
 
   EN_TO_GERMAN_ABBR_MONTHS = {
     'Jan' => 'Jan', 'Feb'      => 'Feb', 'Mar'      => 'Mae', 'Apr'      => 'Apr',
     'May' => 'Mai', 'Jun'      => 'Jun', 'Jul'      => 'Jul', 'Aug'      => 'Aug',
     'Sep' => 'Sep', 'Oct'      => 'Okt', 'Nov'      => 'Nov', 'Dec'      => 'Dez'
-  }
+  }.freeze
 
   EN_TO_GERMAN_ABBR_DAYS = {
     'Sun' => 'So', 'Mon'      => 'Mo', 'Tue'      => 'Di', 'Wed' => 'Mi',
     'Thu' => 'Do', 'Fri'      => 'Fr', 'Sat'      => 'Sa'
-  }
+  }.freeze
 
   def self.parse_german_string(str)
     date_string = str
@@ -41,7 +43,7 @@ class Date
       date = parse(date_string)
     rescue ArgumentError
       # "22.12.77" crashes, "22.12.1977" not
-      date_components = date_string.split(%r{-|\.|/}).map { |x| x.strip }
+      date_components = date_string.split(%r{-|\.|/}).map(&:strip)
       if date_components.size == 3 && (1..99).include?(date_components[2].to_i)
         date_components[2] = if date_components[2].to_i < 50
                                (date_components[2].to_i + 2000).to_s

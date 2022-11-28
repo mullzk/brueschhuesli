@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Renaming < ActiveRecord::Migration[5.2]
   def up
     rename_column :users, :hasToChangePassword, :has_to_change_password

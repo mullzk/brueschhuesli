@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: users
@@ -45,7 +47,7 @@ class User < ApplicationRecord
   private
 
   def self.encrypted_password(password, salt)
-    string_to_hash = password + 'sdf' + salt
+    string_to_hash = "#{password}sdf#{salt}"
     Digest::SHA1.hexdigest(string_to_hash)
   end
 

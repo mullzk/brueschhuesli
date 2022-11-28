@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AbrechnungController < ApplicationController
   before_action :authorize
 
@@ -14,7 +16,7 @@ class AbrechnungController < ApplicationController
         [user, user_res.size, fee_sum]
       end
     end
-    @stats = stats.compact.sort { |a, b| (a[0] <=> b[0]) }  # We don't want to show nil-values, and we sort by Name
+    @stats = stats.compact.sort { |a, b| (a[0] <=> b[0]) } # We don't want to show nil-values, and we sort by Name
     respond_to_html_and_excel "brüschhüsli_abrechnung_#{@listed_year.year}"
   end
 

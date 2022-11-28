@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class RenamingReservationsToCamelcase < ActiveRecord::Migration[5.2]
   def up
     rename_column :reservations, :isExclusive, :is_exclusive

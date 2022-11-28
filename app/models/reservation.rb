@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: reservations
@@ -77,11 +79,12 @@ class Reservation < ApplicationRecord
   end
 
   def billed_fee
-    if type_of_reservation.eql?(Reservation::KURZAUFENTHALT) || type_of_reservation.eql?(Reservation::FERIENAUFENTHALT)
+    case type_of_reservation
+    when Reservation::KURZAUFENTHALT, Reservation::FERIENAUFENTHALT
       paid_blocks * 15
-    elsif type_of_reservation.eql?(Reservation::GROSSANLASS)
+    when Reservation::GROSSANLASS
       200
-    elsif type_of_reservation.eql?(Reservation::EXTERNE_NUTZUNG)
+    when Reservation::EXTERNE_NUTZUNG
       duration_in_days * 100 # duration_in_days_returns_seconds !!!!
     end
   end
