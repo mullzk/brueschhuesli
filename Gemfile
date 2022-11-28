@@ -80,3 +80,9 @@ end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
+
+gem "bundler-audit", "~> 0.9.1"
+
+gem "brakeman", "~> 5.4"
+
+gem "rubocop", "~> 1.39"
