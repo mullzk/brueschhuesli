@@ -5,9 +5,9 @@ ruby '3.3.5'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '~> 7.0.0'
-# Mullzk:
-# Use Postgres as the database for Active Record, as used by heroku
-gem 'pg'
+# Use trilogy as the MySQL adapter for Active Record
+gem 'trilogy'
+gem 'activerecord-trilogy-adapter'
 # Use Puma as the app server
 gem 'puma', '>= 4.3.9'
 # Use SCSS for stylesheets
@@ -46,6 +46,7 @@ gem 'jquery-rails' # Used for bootstrap
 
 group :development do
   gem 'annotate'
+  gem 'pg', require: false  # needed for db:import_from_postgres rake task only
 end
 group :development, :test do
   gem "factory_bot_rails", "~> 4.0"
