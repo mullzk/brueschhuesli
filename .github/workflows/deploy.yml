@@ -1,0 +1,31 @@
+name: Deploy
+on:
+  workflow_call:
+    inputs:
+      stage:
+        required: true
+        type: string
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+      - uses: webfactory/ssh-agent@v0.10.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_DEPLOY_KEY }}
+      - name: Setup known_hosts
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_KNOWN_HOSTS }}" > ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/known_hosts
+      - name: Deploy
+        env:
+          DEPLOY_INTEGRATION_HOST: ${{ secrets.DEPLOY_INTEGRATION_HOST }}
+          DEPLOY_INTEGRATION_USER: ${{ secrets.DEPLOY_INTEGRATION_USER }}
+          DEPLOY_PRODUCTION_HOST: ${{ secrets.DEPLOY_PRODUCTION_HOST }}
+          DEPLOY_PRODUCTION_USER: ${{ secrets.DEPLOY_PRODUCTION_USER }}
+        run: bundle exec cap ${{ inputs.stage }} deploy
