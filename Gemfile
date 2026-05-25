@@ -83,6 +83,7 @@ group :test do
   gem 'webdrivers'
 end
 
+gem 'minitest', '~> 5.0'
 gem 'brakeman', '~> 5.4'
 gem 'bundler-audit'
 
