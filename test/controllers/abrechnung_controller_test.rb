@@ -62,7 +62,7 @@ class AbrechnungControllerTest < ActionDispatch::IntegrationTest
 
   def login_as_user
     @admin = FactoryBot.build(:user)
-    @admin.name = "user"
+    @admin.name = "admin"
     @admin.email = "email@mail.com"
     @admin.password = "password"
     @admin.save
