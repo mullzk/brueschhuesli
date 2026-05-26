@@ -1,43 +1,19 @@
-# frozen_string_literal: true
-
 # Puma can serve each request in a thread from an internal thread pool.
-# The `threads` method setting takes two numbers: a minimum and maximum.
-# Any libraries that use thread pools should be configured to match
-# the maximum value specified for Puma. Default is set to 5 threads for minimum
-# and maximum; this matches the default thread size of Active Record.
-#
-threads_count = ENV.fetch('RAILS_MAX_THREADS', 5)
+# The `threads` method setting takes a minimum and maximum.
+# Any libraries that use a connection pool or another resource pool should
+# be configured to provide at least as many connections as the number of
+# threads. This includes Active Record's `pool` parameter in `database.yml`.
+threads_count = ENV.fetch("RAILS_MAX_THREADS", 3)
 threads threads_count, threads_count
 
-# Specifies the `port` that Puma will listen on to receive requests; default is 3000.
-#
 if ENV['PUMA_SOCKET']
   bind "unix://#{ENV['PUMA_SOCKET']}"
 else
   port ENV.fetch('PORT', 3000)
 end
 
-# Specifies the `environment` that Puma will run in.
-#
 environment ENV.fetch('RAILS_ENV', 'development')
 
-# Specifies the number of `workers` to boot in clustered mode.
-# Workers are forked webserver processes. If using threads and workers together
-# the concurrency of the application would be max `threads` * `workers`.
-# Workers do not work on JRuby or Windows (both of which do not support
-# processes).
-#
-# workers ENV.fetch("WEB_CONCURRENCY") { 2 }
-
-# Use the `preload_app!` method when specifying a `workers` number.
-# This directive tells Puma to first boot the application and load code
-# before forking the application. This takes advantage of Copy On Write
-# process behavior so workers use less memory.
-#
-# preload_app!
-
-# Server only: tmp/pids is a linked_dir, so these paths resolve into shared/
-# and stay stable across releases. PUMA_DIRECTORY is the `current` symlink.
 puma_dir = ENV["PUMA_DIRECTORY"].to_s
 unless puma_dir.empty?
   directory puma_dir
@@ -48,6 +24,3 @@ unless puma_dir.empty?
 end
 
 plugin :tmp_restart
-
-# ssl_bind '127.0.0.1', '3000',
-#         { key: 'config/ssl/localhost.mullzk.key', cert: 'config/ssl/localhost.mullzk.crt', verify_mode: 'none' }
