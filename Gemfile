@@ -4,10 +4,9 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 ruby '3.3.5'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '~> 7.0.0'
+gem 'rails', '~> 7.1.0'
 # Use trilogy as the MySQL adapter for Active Record
 gem 'trilogy'
-gem 'activerecord-trilogy-adapter'
 # Use Puma as the app server
 gem 'puma', '>= 4.3.9'
 # Use SCSS for stylesheets

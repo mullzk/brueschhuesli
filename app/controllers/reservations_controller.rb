@@ -1,5 +1,4 @@
 class ReservationsController < ApplicationController
-  require "DateGermanAdditions"
   before_action :authorize
   
   def index
