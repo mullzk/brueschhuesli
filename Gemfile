@@ -4,7 +4,7 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 ruby '3.3.5'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '~> 7.2.0'
+gem 'rails', '~> 8.0'
 # Use trilogy as the MySQL adapter for Active Record
 gem 'trilogy'
 # Use Puma as the app server
@@ -44,7 +44,7 @@ gem 'jquery-rails' # Used for bootstrap
 #gem 'mini_racer' # otherwise bootstrap-subgem Autoprefixer crashes
 
 group :development do
-  gem 'annotate'
+  gem 'annotaterb'
   gem 'pg', require: false  # needed for db:import_from_postgres rake task only
 end
 group :development, :test do
