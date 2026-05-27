@@ -12,7 +12,7 @@ document.addEventListener("turbo:load", function(event) {
 				// We set the state to loading, logically and visible to the user and then start to load the previous month
 				document.querySelector("#loadinghint").style.display = "block";
 				loader.setAttribute("data-loading-preceding-month-link", "true");
-				$.ajax({ url: loader.getAttribute("href") }).done(function(html) {
+				fetch(loader.getAttribute("href"), { credentials: "same-origin" }).then(function(response) { return response.text(); }).then(function(html) {
 
 					// We insert the previous month at the top and scroll down the height of the inserted calendar
 					document.querySelector("#reservationskalender").insertAdjacentHTML("afterbegin", html);
@@ -46,7 +46,7 @@ document.addEventListener("turbo:load", function(event) {
 				// We set the state to loading, logically and visible to the user and then start to load the next month
 				document.querySelector("#loadinghint").style.display = "block";
 				loader.setAttribute("data-loading-succeeding-month-link", "true");
-				$.ajax({ url: loader.getAttribute("href") }).done(function(html) {
+				fetch(loader.getAttribute("href"), { credentials: "same-origin" }).then(function(response) { return response.text(); }).then(function(html) {
 
 					// We insert the next month at the bottom
 					document.querySelector("#reservationskalender").insertAdjacentHTML("beforeend", html);
