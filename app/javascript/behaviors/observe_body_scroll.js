@@ -1,4 +1,4 @@
-document.addEventListener("turbolinks:load", function(event) {
+document.addEventListener("turbo:load", function(event) {
 	window.addEventListener("scroll", function(scrollEvent) {
 		var loader;
 		if (window.scrollY < 1) {
