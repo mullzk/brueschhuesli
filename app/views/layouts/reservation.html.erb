@@ -7,48 +7,38 @@
 
 	<link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
 	<meta name="viewport" content="width=device-width, initial-scale=0.75" />
-    <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
-    <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
+    <%= stylesheet_link_tag    'application', media: 'all' %>
+    <%= javascript_importmap_tags %>
 
 </head>
-<body id="brueschhuesli-app">
+<body id="brueschhuesli-app" data-controller="body-scroll" data-action="scroll@window->body-scroll#check">
 
-	<div class="container-fluid">
-		<div class="row" style="padding-top:4em;">
-			<div class="col-md-12">
-				<% if flash[:notice] -%>
-					<div id="notice">
-						<%= flash[:notice] %>
-					</div>
-				<% end -%>
-				<%= yield %>
+	<header class="site-header" data-controller="navbar-toggle">
+		<nav class="site-nav">
+			<a class="site-nav__brand" href="/">Brüschhüsli</a>
+			<button class="site-nav__toggle" type="button" aria-expanded="false" aria-label="Navigation umschalten" data-action="click->navbar-toggle#toggle">
+				<span class="site-nav__toggle-icon"></span>
+			</button>
+			<ul class="site-nav__menu" data-navbar-toggle-target="menu">
+				<li><%= link_to "Reservationen", {:controller => "reservations", :action => "index"}, :class => "site-nav__link" %></li>
+				<li><%= link_to "Abrechnung", {:controller => "abrechnung", :action => "jahresstatistik"}, :class => "site-nav__link" %></li>
+				<li><%= link_to "Reservations- und Entschädigungsregelgung", "/reservationsregelung.pdf", :class => "site-nav__link" %></li>
+				<li><%= link_to "Hausordnung", "/hausordnung.pdf", :class => "site-nav__link" %></li>
+				<li><%= link_to "Benutzer", {:controller=>"login", :action=>"list_users"}, :class => "site-nav__link" %></li>
+				<li><%= link_to "Passwort ändern", {:controller => "login", :action => "change_password"}, :class => "site-nav__link" %></li>
+				<li><%= link_to "Abmelden", {:controller => "login", :action => "logout"}, :class => "site-nav__link" %></li>
+			</ul>
+		</nav>
+	</header>
+
+	<main class="page">
+		<% if flash[:notice] -%>
+			<div id="notice">
+				<%= flash[:notice] %>
 			</div>
-			
-			
-			<nav class="navbar navbar-expand-lg fixed-top navbar-dark bg-dark">
-
-				<a class="navbar-brand" href="/">Brüschhüsli</a>
-				
-				<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-    				<span class="navbar-toggler-icon"></span>
-  			  	</button>
-
-				<div class="collapse navbar-collapse" id="navbarSupportedContent">
-					<ul class="navbar-nav mr-auto" >
-						<li class="nav-item"><%= link_to "Reservationen", {:controller => "reservations", :action => "index"}, :class => "nav-link" %></li>
-						<li class="nav-item"><%= link_to "Abrechnung", {:controller => "abrechnung", :action => "jahresstatistik"}, :class => "nav-link" %></li>
-						<li class="nav-item"><%= link_to "Reservations- und Entschädigungsregelgung", "/reservationsregelung.pdf", :class => "nav-link" %></li>
-						<li class="nav-item"><%= link_to "Hausordnung", "/hausordnung.pdf", :class => "nav-link" %></li>
-						<li class="nav-item"><%= link_to "Benutzer", {:controller=>"login", :action=>"list_users"}, :class => "nav-link" %></li>
-						<li class="nav-item"><%= link_to "Passwort ändern", {:controller => "login", :action => "change_password"}, :class => "nav-link" %></li>
-						<li class="nav-item"><%= link_to "Abmelden", {:controller => "login", :action => "logout"}, :class => "nav-link" %></li>
-					</ul>
-				</div>
-			
-			
-			</nav>
-		</div>
-	</div>
+		<% end -%>
+		<%= yield %>
+	</main>
 
 
 
