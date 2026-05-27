@@ -7,7 +7,7 @@ import { Controller } from "@hotwired/stimulus"
 //     <ul data-navbar-toggle-target="menu">...</ul>
 //   </nav>
 export default class extends Controller {
-  static targets = ["menu", "button"]
+  static targets = ["menu"]
 
   toggle(event) {
     const button = event.currentTarget

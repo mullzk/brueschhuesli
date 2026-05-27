@@ -336,7 +336,9 @@ div.reservationform div.datebox_right {
 
 #reservationskalender th p,
 #reservationskalender td p {
-	overflow: ellipsis;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
 	margin: 0;
 	font-size: 0.7em;
 }
