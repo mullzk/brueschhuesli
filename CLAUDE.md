@@ -1,0 +1,68 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+## Project
+
+Brüschhüsli — Rails 8 reservation system for a family weekend cabin. Solo-maintained, single deployment target, mature/frozen feature set. UI is German; code, commits and comments are English.
+
+## Stack
+
+- Ruby 3.3.5 (`.tool-versions`, managed via mise on servers, rvm/asdf locally)
+- Rails 8.x, Puma, MySQL via **trilogy**
+- Hotwire (turbo-rails + stimulus-rails) via **importmap-rails**, **Propshaft** asset pipeline, plain CSS (no Sass/jQuery/CoffeeScript)
+- Testing: Rails Minitest + FactoryBot + Capybara/Selenium
+- Linting/security: `brakeman`, `bundler-audit` (binstubs under `bin/`)
+- Active Storage on local disk (`storage/` is in `linked_dirs` on the server)
+
+## Common commands
+
+```bash
+bin/rails server                  # dev server
+bin/rails test                    # full suite (32 runs currently)
+bin/rails test test/models/reservation_test.rb     # single file
+bin/rails test test/models/reservation_test.rb:42  # single test by line
+bin/rake                          # default — runs the test suite
+bin/brakeman -q -w2               # static security scan (CI gate on PRs)
+bin/bundler-audit --update        # CVE check (CI gate on PRs)
+bin/rails db:schema:load          # bring an empty MySQL DB up
+bundle exec annotaterb models     # refresh `# == Schema Information` headers
+```
+
+DB sync between local and deployed instances:
+
+`rails db:pull[integration|production]` / `db:push[...]` — defined in `lib/tasks/db_sync.rake`, uses `mariadb-dump`/`mariadb` over SSH. Paths come from `DEPLOY_*_HOST/USER` env vars.
+
+Local env via `.env` (template in `.env.example`); `DATABASE_URL` is read in all environments.
+
+## Deployment
+
+**GitHub Actions** triggers deployment via Capistrano 3. `main` deploys to `integration`, `production` to `production`.
+
+## Domain model (the bits worth knowing before editing)
+
+Two models: `Reservation` (cabin booking) and `User` (owner/co-owner/guest). All non-trivial logic lives in `app/models/reservation.rb`.
+
+- **`type_of_reservation` is overridden on read** (`reservation.rb:103`): the getter swaps `KURZAUFENTHALT` ↔ `FERIENAUFENTHALT` automatically based on `duration` (>48h cutoff). The DB value can disagree with what `.type_of_reservation` returns. When comparing or persisting, be deliberate about which you want — `self[:type_of_reservation]` reads the raw column.
+- **Billing constants & rules** (`billed_fee`, `paid_blocks`):
+  - Short/long stays: 15 CHF per 8-hour block.
+  - Big event (`GROSSANLASS`): flat 200.
+  - External use (`EXTERNE_NUTZUNG`): 100 CHF per day — and beware, `duration_in_days` returns *seconds* (commented in source). Don't "fix" this without auditing call sites.
+  - Co-owners (`user.miteigentuemer?`) get the first 6 blocks free on non-exclusive reservations.
+  - 7-day hard cap enforced as a validation.
+- **Overlap validation** (`is_timeslot_exclusive?`) hits `find_reservations_in_timeslot`, which uses raw `where("start <= ? AND finish > ?", ...)` string interpolation with `.to_formatted_s(:db)`. Don't pass user-controlled times here without going through the same formatting pipeline.
+- `Reservation.find_reservations_beginning_in_*` are used for billing periods — they intentionally exclude reservations that *span* into the period from earlier. This is load-bearing for the year-end report.
+
+## Frontend
+
+- Importmap pins are in `config/importmap.rb`; JS lives under `app/javascript/`.
+- Stimulus controllers replaced the old jQuery-driven calendar interactions.
+- Styling is hand-written CSS via Propshaft — no Sass, no PostCSS, no bundler. Add new stylesheets directly under `app/assets/stylesheets/`.
+
+## Locale & date handling
+
+The app is German-locale. `config/initializers/date_german_additions.rb` monkey-patches `Date` with `parse_german_string`, `short_german_std`, `long_german_std`, `german_month`, `strftime_german`. Use those instead of reimplementing translation — they handle the date-format quirks (e.g. two-digit year disambiguation around 1950/2050) used by existing views and forms.
+
+## Conventions
+
+- When touching domain rules in `Reservation`, keep the existing German constant strings (`KURZAUFENTHALT`, `FERIENAUFENTHALT`, `GROSSANLASS`, `EXTERNE_NUTZUNG`) — they're persisted in the DB as-is.
