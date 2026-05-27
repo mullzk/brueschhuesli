@@ -82,7 +82,7 @@ group :test do
 end
 
 gem 'minitest', '~> 5.0'
-gem 'brakeman', '~> 5.4'
+gem 'brakeman', '~> 8.0'
 gem 'bundler-audit'
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
