@@ -141,7 +141,7 @@ class Reservation < ApplicationRecord
         interval_finish = (time_b+(1.day)).to_formatted_s(:db)
       end
     end    
-    self.where("(start >= '#{interval_start}' AND start <= '#{interval_finish}')")
+    self.where("start >= ? AND start <= ?", interval_start, interval_finish)
   end
   
   def self.find_reservations_beginning_in_month(month)
@@ -184,7 +184,7 @@ class Reservation < ApplicationRecord
         interval_finish = (time_b+(1.day)).to_formatted_s(:db)
       end
     end    
-    self.where("(start <= '#{interval_start}' AND finish > '#{interval_start}') OR ('#{interval_start}' <= start AND '#{interval_finish}' > start)").order(:start)    
+    self.where("(start <= ? AND finish > ?) OR (? <= start AND ? > start)", interval_start, interval_start, interval_start, interval_finish).order(:start)
   end
   
   def begin_on_day(day)
