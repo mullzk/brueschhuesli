@@ -4,13 +4,11 @@ class LoginController < ApplicationController
   before_action :authorize, :except => :login
   
   def add_user
-    params.permit!
-    
-    @user = User.new(params[:user])
-        
+    @user = User.new(user_params)
+
     initial_password = SecureRandom.hex(8)
     if request.post? and @user.save
-      @user.password = params[:user][:password] || initial_password
+      @user.password = user_params[:password] || initial_password
       flash.now[:notice] = "Benutzer #{@user.name} erstellt"
       redirect_to :action => "list_users"
     else 
@@ -50,10 +48,8 @@ class LoginController < ApplicationController
   end
   
   def update_user
-    params.permit!
-
     @user = User.find(params[:id])
-    if @user.update(params[:user])
+    if @user.update(user_params)
       flash.now[:notice] = 'Benutzer-Angaben gespeichert.'
       redirect_to :action => "list_users"
     else
@@ -83,8 +79,7 @@ class LoginController < ApplicationController
     if request.post?
       user = User.authenticate(@user.name, params[:old_password])
       if user
-        params.permit!
-        if @user.update(params[:user])
+        if @user.update(user_params)
           @user.has_to_change_password = false
           @user.save
           flash[:notice] = 'Passwort geändert'
@@ -98,7 +93,7 @@ class LoginController < ApplicationController
   
   private
   def user_params
-    params.fetch(:user, {}).permit(:name, :password)
+    params.fetch(:user, {}).permit(:name, :email, :password, :password_confirmation)
   end
   
 end
