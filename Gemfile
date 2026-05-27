@@ -48,7 +48,7 @@ group :development do
   gem 'pg', require: false  # needed for db:import_from_postgres rake task only
 end
 group :development, :test do
-  gem "factory_bot_rails", "~> 4.0"
+  gem "factory_bot_rails"
 end
 
 
