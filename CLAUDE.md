@@ -37,7 +37,7 @@ bundle exec annotaterb models     # refresh `# == Schema Information` headers
 DB sync between local and deployed instances:
 
 - `rails db:pull[integration|production]` / `db:push[...]` — defined in `lib/tasks/db_sync.rake`, uses `mariadb-dump`/`mariadb` over SSH. Paths come from `DEPLOY_*_HOST/USER` env vars.
-- `rails db:import_from_postgres` — one-off Heroku-Postgres → local-MySQL importer in `lib/tasks/db_import.rake`. Kept around for the final cutover; it's the only reason `pg` is in the Gemfile.
+- `rails db:import_from_postgres` — Heroku-Postgres → local-MySQL importer in `lib/tasks/db_import.rake`. Kept around as a fallback restore path from the historical Heroku snapshot; it's the only reason `pg` is in the Gemfile.
 
 Local env via `.env` (template in `.env.example`); `DATABASE_URL` is read in all environments.
 
@@ -45,16 +45,18 @@ Local env via `.env` (template in `.env.example`); `DATABASE_URL` is read in all
 
 Capistrano 3, two stages, **GitHub Actions** triggers the deploy after a green test run:
 
-| Branch       | Stage         | Server                              | Path                          |
-|--------------|---------------|-------------------------------------|-------------------------------|
-| `main`       | `integration` | `brueschhueslidev.mullzk.ch`        | `/var/www/brueschhueslidev`   |
-| `production` | `production`  | (TBD — Phase 5 of `roadmap.md`)     | `/var/www/brueschhuesliprod`  |
+| Branch       | Stage         | Host (`webapps-hetzner-01`)         | Path                          | Public URL                   |
+|--------------|---------------|-------------------------------------|-------------------------------|------------------------------|
+| `main`       | `integration` | `brueschhueslidev.mullzk.ch`        | `/var/www/brueschhueslidev`   | https://brueschhueslidev.mullzk.ch |
+| `production` | `production`  | `xn--brschhsli-r9ae.ch` (`brüschhüsli.ch`) | `/var/www/brueschhuesliprod`  | https://brüschhüsli.ch     |
+
+Both stages run on the same VPS (`webapps-hetzner-01.mullzk.ch`), provisioned by [`webapp_infra`](../webapp_infra). The Hostpoint-managed alias `brueschhuesli.ch` (and `www.`) redirects to the canonical IDN domain at the provider level — no separate vhost on the VPS.
 
 - Secrets live in `shared/config/env` on each server and are loaded by the `before 'deploy:starting', :load_shared_env` hook in `config/deploy.rb` — **never** commit env values to the repo.
 - `config/puma.rb` is environment-driven (`PUMA_SOCKET`); the old hardcoded `ssl_bind` is gone, Passenger fronts Puma via nginx.
 - `linked_dirs` covers `log tmp/pids public/system storage`. Adding state that must survive deploys means adding it here.
 
-Heroku is being phased out. Current status and remaining cutover steps are tracked in `roadmap.md` (gitignored — read but don't commit).
+Heroku has been retired; the app runs exclusively on the `webapp_infra` VPS. The `roadmap.md` (gitignored — read but don't commit) tracks any remaining cleanup tasks.
 
 ## Domain model (the bits worth knowing before editing)
 
