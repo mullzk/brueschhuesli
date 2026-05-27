@@ -1,4 +1,4 @@
-<div class="reservation" data-js-enter-reservation-href="<%= url_for edit_reservation_path(reservation) %>">
+<div class="reservation" data-controller="enter-href" data-enter-href-url-value="<%= url_for edit_reservation_path(reservation) %>">
 	<div><span>Wer:</span> <%= mail_to(reservation.user.email, reservation.user.name)%></div>
 	<div>
 		<span>Wann:</span> 
@@ -14,6 +14,6 @@
 	
     <div class="actions">
 		<%= link_to 'Bearbeiten', edit_reservation_path(reservation) %> - 
-    	<%= link_to 'Löschen', reservation, method: :delete, data: { confirm: 'Are you sure?' } %>
+    	<%= link_to 'Löschen', reservation, data: { turbo_method: :delete, turbo_confirm: 'Are you sure?' } %>
 	</div>
 </div>
