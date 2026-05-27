@@ -1,0 +1,369 @@
+/* ---------- Reset (Bootstrap-equivalent base) ---------- */
+
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+}
+
+html {
+	-webkit-text-size-adjust: 100%;
+	-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+
+body {
+	margin: 0;
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif;
+	font-size: 1rem;
+	font-weight: 400;
+	line-height: 1.5;
+	color: #212529;
+	background-color: #fff;
+	text-align: left;
+}
+
+h1, h2, h3, h4, h5, h6 {
+	margin-top: 0;
+	margin-bottom: 0.5rem;
+	font-weight: 500;
+	line-height: 1.2;
+}
+
+p {
+	margin-top: 0;
+	margin-bottom: 1rem;
+}
+
+ul, ol {
+	margin-top: 0;
+	margin-bottom: 1rem;
+}
+
+a {
+	color: #007bff;
+	text-decoration: none;
+	background-color: transparent;
+}
+
+a:hover {
+	color: #0056b3;
+	text-decoration: underline;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+button, input, select, textarea {
+	margin: 0;
+	font-family: inherit;
+	font-size: inherit;
+	line-height: inherit;
+}
+
+fieldset {
+	min-width: 0;
+	padding: 0;
+	margin: 0;
+	border: 0;
+}
+
+legend {
+	display: block;
+	width: 100%;
+	max-width: 100%;
+	padding: 0;
+	margin-bottom: 0.5rem;
+	font-size: 1.5rem;
+	line-height: inherit;
+	color: inherit;
+	white-space: normal;
+}
+
+:root {
+	--light-blue: rgb(230, 255, 254);
+	--dark-blue: rgb(114, 200, 200);
+	--light-red: rgb(237, 205, 204);
+	--dark-red: rgb(152, 24, 24);
+	--light-green: rgb(229, 252, 180);
+	--light-gray: rgb(240, 240, 240);
+	--dark-gray: rgb(175, 175, 175);
+	--light-yellow: rgb(255, 255, 185);
+	--almost-black: rgb(59, 59, 59);
+	--nav-bg: #343a40;
+	--nav-fg: rgba(255, 255, 255, 0.5);
+	--nav-fg-hover: rgba(255, 255, 255, 0.75);
+	--nav-brand: #ffffff;
+}
+
+/* ---------- Layout ---------- */
+
+.site-header {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	z-index: 1000;
+	background: var(--nav-bg);
+	color: var(--nav-fg);
+	padding: 0.5rem 1rem;
+}
+
+.site-nav {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 0.25rem 1rem;
+}
+
+.site-nav__brand {
+	display: inline-block;
+	color: var(--nav-brand);
+	font-size: 1.25rem;
+	line-height: inherit;
+	margin-right: 1rem;
+	padding: 0.3125rem 0;
+	text-decoration: none;
+	white-space: nowrap;
+}
+
+.site-nav__brand:hover {
+	color: var(--nav-brand);
+	text-decoration: none;
+}
+
+.site-nav__toggle {
+	display: none;
+	background: transparent;
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	border-radius: 4px;
+	padding: 0.25rem 0.75rem;
+	cursor: pointer;
+	color: var(--nav-fg);
+}
+
+.site-nav__toggle-icon {
+	display: block;
+	width: 1.5em;
+	height: 2px;
+	background: var(--nav-fg);
+	box-shadow: 0 -6px 0 var(--nav-fg), 0 6px 0 var(--nav-fg);
+}
+
+.site-nav__menu {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0 0.5rem;
+	margin-right: auto;
+}
+
+.site-nav__link {
+	display: block;
+	color: var(--nav-fg);
+	text-decoration: none;
+	padding: 0.5rem;
+}
+
+.site-nav__link:hover,
+.site-nav__link:focus {
+	color: var(--nav-fg-hover);
+	text-decoration: none;
+}
+
+@media (max-width: 768px) {
+	.site-nav__toggle {
+		display: inline-block;
+	}
+	.site-nav__menu {
+		flex-basis: 100%;
+		flex-direction: column;
+		display: none;
+	}
+	.site-nav__menu.is-open {
+		display: flex;
+	}
+}
+
+.page {
+	padding: 4em 1rem 1rem;
+	max-width: 1200px;
+	margin: 0 auto;
+}
+
+.page-row {
+	margin-bottom: 1em;
+}
+
+/* ---------- Reservations ---------- */
+
+div.month-navigation {
+	max-width: 780px;
+}
+
+div.month-navigation p {
+	margin-bottom: 0;
+	padding-bottom: 0;
+}
+
+div.month-navigation p:first-child {
+	float: left;
+}
+
+div.month-navigation p:last-child {
+	text-align: right;
+}
+
+div.month-navigation::after {
+	content: "";
+	display: block;
+	clear: both;
+}
+
+div.month-navigation-js {
+	display: none;
+}
+
+div.reservation {
+	padding: 1em 0 2em;
+	border-bottom: 1px dotted black;
+}
+
+div.reservation span {
+	font-weight: bold;
+	min-width: 38em;
+}
+
+div.reservation div {
+	background-color: #eeeeee;
+}
+
+div.reservation div.actions {
+	background-color: #ffffff;
+	padding-left: 4em;
+}
+
+div.reservationform label.legend {
+	font-weight: bold;
+	margin-bottom: 0;
+	margin-right: 1em;
+}
+
+div.reservationform div.page-row {
+	margin-bottom: 2em;
+}
+
+div.reservationform div.datebox_left {
+	background-color: rgb(184, 252, 185);
+	margin-right: 2em;
+	margin-bottom: 1em;
+}
+
+div.reservationform div.datebox_right {
+	background-color: rgb(254, 216, 164);
+	margin-bottom: 1em;
+}
+
+#loadinghint {
+	box-shadow: 0 0 0 2px #9fb4f2;
+	background: linear-gradient(to bottom, #7892c2 5%, #476e9e 100%);
+	background-color: #7892c2;
+	border-radius: 10px;
+	border: 1px solid #4e6096;
+	color: #ffffff;
+	font-family: Arial;
+	font-size: 15px;
+	padding: 5px 37px;
+	text-decoration: none;
+	text-shadow: 0 1px 0 #283966;
+	position: fixed;
+	bottom: 0;
+	right: 0;
+	display: none;
+}
+
+/* ---------- Calendar ---------- */
+
+#reservationskalender {
+	padding: 0;
+}
+
+#reservationskalender h2 {
+	margin: 1em 0 0.25em 4em;
+}
+
+#reservationskalender h2:first-child {
+	margin: 0 0 0.25em 4em;
+}
+
+#reservationskalender table {
+	width: 100%;
+	max-width: 800px;
+	table-layout: fixed;
+	border-collapse: collapse;
+}
+
+#reservationskalender tr {
+	vertical-align: top;
+	height: 3.5em;
+}
+
+#reservationskalender td.inactive {
+	color: silver;
+}
+
+#reservationskalender td.inactive p {
+	color: var(--almost-black);
+}
+
+#reservationskalender td.occupied {
+	background-color: var(--light-gray);
+}
+
+#reservationskalender td.today {
+	background-color: var(--light-yellow);
+}
+
+#reservationskalender th,
+#reservationskalender td {
+	width: 14%;
+	text-align: center;
+	border: 1px black solid;
+	padding: 0;
+}
+
+#reservationskalender th p,
+#reservationskalender td p {
+	overflow: ellipsis;
+	margin: 0;
+	font-size: 0.7em;
+}
+
+#reservationskalender td p.open {
+	background-color: var(--light-red);
+}
+
+#reservationskalender td p.closed {
+	background-color: var(--dark-red);
+	color: white;
+}
+
+#reservationskalender .month-navigation {
+	width: 100%;
+	max-width: 800px;
+	overflow: hidden;
+}
+
+#reservationskalender .month-navigation p:first-child {
+	float: left;
+}
+
+#reservationskalender .month-navigation p:last-child {
+	float: right;
+}
+
+#reservationskalender .month-navigation a {
+	color: black;
+}

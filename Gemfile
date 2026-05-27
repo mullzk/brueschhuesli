@@ -9,15 +9,8 @@ gem 'rails', '~> 8.0'
 gem 'trilogy'
 # Use Puma as the app server
 gem 'puma', '>= 6.0'
-# Use SCSS for stylesheets
-#gem 'sass-rails', '~> 5.0'
-gem 'sassc-rails'
-# Use Uglifier as compressor for JavaScript assets
-gem 'uglifier', '>= 1.3.0'
-# See https://github.com/rails/execjs#readme for more supported runtimes
-gem 'mini_racer', platforms: :ruby
-
-# Hotwire: Turbo (replaces Turbolinks) + Stimulus + Importmap for browser-native ES modules
+# Asset pipeline (Propshaft) + Hotwire (Turbo + Stimulus) loaded via Importmap.
+gem 'propshaft'
 gem 'turbo-rails'
 gem 'stimulus-rails'
 gem 'importmap-rails'
@@ -41,9 +34,6 @@ gem 'bootsnap', '>= 1.1.0', require: false
 
 # Gems for this project, added by mullzk
 gem 'will_paginate'
-gem 'bootstrap', '~> 4.6'
-gem 'jquery-rails' # Used for bootstrap
-#gem 'mini_racer' # otherwise bootstrap-subgem Autoprefixer crashes
 
 group :development do
   gem 'annotaterb'
