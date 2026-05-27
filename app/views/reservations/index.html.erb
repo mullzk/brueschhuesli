@@ -1,11 +1,11 @@
-<div class="container">
+<div class="page-row">
 	 <div class="month-navigation">
 	<p><%= link_to ">" + (@months.first[:first_of_month] - 1.month).german_month, {controller:"reservations", action:"index", date:(@months.first[:first_of_month] - 1.month)} -%></p>
 	<p><%= link_to ">"+(@months.first[:first_of_month] + 1.month).german_month, {controller:"reservations", action:"index", date:(@months.first[:first_of_month] + 1.month)} -%></p>
 	</div>
 </div>
 
-<div class="container" id="reservationskalender">
+<div class="page-row" id="reservationskalender">
 	<%= render partial: "month", collection: @months, as: :month %>
 </div>
 
