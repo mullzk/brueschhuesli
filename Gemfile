@@ -17,8 +17,9 @@ gem 'uglifier', '>= 1.3.0'
 # See https://github.com/rails/execjs#readme for more supported runtimes
 gem 'mini_racer', platforms: :ruby
 
-# Hotwire: Turbo (replaces Turbolinks) + Importmap for browser-native ES modules
+# Hotwire: Turbo (replaces Turbolinks) + Stimulus + Importmap for browser-native ES modules
 gem 'turbo-rails'
+gem 'stimulus-rails'
 gem 'importmap-rails'
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 # gem 'jbuilder', '~> 2.5'         ## Commented out by Mullzk. Mensajasser is HTML only. 
