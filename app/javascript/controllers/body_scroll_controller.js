@@ -39,6 +39,10 @@ export default class extends Controller {
         loader.setAttribute("data-loading-preceding-month-link", "false")
         this.hideHint()
       })
+      .catch(() => {
+        loader.setAttribute("data-loading-preceding-month-link", "false")
+        this.hideHint()
+      })
   }
 
   loadSucceedingMonth() {
@@ -55,6 +59,10 @@ export default class extends Controller {
         const nextNodes = document.querySelectorAll("[data-next-month-url]")
         const nextUrl = nextNodes[nextNodes.length - 1].getAttribute("data-next-month-url")
         loader.setAttribute("href", nextUrl)
+        loader.setAttribute("data-loading-succeeding-month-link", "false")
+        this.hideHint()
+      })
+      .catch(() => {
         loader.setAttribute("data-loading-succeeding-month-link", "false")
         this.hideHint()
       })
