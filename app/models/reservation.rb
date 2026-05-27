@@ -2,19 +2,23 @@
 #
 # Table name: reservations
 #
-#  id                  :integer          not null, primary key
-#  user_id             :integer
-#  comment             :text
+#  id                  :bigint           not null, primary key
+#  comment             :text(65535)
+#  finish              :datetime
 #  is_exclusive        :boolean
 #  start               :datetime
-#  finish              :datetime
-#  type_of_reservation :string
+#  type_of_reservation :string(255)
 #  created_at          :datetime         not null
 #  updated_at          :datetime         not null
+#  user_id             :bigint
 #
 # Indexes
 #
 #  index_reservations_on_user_id  (user_id)
+#
+# Foreign Keys
+#
+#  fk_rails_...  (user_id => users.id)
 #
 
 class Reservation < ApplicationRecord
@@ -137,7 +141,7 @@ class Reservation < ApplicationRecord
         interval_finish = (time_b+(1.day)).to_formatted_s(:db)
       end
     end    
-    self.where("(start >= '#{interval_start}' AND start <= '#{interval_finish}')")
+    self.where("start >= ? AND start <= ?", interval_start, interval_finish)
   end
   
   def self.find_reservations_beginning_in_month(month)
@@ -180,7 +184,7 @@ class Reservation < ApplicationRecord
         interval_finish = (time_b+(1.day)).to_formatted_s(:db)
       end
     end    
-    self.where("(start <= '#{interval_start}' AND finish > '#{interval_start}') OR ('#{interval_start}' <= start AND '#{interval_finish}' > start)").order(:start)    
+    self.where("(start <= ? AND finish > ?) OR (? <= start AND ? > start)", interval_start, interval_start, interval_start, interval_finish).order(:start)
   end
   
   def begin_on_day(day)

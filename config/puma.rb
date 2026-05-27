@@ -1,8 +1,3 @@
-# Puma can serve each request in a thread from an internal thread pool.
-# The `threads` method setting takes a minimum and maximum.
-# Any libraries that use a connection pool or another resource pool should
-# be configured to provide at least as many connections as the number of
-# threads. This includes Active Record's `pool` parameter in `database.yml`.
 threads_count = ENV.fetch("RAILS_MAX_THREADS", 3)
 threads threads_count, threads_count
 
