@@ -14,7 +14,7 @@ Brüschhüsli — Rails 8 reservation system for a family weekend cabin. Solo-ma
 ## Stack
 
 - Ruby 3.3.5 (`.tool-versions`, managed via mise on servers, rvm/asdf locally)
-- Rails 8.x, Puma, MySQL via **trilogy** (no Postgres adapter at runtime — `pg` exists as `require: false` only for `db:import_from_postgres`)
+- Rails 8.x, Puma, MySQL via **trilogy**
 - Hotwire (turbo-rails + stimulus-rails) via **importmap-rails**, **Propshaft** asset pipeline, plain CSS (no Sass/jQuery/CoffeeScript)
 - Testing: Rails Minitest + FactoryBot + Capybara/Selenium
 - Linting/security: `brakeman`, `bundler-audit` (binstubs under `bin/`)
@@ -36,8 +36,7 @@ bundle exec annotaterb models     # refresh `# == Schema Information` headers
 
 DB sync between local and deployed instances:
 
-- `rails db:pull[integration|production]` / `db:push[...]` — defined in `lib/tasks/db_sync.rake`, uses `mariadb-dump`/`mariadb` over SSH. Paths come from `DEPLOY_*_HOST/USER` env vars.
-- `rails db:import_from_postgres` — Heroku-Postgres → local-MySQL importer in `lib/tasks/db_import.rake`. Kept around as a fallback restore path from the historical Heroku snapshot; it's the only reason `pg` is in the Gemfile.
+`rails db:pull[integration|production]` / `db:push[...]` — defined in `lib/tasks/db_sync.rake`, uses `mariadb-dump`/`mariadb` over SSH. Paths come from `DEPLOY_*_HOST/USER` env vars.
 
 Local env via `.env` (template in `.env.example`); `DATABASE_URL` is read in all environments.
 
