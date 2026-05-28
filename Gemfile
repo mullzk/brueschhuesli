@@ -37,7 +37,6 @@ gem 'will_paginate'
 
 group :development do
   gem 'annotaterb'
-  gem 'pg', require: false  # needed for db:import_from_postgres rake task only
 end
 group :development, :test do
   gem "factory_bot_rails"
