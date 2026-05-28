@@ -209,13 +209,6 @@ GEM
     nokogiri (1.19.3-x86_64-linux-musl)
       racc (~> 1.4)
     ostruct (0.6.3)
-    pg (1.6.3)
-    pg (1.6.3-aarch64-linux)
-    pg (1.6.3-aarch64-linux-musl)
-    pg (1.6.3-arm64-darwin)
-    pg (1.6.3-x86_64-darwin)
-    pg (1.6.3-x86_64-linux)
-    pg (1.6.3-x86_64-linux-musl)
     pp (0.6.3)
       prettyprint
     prettyprint (0.2.0)
@@ -353,7 +346,6 @@ DEPENDENCIES
   importmap-rails
   listen
   minitest (~> 5.0)
-  pg
   propshaft
   puma (>= 6.0)
   rails (~> 8.0)
