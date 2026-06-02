@@ -68,17 +68,6 @@
 # Rails.application.config.active_record.run_commit_callbacks_on_first_saved_instances_in_transaction = false
 
 ###
-# Configures SQLite with a strict strings mode, which disables double-quoted string literals.
-#
-# SQLite has some quirks around double-quoted string literals.
-# It first tries to consider double-quoted strings as identifier names, but if they don't exist
-# it then considers them as string literals. Because of this, typos can silently go unnoticed.
-# For example, it is possible to create an index for a non existing column.
-# See https://www.sqlite.org/quirks.html#double_quoted_string_literals_are_accepted for more details.
-#++
-# Rails.application.config.active_record.sqlite3_adapter_strict_strings_by_default = true
-
-###
 # Disable deprecated singular associations names.
 #++
 # Rails.application.config.active_record.allow_deprecated_singular_associations_name = false

@@ -1,21 +1,21 @@
-source 'https://rubygems.org'
+source "https://rubygems.org"
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-ruby '3.3.5'
+ruby "3.3.5"
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '~> 8.0'
+gem "rails", "~> 8.0"
 # Use trilogy as the MySQL adapter for Active Record
-gem 'trilogy'
+gem "trilogy"
 # Use Puma as the app server
-gem 'puma', '>= 6.0'
+gem "puma", ">= 6.0"
 # Asset pipeline (Propshaft) + Hotwire (Turbo + Stimulus) loaded via Importmap.
-gem 'propshaft'
-gem 'turbo-rails'
-gem 'stimulus-rails'
-gem 'importmap-rails'
+gem "propshaft"
+gem "turbo-rails"
+gem "stimulus-rails"
+gem "importmap-rails"
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
-# gem 'jbuilder', '~> 2.5'         ## Commented out by Mullzk. Mensajasser is HTML only. 
+# gem 'jbuilder', '~> 2.5'         ## Commented out by Mullzk. Mensajasser is HTML only.
 # Use Redis adapter to run Action Cable in production
 # gem 'redis', '~> 4.0'
 # Use ActiveModel has_secure_password
@@ -27,16 +27,18 @@ gem 'importmap-rails'
 # Use Capistrano for deployment
 
 # Reduces boot times through caching; required in config/boot.rb
-gem 'bootsnap', '>= 1.1.0', require: false
+gem "bootsnap", ">= 1.1.0", require: false
 
 
 
 
 # Gems for this project, added by mullzk
-gem 'will_paginate'
+gem "will_paginate"
 
 group :development do
-  gem 'annotaterb'
+  gem "annotaterb"
+  # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase]
+  gem "rubocop-rails-omakase", require: false
 end
 group :development, :test do
   gem "factory_bot_rails"
@@ -46,33 +48,33 @@ end
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
-  gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
-  gem 'dotenv-rails'
+  gem "byebug", platforms: [ :mri, :mingw, :x64_mingw ]
+  gem "dotenv-rails"
 end
 
 group :development do
   # Access an interactive console on exception pages or by calling 'console' anywhere in the code.
-  gem 'web-console', '>= 3.3.0'
-  gem 'listen'
+  gem "web-console", ">= 3.3.0"
+  gem "listen"
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
-  gem 'spring'
-  gem 'capistrano', '~> 3.18'
-  gem 'capistrano-rails'
-  gem 'capistrano-bundler'
+  gem "spring"
+  gem "capistrano", "~> 3.18"
+  gem "capistrano-rails"
+  gem "capistrano-bundler"
   # Required by net-ssh to authenticate with ED25519 SSH keys.
-  gem 'ed25519', '~> 1.2'
-  gem 'bcrypt_pbkdf', '~> 1.0'
+  gem "ed25519", "~> 1.2"
+  gem "bcrypt_pbkdf", "~> 1.0"
 end
 
 group :test do
   # Adds support for Capybara system testing and selenium driver
-  gem 'capybara', '>= 2.15'
-  gem 'selenium-webdriver'
+  gem "capybara", ">= 2.15"
+  gem "selenium-webdriver"
 end
 
-gem 'minitest', '~> 5.0'
-gem 'brakeman', '~> 8.0'
-gem 'bundler-audit'
+gem "minitest", "~> 5.0"
+gem "brakeman", "~> 8.0"
+gem "bundler-audit"
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
-gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
+gem "tzinfo-data", platforms: [ :mingw, :mswin, :x64_mingw, :jruby ]

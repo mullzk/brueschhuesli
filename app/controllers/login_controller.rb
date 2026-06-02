@@ -1,8 +1,8 @@
 class LoginController < ApplicationController
   layout "reservation"
-  
-  before_action :authorize, :except => :login
-  
+
+  before_action :authorize, except: :login
+
   def add_user
     @user = User.new(user_params)
 
@@ -10,9 +10,9 @@ class LoginController < ApplicationController
     if request.post? and @user.save
       @user.password = user_params[:password] || initial_password
       flash.now[:notice] = "Benutzer #{@user.name} erstellt"
-      redirect_to :action => "list_users"
-    else 
-      if request.post? 
+      redirect_to action: "list_users"
+    else
+      if request.post?
         flash.now[:notice] = "Benutzer konnte nicht erstellt werden"
       end
       @user.password = initial_password
@@ -27,9 +27,9 @@ class LoginController < ApplicationController
         session[:user_id] = user.id
         if user.has_to_change_password
           flash[:notice] = "Ein neues Passwort muss gesetzt werden"
-          redirect_to :action => "change_password"
+          redirect_to action: "change_password"
         else
-          redirect_to :controller => "reservations", :action => "index"
+          redirect_to controller: "reservations", action: "index"
         end
       else
         flash.now[:notice] = "Ungültige Benutzer/Passwort Kombination"
@@ -40,23 +40,23 @@ class LoginController < ApplicationController
   def logout
     session[:user_id] = nil
     flash[:notice] = "Logged out"
-    redirect_to :action => "login"
+    redirect_to action: "login"
   end
 
   def edit_user
     @user = User.find(params[:id])
   end
-  
+
   def update_user
     @user = User.find(params[:id])
     if @user.update(user_params)
-      flash.now[:notice] = 'Benutzer-Angaben gespeichert.'
-      redirect_to :action => "list_users"
+      flash.now[:notice] = "Benutzer-Angaben gespeichert."
+      redirect_to action: "list_users"
     else
-      render :action => "edit_user"
+      render action: "edit_user"
     end
   end
-  
+
   def delete_user
     if request.post?
       user = User.find(params[:id])
@@ -67,33 +67,32 @@ class LoginController < ApplicationController
         flash[:notice] = "#{e.message}"
       end
     end
-    redirect_to :action => "list_users"
+    redirect_to action: "list_users"
   end
 
   def list_users
     @all_users = User.all.sort
   end
-  
+
   def change_password
-    @user = User.find_by_id(session[:user_id])    
+    @user = User.find_by_id(session[:user_id])
     if request.post?
       user = User.authenticate(@user.name, params[:old_password])
       if user
         if @user.update(user_params)
           @user.has_to_change_password = false
           @user.save
-          flash[:notice] = 'Passwort geändert'
-          redirect_to :action => 'list_users'
+          flash[:notice] = "Passwort geändert"
+          redirect_to action: "list_users"
         end
       else
         flash[:notice] = "Altes Passwort ist ungültig"
       end
     end
   end
-  
+
   private
   def user_params
     params.fetch(:user, {}).permit(:name, :email, :password, :password_confirmation)
   end
-  
 end

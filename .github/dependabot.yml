@@ -1,0 +1,24 @@
+# Dependabot configuration.
+#
+# Security updates are enabled separately in the GitHub repository settings and
+# run independently of this file. This file enables *version* updates: weekly
+# checks for newer releases of our dependencies, opened as pull requests.
+#
+# Docs: https://docs.github.com/code-security/dependabot/dependabot-version-updates
+version: 2
+updates:
+  - package-ecosystem: bundler
+    directory: "/"
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 10
+    assignees:
+      - mullzk
+
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 10
+    assignees:
+      - mullzk
