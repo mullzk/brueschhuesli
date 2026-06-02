@@ -1,0 +1,4 @@
+#!/bin/sh
+# Heavier security checks before pushing — same as the CI lint gate.
+# bundler-audit runs offline here; CI refreshes the advisory DB with --update.
+bin/bundler-audit && bin/brakeman -q -w2
