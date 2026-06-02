@@ -14,7 +14,7 @@
 #  updated_at             :datetime         not null
 #
 
-require 'test_helper'
+require "test_helper"
 
 class UserTest < ActiveSupport::TestCase
   test "Unknown User is not found" do
@@ -23,7 +23,7 @@ class UserTest < ActiveSupport::TestCase
   end
 
   test "User gets created, Passwort is not stored in clear-text" do
-    user = FactoryBot.build(:user, name:"Stefan", email:"test@mail.com")
+    user = FactoryBot.build(:user, name: "Stefan", email: "test@mail.com")
     user.password="test1234"
     user.save
     dbuser = User.find_by_name("Stefan")
@@ -33,23 +33,23 @@ class UserTest < ActiveSupport::TestCase
 
 
   test "authentication with correct password should pass" do
-    user = FactoryBot.build(:user, name:"Stefan", email:"test@mail.com")
+    user = FactoryBot.build(:user, name: "Stefan", email: "test@mail.com")
     user.password="test1234"
     user.save
     assert User.authenticate("Stefan", "test1234")
   end
 
   test "authentifcation with wrong password should be rejected" do
-    user = FactoryBot.build(:user, name:"Stefan", email:"test@mail.com")
+    user = FactoryBot.build(:user, name: "Stefan", email: "test@mail.com")
     user.password="test1234"
     user.save
     assert_not User.authenticate("Stefan", "test")
   end
-  
+
   test "authentification with no password should be rejected" do
-    user = FactoryBot.build(:user, name:"Stefan", email:"test@mail.com")
+    user = FactoryBot.build(:user, name: "Stefan", email: "test@mail.com")
     user.password="test1234"
     user.save
     assert_not User.authenticate("Stefan", "")
   end
- end
+end

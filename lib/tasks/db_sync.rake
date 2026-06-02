@@ -58,13 +58,13 @@ module DbSync
   end
 
   def local_dump(db, path)
-    system({"MYSQL_PWD" => db[:password]}, "#{mysqldump_cmd(db)} > #{path}") or
+    system({ "MYSQL_PWD" => db[:password] }, "#{mysqldump_cmd(db)} > #{path}") or
       abort "Fehler beim Dump."
     File.chmod(0o600, path)
   end
 
   def local_import(db, path)
-    system({"MYSQL_PWD" => db[:password]}, "#{mysql_import_cmd(db)} < #{path}") or
+    system({ "MYSQL_PWD" => db[:password] }, "#{mysql_import_cmd(db)} < #{path}") or
       abort "Fehler beim Import."
   end
 
@@ -119,7 +119,7 @@ module DbSync
   end
 
   def run_remote(ssh, script)
-    IO.popen(["ssh", ssh, "bash", "-l", "-s"], "w") { |io| io.write(script) }
+    IO.popen([ "ssh", ssh, "bash", "-l", "-s" ], "w") { |io| io.write(script) }
     abort "Schritt fehlgeschlagen." unless $?.success?
   end
 
@@ -135,7 +135,7 @@ end
 
 namespace :db do
   desc "Pull data from remote stage, replacing local dev DB. Usage: STAGE=integration rails db:pull"
-  task :pull => :environment do
+  task pull: :environment do
     stage      = DbSync.require_stage!
     cfg        = DbSync.stage_credentials(stage)
     ssh_target = DbSync.ssh_target_for(stage)
@@ -157,7 +157,7 @@ namespace :db do
   end
 
   desc "Push local dev data to remote stage, replacing its DB. Usage: STAGE=integration rails db:push"
-  task :push => :environment do
+  task push: :environment do
     stage      = DbSync.require_stage!
     DbSync.confirm_production!(stage)
     cfg        = DbSync.stage_credentials(stage)
