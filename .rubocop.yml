@@ -1,0 +1,10 @@
+# Omakase Ruby styling for Rails [https://github.com/rails/rubocop-rails-omakase]
+inherit_gem:
+  rubocop-rails-omakase: rubocop.yml
+
+# Overrides can be added below; keep this minimal.
+AllCops:
+  Exclude:
+    - "db/schema.rb"
+    - "bin/**/*"
+    - "vendor/**/*"
