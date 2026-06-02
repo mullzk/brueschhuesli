@@ -8,6 +8,7 @@ on:
 
 jobs:
   test:
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-24.04
     env:
       RAILS_ENV: test
@@ -43,9 +44,10 @@ jobs:
         run: bin/bundler-audit --update
       - name: Security audit application code
         run: bin/brakeman -q -w2
+      - name: Lint Ruby code
+        run: bin/rubocop -f github
 
   deploy_integration:
-    needs: [test]
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     uses: ./.github/workflows/deploy.yml
     with:
@@ -53,7 +55,6 @@ jobs:
     secrets: inherit
 
   deploy_production:
-    needs: [test]
     if: github.ref == 'refs/heads/production' && github.event_name == 'push'
     uses: ./.github/workflows/deploy.yml
     with:
