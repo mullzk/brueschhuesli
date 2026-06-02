@@ -37,9 +37,10 @@ bin/rake                      # same (default task)
 | `main`       | integration |
 | `production` | production  |
 
-GitHub Actions runs the test suite on every push and PR. On a green run,
-pushes to `main` trigger a Capistrano deploy to integration; pushes to
-`production` trigger a deploy to production.
+GitHub Actions runs the test suite and linters on pull requests. Pushes to
+`main` trigger a Capistrano deploy to integration; pushes to `production`
+trigger a deploy to production. Merges are gated by the required `test` and
+`lint` status checks on the protected branches.
 
 Manual deploy:
 
@@ -60,8 +61,16 @@ bin/rails 'db:push[integration]'   # push local DB to remote (with prompt)
 ## Security & linting
 
 ```bash
-bin/brakeman -q -w2
-bin/bundler-audit --update
+bin/rubocop                   # Ruby style (Omakase)
+bin/brakeman -q -w2           # static security scan
+bin/bundler-audit --update    # CVE check
 ```
 
-Both are CI gates on pull requests.
+All three are CI gates on pull requests. Run everything CI does (lint +
+tests) in one go with `bin/ci`.
+
+Git hooks (enabled automatically by `bin/setup`, or manually with
+`git config core.hooksPath .githooks`):
+
+- **pre-commit** — RuboCop on staged Ruby files only (sub-second).
+- **pre-push** — Brakeman + bundler-audit.
