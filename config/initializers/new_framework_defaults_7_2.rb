@@ -54,16 +54,6 @@
 # Rails.application.config.active_record.validate_migration_timestamps = true
 
 ###
-# Controls whether the PostgresqlAdapter should decode dates automatically with manual queries.
-#
-# Example:
-#   ActiveRecord::ConnectionAdapters::PostgreSQLAdapter.select_value("select '2024-01-01'::date") #=> Date
-#
-# This query used to return a `String`.
-#++
-# Rails.application.config.active_record.postgresql_adapter_decode_dates = true
-
-###
 # Enables YJIT as of Ruby 3.3, to bring sizeable performance improvements. If you are
 # deploying to a memory constrained environment you may want to set this to `false`.
 #++

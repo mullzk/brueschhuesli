@@ -1,53 +1,76 @@
-# Brueschhuesli
+# Brüschhüsli
 
-Although publicly accessible, the Brueschhuesli-Project is taylored for a single use. It is the Reservation-System for our families weekend-cabin. It consists of: 
+Although publicly accessible, the Brueschhuesli-Project is taylored for a single use. It is the Reservation-System for our families weekend-cabin. 
 
-* A very rudimentary Authentification System (User-Controller), controlling who can make and see reservations. 
-* The Model with Reservations for a certain timeslot
-* A inifite scolling Calendar-View for those Reservations, a CRUD-Interface for them, and the year-over-year-statistic who had how many reservations (also as xls-Download)
+## Stack
 
+- Ruby 3.3.5, Rails 8, Puma
+- MySQL via `trilogy`
+- Hotwire (Turbo + Stimulus), Importmap, Propshaft
+- Minitest + FactoryBot + Capybara
 
-## System dependencies & Configuration
-To run this project, you need: 
-- Ruby, at least version 2.5.1 (I use rvm for keeping track of ruby versions)
-- Rails 5.2.1  (gem install rails)
-- Bundler (gem install bundler)
-- Postgres  
-everything else should get installed when running "bundle install"
+## Local setup
 
-## Database 
-Once Postgres is installed, you should create the databases according to config/database.yml.  
-`createdb brueschhuesli_development`
-`createdb brueschhuesli_test``
-
-## Testing
-Testing is rudimentary, but running  
-`rails test` 
-should produce no errors. 
+```bash
+cp .env.example .env          # fill in DATABASE_URL + DEPLOY_* vars
+bundle install
+bin/rails db:schema:load      # needs a local MySQL DB
+bin/rails server
+```
 
 ## History
 v1.0, 2010: Developed as one of my first Rails-Projects, in local git-repo only
-v2.0, 2019 (this version). Newly initialized repo on github, complete new and responsive view-code
+v2.0, 2019: Newly initialized repo on github, complete new and responsive view-code
+v3.0, 2026 (this version): Configuration for deployment on new infrastructure. 
 
+## Testing
 
-## Todo
-No current todos. Possible next steps would be a "What should the next visitor bring"-List and a way to communicate when something broke
+```bash
+bin/rails test                # full suite
+bin/rake                      # same (default task)
+```
 
+## Branch model & deployment
 
-## Maintenance
-`git pull`  
-`git checkout dev-branch`  
-`bundle update` 		# Updates *all* gems in Gemfile  
-`rails test`			# runs test-suite  
-`git add . && git commit -m "Updates" && git push` # pushs into dev-branch  
-Make sure, that heroku dev-app automatically deploys dev-branch, wait until deployed  
-Test dev-app  
-`git checkout master`  
-`git merge dev-branch`  
-`rails test`  
-`git add . && git commit -m "Updates" && git push`  # pushs into master  
-Make sure, that heroku prod-app automatically deploys master, wait until deployed  
-`git checkout dev-branch` # No working in master  
+| Branch       | Stage       |
+|--------------|-------------|
+| `main`       | integration |
+| `production` | production  |
 
-## Deployment
-This of course is heavily dependent on the installation. My own way: I have two heroku-apps, prod and dev. Prod is linked to the master branch, dev is linked to whatever dev-branch I currently work in. With every push to the dev-branch, the Dev-App gets immediately updated. If everything works out as desired, I merge into master, deploy the master, on which herokus prod-app fetches its new code. 
+GitHub Actions runs the test suite and linters on pull requests. Pushes to
+`main` trigger a Capistrano deploy to integration; pushes to `production`
+trigger a deploy to production. Merges are gated by the required `test` and
+`lint` status checks on the protected branches.
+
+Manual deploy:
+
+```bash
+bundle exec cap integration deploy
+bundle exec cap production deploy
+```
+
+Secrets live in `shared/config/env` on the server — never commit env values.
+
+## DB sync
+
+```bash
+bin/rails 'db:pull[integration]'   # pull remote DB into local
+bin/rails 'db:push[integration]'   # push local DB to remote (with prompt)
+```
+
+## Security & linting
+
+```bash
+bin/rubocop                   # Ruby style (Omakase)
+bin/brakeman -q -w2           # static security scan
+bin/bundler-audit --update    # CVE check
+```
+
+All three are CI gates on pull requests. Run everything CI does (lint +
+tests) in one go with `bin/ci`.
+
+Git hooks (enabled automatically by `bin/setup`, or manually with
+`git config core.hooksPath .githooks`):
+
+- **pre-commit** — RuboCop on staged Ruby files only (sub-second).
+- **pre-push** — Brakeman + bundler-audit.

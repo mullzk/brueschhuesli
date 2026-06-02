@@ -1,0 +1,6 @@
+#!/bin/sh
+# RuboCop on staged Ruby files only — fast style feedback before each commit.
+# Heavier checks (Brakeman, bundler-audit) live in the pre-push hook.
+files=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.(rb|rake|builder)$|(^|/)Gemfile$')
+[ -z "$files" ] && exit 0
+exec bin/rubocop --force-exclusion $files

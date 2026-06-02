@@ -7,15 +7,15 @@ set :keep_releases, 5
 
 set :default_env, { path: "/home/deploy-app/.local/share/mise/shims:$PATH" }
 
-before 'deploy:starting', :load_shared_env do
+before "deploy:starting", :load_shared_env do
   on roles(:all) do
     env_content = capture("cat #{shared_path}/config/env 2>/dev/null || true")
     env_vars = {}
     env_content.each_line do |line|
       line = line.strip
-      next if line.empty? || line.start_with?('#')
-      key, value = line.split('=', 2)
-      env_vars[key.strip] = value.to_s.strip.gsub(/\A["']|["']\z/, '') if key
+      next if line.empty? || line.start_with?("#")
+      key, value = line.split("=", 2)
+      env_vars[key.strip] = value.to_s.strip.gsub(/\A["']|["']\z/, "") if key
     end
     SSHKit.config.default_env.merge!(env_vars)
   end

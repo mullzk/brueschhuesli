@@ -5,5 +5,4 @@ class Renaming < ActiveRecord::Migration[5.2]
   def down
     rename_column :users, :has_to_change_password, :hasToChangePassword
   end
-
 end
