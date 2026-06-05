@@ -133,13 +133,13 @@ class Reservation < ApplicationRecord
   end
 
   def self.reservations_for_user_in_timeslot(user, time_a, time_b)
-    self.find_reservations_beginning_in_timeslot(time_a, time_b).select { |r| r.user.eql? user }
+    self.find_reservations_beginning_in_timeslot(time_a, time_b).where(user: user)
   end
   def self.reservations_for_user_in_month(user, month)
-    self.find_reservations_beginning_in_month(month).select { |r| r.user.eql? user }
+    self.find_reservations_beginning_in_month(month).where(user: user)
   end
   def self.reservations_for_user_in_year(user, year)
-    self.find_reservations_beginning_in_year(year).select { |r| r.user.eql? user }
+    self.find_reservations_beginning_in_year(year).where(user: user)
   end
 
   def self.find_reservations_on_date(date)
