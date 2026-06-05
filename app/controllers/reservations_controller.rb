@@ -115,7 +115,7 @@ class ReservationsController < ApplicationController
     reservations = reservations_covering(days.first, days.last)
 
     weeks = days.collect { |day| calendar_day(day, day_in_month, reservations) }.in_groups_of(7)
-    { first_of_month: day_in_month.beginning_of_month, name: day_in_month.german_month, weeks: weeks }
+    { first_of_month: day_in_month.beginning_of_month, name: I18n.l(day_in_month, format: :month_year), weeks: weeks }
   end
 
   def reservations_covering(first_day, last_day)

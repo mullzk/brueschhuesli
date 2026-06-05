@@ -86,14 +86,6 @@ class Reservation < ApplicationRecord
   private :billing
 
 
-  def german_date
-    self.date.short_german_std
-  end
-
-  def german_date=(str)
-    self.date= Date.parse_german_string(str)
-  end
-
   def classified_type
     saved = self[:type_of_reservation]
     if saved == KURZAUFENTHALT && duration > LONG_STAY_THRESHOLD

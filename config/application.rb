@@ -23,5 +23,10 @@ module Brueschhuesli
     #
     # config.time_zone = "Central Time (US & Canada)"
     # config.eager_load_paths << Rails.root.join("extras")
+
+    # German UI: localize dates via I18n, falling back to English for the
+    # framework strings (e.g. validation messages) that are not translated here.
+    config.i18n.default_locale = :de
+    config.i18n.fallbacks = [ :en ]
   end
 end
