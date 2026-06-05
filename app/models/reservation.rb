@@ -65,27 +65,23 @@ class Reservation < ApplicationRecord
   end
 
   def paid_blocks
-    blocks = duration_in_8_hour_blocks
-    if user.miteigentuemer? && !is_exclusive?
-      if blocks <= 6
-        0
-      else
-        blocks - 6
-      end
-    else
-      blocks
-    end
+    billing.paid_blocks
   end
 
   def billed_fee
-    if type_of_reservation.eql?(Reservation::KURZAUFENTHALT) || type_of_reservation.eql?(Reservation::FERIENAUFENTHALT)
-      paid_blocks * 15
-    elsif type_of_reservation.eql?(Reservation::GROSSANLASS)
-      200
-    elsif type_of_reservation.eql?(Reservation::EXTERNE_NUTZUNG)
-      duration_in_days * 100
-    end
+    billing.fee
   end
+
+  def billing
+    ReservationBilling.new(
+      type: type_of_reservation,
+      blocks: duration_in_8_hour_blocks,
+      days: duration_in_days,
+      miteigentuemer: user.miteigentuemer?,
+      exclusive: is_exclusive?
+    )
+  end
+  private :billing
 
 
   def german_date
