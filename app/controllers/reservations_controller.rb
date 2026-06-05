@@ -110,12 +110,18 @@ class ReservationsController < ApplicationController
   end
 
   def get_calendar_for_month (day_in_month)
-    # Get 4-6 complete weeks in our calendar, meaning als the last days of the previous and the first days of the next months
-    days = day_in_month.beginning_of_month.beginning_of_week.upto(day_in_month.end_of_month.end_of_week).to_a
-    reservations = reservations_covering(days.first, days.last)
+    month_start = day_in_month.beginning_of_month
+    month_end = day_in_month.end_of_month
+    reservations = reservations_covering(month_start, month_end)
 
-    weeks = days.collect { |day| calendar_day(day, day_in_month, reservations) }.in_groups_of(7)
-    { first_of_month: day_in_month.beginning_of_month, name: I18n.l(day_in_month, format: :month_year), weeks: weeks }
+    # Blank cells before the 1st and after the last day keep each day under its weekday column.
+    leading = (month_start - month_start.beginning_of_week).to_i
+    trailing = (month_end.end_of_week - month_end).to_i
+    cells = [ nil ] * leading +
+            (month_start..month_end).map { |day| calendar_day(day, reservations) } +
+            [ nil ] * trailing
+
+    { first_of_month: month_start, name: I18n.l(month_start, format: :month_year), weeks: cells.in_groups_of(7) }
   end
 
   def reservations_covering(first_day, last_day)
@@ -123,8 +129,8 @@ class ReservationsController < ApplicationController
                .includes(:user).order(:start).to_a
   end
 
-  def calendar_day(day, day_in_month, reservations)
+  def calendar_day(day, reservations)
     on_day = reservations.select { |reservation| reservation.on_day?(day) }.sort_by { |reservation| reservation.begin_on_day(day) }
-    { date: day, in_month: day.month.equal?(day_in_month.month), reservations: on_day }
+    { date: day, reservations: on_day }
   end
 end

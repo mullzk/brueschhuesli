@@ -15,7 +15,11 @@
 	<% for week in month[:weeks] %>
 		<tr>
 			<% for day in week %>
-				<%= render partial: "day", locals: {day:day, in_month:day[:date].month.equal?(month[:first_of_month].month)} %>
+				<% if day %>
+					<%= render partial: "day", locals: { day: day } %>
+				<% else %>
+					<td class="empty"></td>
+				<% end %>
 			<% end %>
 		</tr>
 	<%end%>

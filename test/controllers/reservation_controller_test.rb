@@ -146,6 +146,13 @@ class ReservationControllerTest < ActionDispatch::IntegrationTest
     assert_select "td.free[data-enter-href-url-value*='date=2019-03-13']"
   end
 
+  test "month shows only the days of the month" do
+    login_as_user
+    get "/reservations/month/2019-03-01"
+    assert_select "td.free, td.occupied", count: 31 # March has 31 days, no adjacent-month days
+    assert_select "td.empty", minimum: 1
+  end
+
   test "on_day lists reservations for a date" do
     user = login_as_user
     Reservation.create!(valid_params(user))
