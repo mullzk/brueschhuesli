@@ -23,10 +23,6 @@ class User < ApplicationRecord
 
   validates_presence_of :name, :email, :hashed_password, :salt
 
-  def validate
-    errors.add_to_base("Missing Passwort") if hashed_password.blank?
-  end
-
   def password
     @password
   end

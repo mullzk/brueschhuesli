@@ -105,14 +105,4 @@ class UserTest < ActiveSupport::TestCase
     user.password_confirmation = "secret"
     assert user.valid?
   end
-
-  # --- dead code (to be removed in Phase 2) ----------------------------------
-
-  # User#validate is not registered as a validation callback, so AR never calls
-  # it (save/valid? are unaffected). It also shadows ActiveModel's validate
-  # alias of valid? and uses the long-removed errors.add_to_base, so calling it
-  # directly on a record without a hash raises. Frozen here as current state.
-  test "User#validate is dead code and raises when called directly" do
-    assert_raises(NoMethodError) { User.new.validate }
-  end
 end

@@ -252,7 +252,7 @@ class ReservationTest < ActiveSupport::TestCase
     assert_equal r.duration_in_8_hour_blocks, 3
 
     r = Reservation.new(start: DateTime.new(2010, 6, 1, 0), finish: DateTime.new(2010, 6, 1, 24))
-    assert_equal r.duration_in_days, 2 # see test above
+    assert_equal r.duration_in_days, 1 # Phase 2: a midnight finish no longer counts the next day
     assert_equal r.duration_rounded_to_hours, 24.hours
     assert_equal r.duration_in_8_hour_blocks, 3
   end
@@ -304,12 +304,10 @@ class ReservationTest < ActiveSupport::TestCase
     assert_equal r.billed_fee, 3*rate_daily
   end
 
-  # EXTERNE_NUTZUNG is billed per calendar day touched, counting both boundary
-  # days fully: a 48h stay spanning three calendar dates bills 3 x 100 CHF.
-  # duration_in_days returns days (3.0), NOT seconds (the inline comment in
-  # reservation.rb:90 is stale). Frozen as current behaviour; whether counting
-  # both partial boundary days is fair is a deferred Phase 2 decision.
-  test "EXTERNE_NUTZUNG bills per calendar day (current behaviour)" do
+  # EXTERNE_NUTZUNG is billed per calendar day touched: a stay spanning three
+  # calendar dates bills 3 x 100 CHF. A finish exactly at midnight does not
+  # count the following day.
+  test "EXTERNE_NUTZUNG bills per calendar day" do
     r = Reservation.new(
       start: DateTime.new(2010, 6, 1, 14), finish: DateTime.new(2010, 6, 3, 14),
       user: @user, is_exclusive: true, type_of_reservation: Reservation::EXTERNE_NUTZUNG
@@ -318,27 +316,13 @@ class ReservationTest < ActiveSupport::TestCase
     assert_equal 300, r.billed_fee
   end
 
-  # overlaps_with? is currently dead code (never called anywhere). Its logic is
-  # frozen here so it can be removed safely in Phase 2.
-  test "overlaps_with? (dead code) current behaviour" do
-    base           = Reservation.new(start: DateTime.new(2010, 6, 1, 10), finish: DateTime.new(2010, 6, 1, 14))
-    same_start     = Reservation.new(start: DateTime.new(2010, 6, 1, 10), finish: DateTime.new(2010, 6, 1, 12))
-    adjacent_after = Reservation.new(start: DateTime.new(2010, 6, 1, 14), finish: DateTime.new(2010, 6, 1, 16))
-    overlapping    = Reservation.new(start: DateTime.new(2010, 6, 1, 12), finish: DateTime.new(2010, 6, 1, 16))
-    disjoint       = Reservation.new(start: DateTime.new(2010, 6, 2, 10), finish: DateTime.new(2010, 6, 2, 12))
-
-    assert     base.overlaps_with?(same_start)     # shared start
-    assert_not base.overlaps_with?(adjacent_after) # touching edge counts as no overlap
-    assert     base.overlaps_with?(overlapping)
-    assert_not base.overlaps_with?(disjoint)
-  end
-
-  # Latent Rails 8 crash: the reversed-args + Date branch calls the removed
-  # Date#to_s(:db). Unreachable from the app today (callers pass ascending,
-  # hour-aware times). Frozen as raising; to be fixed to to_formatted_s in Phase 2.
-  test "find_reservations_beginning_in_timeslot raises on reversed Date args" do
-    assert_raises(ArgumentError) do
-      Reservation.find_reservations_beginning_in_timeslot(Date.new(2010, 2, 7), Date.new(2010, 2, 3))
-    end
+  # Reversed Date arguments must not crash (Rails 8 removed Date#to_s(:db)) and
+  # must return the same set as ascending arguments.
+  test "find_reservations_beginning_in_timeslot is argument-order independent" do
+    r = Reservation.create!(user: @user, start: DateTime.new(2010, 2, 4, 8), finish: DateTime.new(2010, 2, 4, 10), type_of_reservation: Reservation::KURZAUFENTHALT)
+    ascending = Reservation.find_reservations_beginning_in_timeslot(Date.new(2010, 2, 3), Date.new(2010, 2, 7))
+    reversed  = Reservation.find_reservations_beginning_in_timeslot(Date.new(2010, 2, 7), Date.new(2010, 2, 3))
+    assert_includes ascending, r
+    assert_includes reversed, r
   end
 end

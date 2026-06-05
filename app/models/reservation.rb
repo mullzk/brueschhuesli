@@ -45,15 +45,11 @@ class Reservation < ApplicationRecord
     finish-start
   end
 
-  def duration_in_complete_days_evaluated_in_seconds
-    fin = DateTime.new(finish.year, finish.month, finish.day, 24, 0).in_time_zone
-    sta = DateTime.new(start.year, start.month, start.day, 0, 0).in_time_zone
-
-    fin - sta
-  end
-
   def duration_in_days
-    self.duration_in_complete_days_evaluated_in_seconds/(24*60*60)
+    # Billed per calendar day touched. A reservation ending exactly at midnight
+    # does not count the following day (it only touches that day's first instant).
+    last_day = finish == finish.beginning_of_day ? finish.to_date - 1 : finish.to_date
+    (last_day - start.to_date).to_i + 1
   end
 
   def duration_rounded_to_hours
@@ -87,7 +83,7 @@ class Reservation < ApplicationRecord
     elsif type_of_reservation.eql?(Reservation::GROSSANLASS)
       200
     elsif type_of_reservation.eql?(Reservation::EXTERNE_NUTZUNG)
-      duration_in_days * 100   # duration_in_days_returns_seconds !!!!
+      duration_in_days * 100
     end
   end
 
@@ -111,26 +107,13 @@ class Reservation < ApplicationRecord
     end
   end
 
-
-  def overlaps_with?(other)
-    if other.start==self.start || other.finish==self.finish
-      true
-    elsif other.start==self.finish || self.start==other.finish
-      false
-    elsif self.start < other.start
-      other.start < self.finish
-    else other.start < self.start
-      self.start < other.finish
-    end
-  end
-
   # Returns only reservations with beginning in a timeslot, e.g. Reservations that span multiple months are reported only in the first month. This makes calculating the tariffs much easier
   def self.find_reservations_beginning_in_timeslot(time_a, time_b)
     if time_a > time_b
       if time_a.respond_to?(:hour)
         interval_finish = time_a.to_formatted_s(:db)
       else # End-time is a day, so we look for reservations including this day
-        interval_finish = (time_a+(1.day)).to_s(:db)
+        interval_finish = (time_a+(1.day)).to_formatted_s(:db)
       end
       interval_start = time_b.to_formatted_s(:db)
     else
