@@ -134,6 +134,18 @@ class ReservationControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
+  test "month marks every day a reservation spans as occupied" do
+    user = login_as_user
+    Reservation.create!(valid_params(user,
+      start: DateTime.new(2019, 3, 10, 14), finish: DateTime.new(2019, 3, 12, 18)))
+    get "/reservations/month/2019-03-01"
+    assert_select "td.occupied[data-enter-href-url-value$='on_day/2019-03-10']"
+    assert_select "td.occupied[data-enter-href-url-value$='on_day/2019-03-11']"
+    assert_select "td.occupied[data-enter-href-url-value$='on_day/2019-03-12']"
+    assert_select "td.free[data-enter-href-url-value*='date=2019-03-09']"
+    assert_select "td.free[data-enter-href-url-value*='date=2019-03-13']"
+  end
+
   test "on_day lists reservations for a date" do
     user = login_as_user
     Reservation.create!(valid_params(user))

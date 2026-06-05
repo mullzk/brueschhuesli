@@ -176,6 +176,10 @@ class Reservation < ApplicationRecord
     start <= day.beginning_of_day && finish > day.end_of_day
   end
 
+  def on_day?(day)
+    start <= day.end_of_day && finish > day.beginning_of_day
+  end
+
   def hours_on_day(day)
     if fills_complete_day?(day)
       24

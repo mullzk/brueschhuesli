@@ -157,6 +157,15 @@ class ReservationTest < ActiveSupport::TestCase
     assert_equal reservations.last, r1
   end
 
+  test "on_day? covers every day a reservation overlaps" do
+    r = Reservation.new(start: DateTime.new(2019, 2, 1, 14), finish: DateTime.new(2019, 2, 3, 18))
+    assert_not r.on_day?(Date.new(2019, 1, 31))
+    assert     r.on_day?(Date.new(2019, 2, 1))
+    assert     r.on_day?(Date.new(2019, 2, 2))
+    assert     r.on_day?(Date.new(2019, 2, 3))
+    assert_not r.on_day?(Date.new(2019, 2, 4))
+  end
+
   test "calculare timespans on one particular day" do
     r = Reservation.new(start: DateTime.new(2010, 6, 1, 12), finish: DateTime.new(2010, 6, 3, 11))
     assert_equal r.begin_on_day(Date.new(2010, 6, 1)).hour, 12

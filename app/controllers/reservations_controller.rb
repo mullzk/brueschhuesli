@@ -115,16 +115,20 @@ class ReservationsController < ApplicationController
 
   def get_calendar_for_month (day_in_month)
     # Get 4-6 complete weeks in our calendar, meaning als the last days of the previous and the first days of the next months
-    all_days_in_calendar = day_in_month.beginning_of_month.beginning_of_week.upto day_in_month.end_of_month.end_of_week
+    days = day_in_month.beginning_of_month.beginning_of_week.upto(day_in_month.end_of_month.end_of_week).to_a
+    reservations = reservations_covering(days.first, days.last)
 
-    # For each day, get the reservations. Days of the pre- or succedding month should be marked.
-    all_days_in_calendar = all_days_in_calendar.collect { |day|
-      reservations = Reservation.find_reservations_on_date(day)
-      { date: day, in_month: day.month.equal?(day_in_month.month), reservations: reservations }
-    }
-
-    # Create 2D-Array of weeks
-    weeks = all_days_in_calendar.in_groups_of(7)
+    weeks = days.collect { |day| calendar_day(day, day_in_month, reservations) }.in_groups_of(7)
     { first_of_month: day_in_month.beginning_of_month, name: day_in_month.german_month, weeks: weeks }
+  end
+
+  def reservations_covering(first_day, last_day)
+    Reservation.where("start <= ? AND finish > ?", last_day.end_of_day, first_day.beginning_of_day)
+               .includes(:user).order(:start).to_a
+  end
+
+  def calendar_day(day, day_in_month, reservations)
+    on_day = reservations.select { |reservation| reservation.on_day?(day) }.sort_by { |reservation| reservation.begin_on_day(day) }
+    { date: day, in_month: day.month.equal?(day_in_month.month), reservations: on_day }
   end
 end
