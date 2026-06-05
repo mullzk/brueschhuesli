@@ -369,3 +369,10 @@ div.reservationform div.datebox_right {
 #reservationskalender .month-navigation a {
 	color: black;
 }
+
+/* ---------- Login ---------- */
+
+.welcomepicture {
+	max-width: 100%;
+	height: auto;
+}

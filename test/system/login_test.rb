@@ -1,6 +1,14 @@
 require "application_system_test_case"
 
 class LoginTest < ApplicationSystemTestCase
+  test "login page fits the mobile viewport" do
+    resize_to(:mobile)
+    visit login_login_path
+    assert_text "Bitte einloggen"
+    fits = page.evaluate_script("document.documentElement.scrollWidth <= window.innerWidth")
+    assert fits, "login page overflows horizontally on mobile"
+  end
+
   # Regression test for the Turbo form bug introduced in #31: an invalid login
   # must show feedback. Previously the controller answered with 200, which
   # Turbo silently ignores, so nothing appeared on screen.
