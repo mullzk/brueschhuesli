@@ -8,6 +8,7 @@
 #  hashed_password        :string(255)
 #  miteigentuemer         :boolean
 #  name                   :string(255)
+#  password_digest        :string(255)
 #  salt                   :string(255)
 #  telefon                :string(255)
 #  created_at             :datetime         not null
@@ -58,6 +59,35 @@ class UserTest < ActiveSupport::TestCase
     assert_not User.authenticate("Stefan", "")
   end
 
+  test "authenticate works by name or by email" do
+    create(:user, name: "Dora", email: "dora@example.com", password: "secret123")
+    assert User.authenticate("Dora", "secret123")
+    assert User.authenticate("dora@example.com", "secret123")
+    assert_not User.authenticate("Dora", "wrong")
+  end
+
+  test "legacy SHA1 user is transparently rehashed to bcrypt on login" do
+    user = make_legacy_user("oldsecret")
+
+    assert User.authenticate("Legacy", "oldsecret")
+    user.reload
+    assert user.password_digest.present?
+    assert_nil user.salt
+    assert_nil user.hashed_password
+    assert User.authenticate("Legacy", "oldsecret")
+    assert_not User.authenticate("Legacy", "wrong")
+  end
+
+  test "legacy user with wrong password is rejected and left untouched" do
+    user = make_legacy_user("oldsecret")
+
+    assert_not User.authenticate("Legacy", "wrong")
+    user.reload
+    assert_nil user.password_digest
+    assert_equal "legacy-salt", user.salt
+    assert_equal User.legacy_hash("oldsecret", "legacy-salt"), user.hashed_password
+  end
+
   # --- validations -----------------------------------------------------------
 
   test "name must be unique" do
@@ -74,37 +104,34 @@ class UserTest < ActiveSupport::TestCase
     assert duplicate.errors[:email].present?
   end
 
-  test "name, email, hashed_password and salt are required" do
+  test "name, email and password are required" do
     user = User.new
     assert_not user.valid?
     assert user.errors[:name].present?
     assert user.errors[:email].present?
-    assert user.errors[:hashed_password].present?
-    assert user.errors[:salt].present?
+    assert user.errors[:password].present?
   end
 
-  # --- password= -------------------------------------------------------------
+  # --- password --------------------------------------------------------------
 
-  test "blank password is ignored and leaves no hash" do
+  test "blank password leaves no digest and is invalid" do
     user = User.new(name: "Blank", email: "blank@example.com")
     user.password = ""
-    assert_nil user.hashed_password
-    assert_nil user.salt
-    assert_not user.valid? # hashed_password/salt presence not satisfied
+    assert_nil user.password_digest
+    assert_not user.valid?
+    assert user.errors[:password].present?
   end
 
-  test "nil password is ignored and leaves no hash" do
+  test "nil password leaves no digest" do
     user = User.new(name: "Nil", email: "nil@example.com")
     user.password = nil
-    assert_nil user.hashed_password
-    assert_nil user.salt
+    assert_nil user.password_digest
   end
 
-  test "non-blank password populates hash and salt" do
+  test "non-blank password populates the digest" do
     user = User.new(name: "Set", email: "set@example.com")
     user.password = "secret"
-    assert user.hashed_password.present?
-    assert user.salt.present?
+    assert user.password_digest.present?
   end
 
   test "password confirmation must match when present" do
@@ -116,5 +143,14 @@ class UserTest < ActiveSupport::TestCase
 
     user.password_confirmation = "secret"
     assert user.valid?
+  end
+
+  private
+
+  def make_legacy_user(password, salt: "legacy-salt")
+    user = User.create!(name: "Legacy", email: "legacy@example.com", password: "temporary")
+    user.update_columns(password_digest: nil, salt: salt,
+                        hashed_password: User.legacy_hash(password, salt))
+    user
   end
 end

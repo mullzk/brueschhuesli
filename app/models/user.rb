@@ -8,6 +8,7 @@
 #  hashed_password        :string(255)
 #  miteigentuemer         :boolean
 #  name                   :string(255)
+#  password_digest        :string(255)
 #  salt                   :string(255)
 #  telefon                :string(255)
 #  created_at             :datetime         not null
@@ -22,49 +23,35 @@
 class User < ApplicationRecord
   has_many :reservations
 
-  attr_accessor :password_confirmation
-  validates_confirmation_of :password
+  has_secure_password
+
   validates_uniqueness_of :name
   validates_uniqueness_of :email
-
-  validates_presence_of :name, :email, :hashed_password, :salt
-
-  def password
-    @password
-  end
-
-  def password=(pwd)
-    @password = pwd
-    return if pwd.blank?
-    create_new_salt
-    self.hashed_password = User.encrypted_password(self.password, self.salt)
-  end
+  validates_presence_of :name, :email
 
   def <=>(other)
     name<=>other.name
   end
 
-  private
-
-
-  def self.encrypted_password(password, salt)
-    string_to_hash = password + "sdf" + salt
-    Digest::SHA1.hexdigest(string_to_hash)
+  def self.authenticate(login, password)
+    user = find_by(name: login) || find_by(email: login)
+    return nil unless user
+    return user if user.authenticate(password)
+    return user.rehash_legacy_password(password) if user.legacy_password?(password)
+    nil
   end
 
-  def create_new_salt
-    self.salt = self.object_id.to_s + rand.to_s
+  def legacy_password?(password)
+    return false if salt.blank? || hashed_password.blank?
+    ActiveSupport::SecurityUtils.secure_compare(self.class.legacy_hash(password, salt), hashed_password)
   end
 
+  def rehash_legacy_password(password)
+    update(password: password, hashed_password: nil, salt: nil)
+    self
+  end
 
-  def self.authenticate(name, password)
-    user = self.find_by_name(name)
-    if user
-      expected_password = encrypted_password(password, user.salt)
-      if user.hashed_password != expected_password
-        user = nil
-      end
-    end
-    user
+  def self.legacy_hash(password, salt)
+    Digest::SHA1.hexdigest(password + "sdf" + salt)
   end
 end
