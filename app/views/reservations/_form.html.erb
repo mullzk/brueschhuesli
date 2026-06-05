@@ -31,7 +31,7 @@
 	<div class="page-row">
 		<label class="legend">Reservations-Typ: </label>
 		<div>
-	    	<%= form.select :type_of_reservation, Reservation.reservation_types.map {|key, value| value}, :prompt => "Type" %>&nbsp; 
+	    	<%= form.select :type_of_reservation, Reservation.reservation_types.map {|key, value| value}, prompt: "Type", selected: form.object.classified_type %>&nbsp;
 			<%= form.select :is_exclusive, [["Exklusiv", true],["Offen", false]]%>
 		</div>
 	</div>

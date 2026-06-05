@@ -31,6 +31,8 @@ class Reservation < ApplicationRecord
   GROSSANLASS = "Grossanlass"
   EXTERNE_NUTZUNG = "Nutzung durch Dritte"
 
+  LONG_STAY_THRESHOLD = 48.hours.to_i
+
   def self.reservation_types
     @reservation_types ||= {}
     @reservation_types[:KURZAUFENTHALT] = KURZAUFENTHALT
@@ -74,7 +76,7 @@ class Reservation < ApplicationRecord
 
   def billing
     ReservationBilling.new(
-      type: type_of_reservation,
+      type: classified_type,
       blocks: duration_in_8_hour_blocks,
       days: duration_in_days,
       miteigentuemer: user.miteigentuemer?,
@@ -92,14 +94,14 @@ class Reservation < ApplicationRecord
     self.date= Date.parse_german_string(str)
   end
 
-  def type_of_reservation
-    saved_reservation_type = self[:type_of_reservation]
-    if saved_reservation_type.eql?(Reservation::KURZAUFENTHALT) && duration > 60*60*48
-      Reservation::FERIENAUFENTHALT
-    elsif saved_reservation_type.eql?(Reservation::FERIENAUFENTHALT) && duration < 60*60*48
-      Reservation::KURZAUFENTHALT
+  def classified_type
+    saved = self[:type_of_reservation]
+    if saved == KURZAUFENTHALT && duration > LONG_STAY_THRESHOLD
+      FERIENAUFENTHALT
+    elsif saved == FERIENAUFENTHALT && duration < LONG_STAY_THRESHOLD
+      KURZAUFENTHALT
     else
-      saved_reservation_type
+      saved
     end
   end
 

@@ -126,23 +126,23 @@ class ReservationTest < ActiveSupport::TestCase
     assert_not r3.valid? # Reservation is too long
 
     r1 = Reservation.new(start: DateTime.new(2010, 6, 1, 12), finish: DateTime.new(2010, 6, 8, 11), type_of_reservation: Reservation::KURZAUFENTHALT)
-    assert_equal r1.type_of_reservation, Reservation::FERIENAUFENTHALT
+    assert_equal r1.classified_type, Reservation::FERIENAUFENTHALT
     r1 = Reservation.new(start: DateTime.new(2010, 6, 1, 12), finish: DateTime.new(2010, 6, 3, 12), type_of_reservation: Reservation::KURZAUFENTHALT)
-    assert_equal r1.type_of_reservation, Reservation::KURZAUFENTHALT
+    assert_equal r1.classified_type, Reservation::KURZAUFENTHALT
     r1 = Reservation.new(start: DateTime.new(2010, 6, 1, 12), finish: DateTime.new(2010, 6, 3, 13), type_of_reservation: Reservation::KURZAUFENTHALT)
-    assert_equal r1.type_of_reservation, Reservation::FERIENAUFENTHALT
+    assert_equal r1.classified_type, Reservation::FERIENAUFENTHALT
     r1 = Reservation.new(start: DateTime.new(2010, 6, 1, 12), finish: DateTime.new(2010, 6, 2, 11), type_of_reservation: Reservation::FERIENAUFENTHALT)
-    assert_equal r1.type_of_reservation, Reservation::KURZAUFENTHALT
+    assert_equal r1.classified_type, Reservation::KURZAUFENTHALT
     r1 = Reservation.new(start: DateTime.new(2010, 6, 1, 12), finish: DateTime.new(2010, 6, 3, 12), type_of_reservation: Reservation::FERIENAUFENTHALT)
-    assert_equal r1.type_of_reservation, Reservation::FERIENAUFENTHALT
+    assert_equal r1.classified_type, Reservation::FERIENAUFENTHALT
     r1 = Reservation.new(start: DateTime.new(2010, 6, 1, 12), finish: DateTime.new(2010, 6, 3, 11), type_of_reservation: Reservation::FERIENAUFENTHALT)
-    assert_equal r1.type_of_reservation, Reservation::KURZAUFENTHALT
+    assert_equal r1.classified_type, Reservation::KURZAUFENTHALT
   end
 
-  test "type_of_reservation reader can diverge from the stored column" do
+  test "classified_type can diverge from the stored column" do
     r = Reservation.new(start: DateTime.new(2010, 6, 1, 12), finish: DateTime.new(2010, 6, 8, 11), type_of_reservation: Reservation::KURZAUFENTHALT)
-    assert_equal Reservation::KURZAUFENTHALT, r.read_attribute(:type_of_reservation)
-    assert_equal Reservation::FERIENAUFENTHALT, r.type_of_reservation
+    assert_equal Reservation::KURZAUFENTHALT, r.type_of_reservation
+    assert_equal Reservation::FERIENAUFENTHALT, r.classified_type
   end
 
   test "Reservations should be ordered by Start date" do
