@@ -84,6 +84,15 @@ class ReservationControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
+  test "edit preselects the classified type for a long stay stored as short" do
+    user = login_as_user
+    reservation = Reservation.create!(valid_params(user,
+      start: DateTime.new(2019, 3, 1, 12), finish: DateTime.new(2019, 3, 4, 12)))
+    get edit_reservation_path(reservation)
+    assert_select "select#reservation_type_of_reservation option[selected='selected']",
+      text: Reservation::FERIENAUFENTHALT
+  end
+
   test "update with valid params saves and redirects" do
     user = login_as_user
     reservation = Reservation.create!(valid_params(user))

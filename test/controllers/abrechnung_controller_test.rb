@@ -56,6 +56,22 @@ class AbrechnungControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
+  test "detailliste shows the classified type, not the stored column" do
+    login_as_user
+    get abrechnung_detailliste_url
+    assert_response :success
+    assert_select "td", text: Reservation::FERIENAUFENTHALT
+    assert_not_includes response.body, Reservation::KURZAUFENTHALT
+  end
+
+  test "benutzer report shows the classified type, not the stored column" do
+    login_as_user
+    get abrechnung_benutzer_url(id: @user.id)
+    assert_response :success
+    assert_select "td", text: Reservation::FERIENAUFENTHALT
+    assert_not_includes response.body, Reservation::KURZAUFENTHALT
+  end
+
   # Verifies the Date.current injection in extract_year: with no params and time
   # frozen, jahresstatistik defaults to the current year (shown in the filename).
   test "jahresstatistik without params uses the current year" do

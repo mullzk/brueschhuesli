@@ -139,6 +139,12 @@ class ReservationTest < ActiveSupport::TestCase
     assert_equal r1.type_of_reservation, Reservation::KURZAUFENTHALT
   end
 
+  test "type_of_reservation reader can diverge from the stored column" do
+    r = Reservation.new(start: DateTime.new(2010, 6, 1, 12), finish: DateTime.new(2010, 6, 8, 11), type_of_reservation: Reservation::KURZAUFENTHALT)
+    assert_equal Reservation::KURZAUFENTHALT, r.read_attribute(:type_of_reservation)
+    assert_equal Reservation::FERIENAUFENTHALT, r.type_of_reservation
+  end
+
   test "Reservations should be ordered by Start date" do
     r1 = FactoryBot.create(:kurzaufenthalt_for_testuser, start: DateTime.new(2010, 6, 5, 12), finish: DateTime.new(2010, 6, 6, 12))
     r2 = FactoryBot.create(:kurzaufenthalt_for_testuser, start: DateTime.new(2010, 6, 1, 12), finish: DateTime.new(2010, 6, 3, 11))
