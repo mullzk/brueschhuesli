@@ -19,10 +19,36 @@ class LoginTest < ApplicationSystemTestCase
     User.create!(name: "Resident", email: "resident@example.com", password: "correct-horse")
 
     visit login_login_path
+    assert_no_link "Abmelden"
     fill_in "name", with: "Resident"
     fill_in "password", with: "correct-horse"
     click_button "Login"
 
-    assert_no_text "Ungültige Benutzer/Passwort Kombination"
+    assert_link "Abmelden"
+  end
+
+  test "login by email address also works" do
+    User.create!(name: "Resident", email: "resident@example.com", password: "correct-horse")
+
+    visit login_login_path
+    fill_in "name", with: "resident@example.com"
+    fill_in "password", with: "correct-horse"
+    click_button "Login"
+
+    assert_link "Abmelden"
+  end
+
+  test "logout returns to the login page" do
+    User.create!(name: "Resident", email: "resident@example.com", password: "correct-horse")
+
+    visit login_login_path
+    fill_in "name", with: "Resident"
+    fill_in "password", with: "correct-horse"
+    click_button "Login"
+    assert_link "Abmelden"
+
+    click_link "Abmelden"
+    assert_text "Bitte einloggen"
+    assert_no_link "Abmelden"
   end
 end
