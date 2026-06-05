@@ -13,6 +13,11 @@
 #  created_at             :datetime         not null
 #  updated_at             :datetime         not null
 #
+# Indexes
+#
+#  index_users_on_email  (email) UNIQUE
+#  index_users_on_name   (name) UNIQUE
+#
 
 class User < ApplicationRecord
   has_many :reservations
@@ -20,6 +25,7 @@ class User < ApplicationRecord
   attr_accessor :password_confirmation
   validates_confirmation_of :password
   validates_uniqueness_of :name
+  validates_uniqueness_of :email
 
   validates_presence_of :name, :email, :hashed_password, :salt
 

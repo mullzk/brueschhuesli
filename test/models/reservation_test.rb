@@ -4,10 +4,10 @@
 #
 #  id                  :bigint           not null, primary key
 #  comment             :text(65535)
-#  finish              :datetime
+#  finish              :datetime         not null
 #  is_exclusive        :boolean
-#  start               :datetime
-#  type_of_reservation :string(255)
+#  start               :datetime         not null
+#  type_of_reservation :string(255)      not null
 #  created_at          :datetime         not null
 #  updated_at          :datetime         not null
 #  user_id             :bigint
@@ -25,7 +25,7 @@ require "test_helper"
 
 class ReservationTest < ActiveSupport::TestCase
   setup do
-    @user = FactoryBot.create(:user, name: "Hans", email: "test@mail.com", password: "test1234")
+    @user = FactoryBot.create(:user, name: "Hans", password: "test1234")
   end
 
   test "Keine negativen oder überlangen Reservationen" do
@@ -114,7 +114,7 @@ class ReservationTest < ActiveSupport::TestCase
   end
 
   test "long KURZAUFENTHALT should be interpreted as FERIENAUFENTHALT" do
-    ruth = FactoryBot.create(:user, name: "Ruth", email: "test@mail.com", password: "test1234", miteigentuemer: true)
+    ruth = FactoryBot.create(:user, name: "Ruth", password: "test1234", miteigentuemer: true)
     r1 = Reservation.new(start: DateTime.new(2010, 6, 1, 12), finish: DateTime.new(2010, 6, 8, 11), user: ruth)
     r2 = Reservation.new(start: DateTime.new(2010, 6, 1, 12), finish: DateTime.new(2010, 6, 8, 12), user: ruth)
     r3 = Reservation.new(start: DateTime.new(2010, 6, 1, 12), finish: DateTime.new(2010, 6, 8, 13), user: ruth)
@@ -191,9 +191,9 @@ class ReservationTest < ActiveSupport::TestCase
 
 
   test "reservations beginning on timeslot for accounting" do
-    stefan = FactoryBot.create(:user, name: "Stefan", email: "test@mail.com", password: "test1234")
-    kaspar = FactoryBot.create(:user, name: "Kaspar", email: "test@mail.com", password: "test1234")
-    ruth   = FactoryBot.create(:user, name: "Ruth", email: "test@mail.com", password: "test1234")
+    stefan = FactoryBot.create(:user, name: "Stefan", password: "test1234")
+    kaspar = FactoryBot.create(:user, name: "Kaspar", password: "test1234")
+    ruth   = FactoryBot.create(:user, name: "Ruth", password: "test1234")
 
     res_kaspar1 = Reservation.create(start: DateTime.new(2010, 2, 1, 16), finish: DateTime.new(2010, 2, 1, 18), user: kaspar)
     res_ruth1   = Reservation.create(start: DateTime.new(2010, 2, 3, 8, 15), finish: DateTime.new(2010, 2, 3, 10), user: ruth)
@@ -275,8 +275,8 @@ class ReservationTest < ActiveSupport::TestCase
 
 
   test "Tariffing-System" do
-    stefan = FactoryBot.create(:user, name: "Stefan", email: "test@mail.com", password: "test1234")
-    ruth   = FactoryBot.create(:user, name: "Ruth", email: "test@mail.com", password: "test1234", miteigentuemer: true)
+    stefan = FactoryBot.create(:user, name: "Stefan", password: "test1234")
+    ruth   = FactoryBot.create(:user, name: "Ruth", password: "test1234", miteigentuemer: true)
 
 
     r = Reservation.new(start: DateTime.new(2010, 6, 1, 14), finish: DateTime.new(2010, 6, 3, 15))

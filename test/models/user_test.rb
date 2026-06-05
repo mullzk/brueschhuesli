@@ -13,6 +13,11 @@
 #  created_at             :datetime         not null
 #  updated_at             :datetime         not null
 #
+# Indexes
+#
+#  index_users_on_email  (email) UNIQUE
+#  index_users_on_name   (name) UNIQUE
+#
 
 require "test_helper"
 
@@ -60,6 +65,13 @@ class UserTest < ActiveSupport::TestCase
     duplicate = build(:user, name: "Hans")
     assert_not duplicate.valid?
     assert duplicate.errors[:name].present?
+  end
+
+  test "email must be unique" do
+    create(:user, email: "shared@example.com")
+    duplicate = build(:user, email: "shared@example.com")
+    assert_not duplicate.valid?
+    assert duplicate.errors[:email].present?
   end
 
   test "name, email, hashed_password and salt are required" do

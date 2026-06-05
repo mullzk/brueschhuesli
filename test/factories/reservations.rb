@@ -4,10 +4,10 @@
 #
 #  id                  :bigint           not null, primary key
 #  comment             :text(65535)
-#  finish              :datetime
+#  finish              :datetime         not null
 #  is_exclusive        :boolean
-#  start               :datetime
-#  type_of_reservation :string(255)
+#  start               :datetime         not null
+#  type_of_reservation :string(255)      not null
 #  created_at          :datetime         not null
 #  updated_at          :datetime         not null
 #  user_id             :bigint
