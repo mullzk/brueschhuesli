@@ -85,6 +85,16 @@ class LoginControllerTest < ActionDispatch::IntegrationTest
     assert_not User.authenticate("NewName", "NewPassword")
   end
 
+  test "deleting a user with reservations is rejected gracefully" do
+    login_as_user
+    user = FactoryBot.create(:user, name: "Owner", password: "password")
+    FactoryBot.create(:reservation, user: user)
+    assert_no_difference -> { User.count } do
+      post "/login/delete_user?id=#{user.id}"
+    end
+    assert_redirected_to controller: "login", action: "list_users"
+  end
+
   test "list users" do
     get "/login/list_users"
     assert_redirected_to controller: :login, action: :login

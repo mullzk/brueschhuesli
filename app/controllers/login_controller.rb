@@ -65,8 +65,9 @@ class LoginController < ApplicationController
       begin
         user.destroy
         flash[:notice] = "Benutzer #{user.name} gelöscht"
-      rescue Exception => e
-        flash[:notice] = "#{e.message}"
+      rescue ActiveRecord::ActiveRecordError => e
+        Rails.logger.warn("User ##{user.id} could not be deleted: #{e.message}")
+        flash[:notice] = e.message
       end
     end
     redirect_to action: "list_users"

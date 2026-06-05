@@ -91,12 +91,10 @@ class ReservationsController < ApplicationController
   private
 
   def month_and_year_as_time(string)
-    begin
-      date = Date.strptime(string, "%Y-%m")
-    rescue
-      return nil
-    end
-    date
+    Date.strptime(string, "%Y-%m")
+  rescue ArgumentError, TypeError => e
+    Rails.logger.debug("Unparseable month param #{string.inspect}: #{e.message}")
+    nil
   end
 
   def reservation_params
