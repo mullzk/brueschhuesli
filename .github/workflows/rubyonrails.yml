@@ -31,6 +31,46 @@ jobs:
         run: bin/rails db:schema:load
       - name: Run tests
         run: bin/rake
+      - name: Upload coverage report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage
+          path: coverage/
+          if-no-files-found: ignore
+
+  system_test:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-24.04
+    env:
+      RAILS_ENV: test
+      DATABASE_URL: trilogy://root@127.0.0.1/brueschhuesli_test
+    services:
+      mysql:
+        image: mariadb:11.4
+        env:
+          MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: yes
+          MARIADB_DATABASE: brueschhuesli_test
+        ports:
+          - 3306:3306
+        options: --health-cmd="healthcheck.sh --connect --innodb_initialized" --health-interval=10s --health-timeout=5s --health-retries=3
+    steps:
+      - uses: actions/checkout@v6
+      - uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+      # ubuntu-24.04 ships Google Chrome; Selenium Manager fetches the driver.
+      - name: Set up database schema
+        run: bin/rails db:schema:load
+      - name: Run system tests
+        run: bin/rails test:system
+      - name: Upload failure screenshots
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: system-test-screenshots
+          path: tmp/screenshots/
+          if-no-files-found: ignore
 
   lint:
     if: github.event_name == 'pull_request'

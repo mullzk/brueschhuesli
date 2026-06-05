@@ -1,6 +1,4 @@
 class ReservationsController < ApplicationController
-  before_action :authorize
-
   def index
     @listed_month = parse_date_param
 
@@ -30,15 +28,15 @@ class ReservationsController < ApplicationController
     if params[:date]
       day = Date.parse(params[:date])
     else
-      day = Date.today
+      day = Date.current
     end
-    startDateTime = DateTime.new(day.year, day.month, day.day, Time.now.hour)
+    startDateTime = DateTime.new(day.year, day.month, day.day, Time.current.hour)
     finishDateTime = startDateTime+1.day
 
     @reservation = Reservation.new(
       start: startDateTime,
       finish: finishDateTime,
-      user_id: session[:user_id],
+      user_id: Current.user.id,
       type_of_reservation: Reservation::KURZAUFENTHALT,
       is_exclusive: true
     )
@@ -51,7 +49,9 @@ class ReservationsController < ApplicationController
       flash[:notice] = "Reservation wurde gespeichert"
       redirect_to action: "index", date: @reservation.start
     else
-      flash[:notice] = "Reservation konnte nicht gespeichert werden"
+      @users = User.all.sort.map { |user| [ user.name, user.id ] }
+      flash.now[:notice] = "Reservation konnte nicht gespeichert werden"
+      render :new, status: :unprocessable_entity
     end
   end
 
@@ -73,7 +73,7 @@ class ReservationsController < ApplicationController
       redirect_to action: "index", date: @reservation.start
     else
       flash.now[:notice] = "Änderungen konnten nicht gespeichert werden."
-      render action: "edit"
+      render :edit, status: :unprocessable_entity
     end
   end
 
@@ -89,12 +89,10 @@ class ReservationsController < ApplicationController
   private
 
   def month_and_year_as_time(string)
-    begin
-      date = Date.strptime(string, "%Y-%m")
-    rescue
-      return nil
-    end
-    date
+    Date.strptime(string, "%Y-%m")
+  rescue ArgumentError, TypeError => e
+    Rails.logger.debug("Unparseable month param #{string.inspect}: #{e.message}")
+    nil
   end
 
   def reservation_params
@@ -107,22 +105,32 @@ class ReservationsController < ApplicationController
     elsif params[:month]
       month_and_year_as_time(params[:month])
     else
-      Date.today
+      Date.current
     end
   end
 
   def get_calendar_for_month (day_in_month)
-    # Get 4-6 complete weeks in our calendar, meaning als the last days of the previous and the first days of the next months
-    all_days_in_calendar = day_in_month.beginning_of_month.beginning_of_week.upto day_in_month.end_of_month.end_of_week
+    month_start = day_in_month.beginning_of_month
+    month_end = day_in_month.end_of_month
+    reservations = reservations_covering(month_start, month_end)
 
-    # For each day, get the reservations. Days of the pre- or succedding month should be marked.
-    all_days_in_calendar = all_days_in_calendar.collect { |day|
-      reservations = Reservation.find_reservations_on_date(day)
-      { date: day, in_month: day.month.equal?(day_in_month.month), reservations: reservations }
-    }
+    # Blank cells before the 1st and after the last day keep each day under its weekday column.
+    leading = (month_start - month_start.beginning_of_week).to_i
+    trailing = (month_end.end_of_week - month_end).to_i
+    cells = [ nil ] * leading +
+            (month_start..month_end).map { |day| calendar_day(day, reservations) } +
+            [ nil ] * trailing
 
-    # Create 2D-Array of weeks
-    weeks = all_days_in_calendar.in_groups_of(7)
-    { first_of_month: day_in_month.beginning_of_month, name: day_in_month.german_month, weeks: weeks }
+    { first_of_month: month_start, name: I18n.l(month_start, format: :month_year), weeks: cells.in_groups_of(7) }
+  end
+
+  def reservations_covering(first_day, last_day)
+    Reservation.where("start <= ? AND finish > ?", last_day.end_of_day, first_day.beginning_of_day)
+               .includes(:user).order(:start).to_a
+  end
+
+  def calendar_day(day, reservations)
+    on_day = reservations.select { |reservation| reservation.on_day?(day) }.sort_by { |reservation| reservation.begin_on_day(day) }
+    { date: day, reservations: on_day }
   end
 end
