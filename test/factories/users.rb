@@ -16,11 +16,15 @@
 
 FactoryBot.define do
   factory :user do
+    sequence(:name) { |n| "Test-User #{n}" }
+    sequence(:email) { |n| "user#{n}@example.com" }
+    # Drives the password= setter, which populates hashed_password + salt.
+    password { "test1234" }
+
+    # Legacy factory retained verbatim: it sets hashed_password/salt directly
+    # (overriding the parent password=) and is depended on via
+    # :kurzaufenthalt_for_testuser. To be revisited in Phase 1.
     factory :valid_user do
-      sequence :name do |n|
-        "Test-User Nr #{n}"
-      end
-      email { "test@mail.com" }
       salt { "pseudosalt" }
       hashed_password { "pseudo-pw, not valid for login" }
     end

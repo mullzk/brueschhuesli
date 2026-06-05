@@ -70,6 +70,10 @@ group :test do
   # Adds support for Capybara system testing and selenium driver
   gem "capybara", ">= 2.15"
   gem "selenium-webdriver"
+  # Mocking/stubbing for Minitest
+  gem "mocha"
+  # Test coverage reporting
+  gem "simplecov", require: false
 end
 
 gem "minitest", "~> 6.0"

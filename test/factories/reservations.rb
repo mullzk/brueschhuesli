@@ -24,7 +24,13 @@
 FactoryBot.define do
   factory :reservation do
     association :user, factory: :user
+    start { DateTime.new(2019, 2, 1, 14, 0) }
+    finish { DateTime.new(2019, 2, 1, 18, 0) }
+    type_of_reservation { Reservation::KURZAUFENTHALT }
 
+    # Legacy factory retained verbatim: the name says "kurzaufenthalt" but the
+    # stored value is FERIENAUFENTHALT on purpose; reservation_test.rb depends
+    # on this. To be renamed/corrected in Phase 1 under characterization tests.
     factory :kurzaufenthalt_for_testuser do
       association :user, factory: :valid_user
       type_of_reservation { Reservation::FERIENAUFENTHALT }
