@@ -8,21 +8,22 @@
 #  hashed_password        :string(255)
 #  miteigentuemer         :boolean
 #  name                   :string(255)
+#  password_digest        :string(255)
 #  salt                   :string(255)
 #  telefon                :string(255)
 #  created_at             :datetime         not null
 #  updated_at             :datetime         not null
 #
+# Indexes
+#
+#  index_users_on_email  (email) UNIQUE
+#  index_users_on_name   (name) UNIQUE
+#
 
 FactoryBot.define do
   factory :user do
-    factory :valid_user do
-      sequence :name do |n|
-        "Test-User Nr #{n}"
-      end
-      email { "test@mail.com" }
-      salt { "pseudosalt" }
-      hashed_password { "pseudo-pw, not valid for login" }
-    end
+    sequence(:name) { |n| "Test-User #{n}" }
+    sequence(:email) { |n| "user#{n}@example.com" }
+    password { "test1234" }
   end
 end

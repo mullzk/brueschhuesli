@@ -1,6 +1,4 @@
 class AbrechnungController < ApplicationController
-  before_action :authorize
-
   def index
     redirect_to action: "jahresstatistik"
   end
@@ -51,7 +49,7 @@ private
     elsif params[:year]
       Date.new(params[:year].to_i)
     else
-      Date.today
+      Date.current
     end
   end
 end

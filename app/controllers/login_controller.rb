@@ -1,7 +1,7 @@
 class LoginController < ApplicationController
   layout "reservation"
 
-  before_action :authorize, except: :login
+  allow_unauthenticated_access only: :login
 
   def add_user
     @user = User.new(user_params)
@@ -12,19 +12,19 @@ class LoginController < ApplicationController
       flash.now[:notice] = "Benutzer #{@user.name} erstellt"
       redirect_to action: "list_users"
     else
+      @user.password = initial_password
       if request.post?
         flash.now[:notice] = "Benutzer konnte nicht erstellt werden"
+        render :add_user, status: :unprocessable_entity
       end
-      @user.password = initial_password
     end
   end
 
   def login
-    session[:user_id] = nil
     if request.post?
       user = User.authenticate(params[:name], params[:password])
       if user
-        session[:user_id] = user.id
+        start_new_session_for(user)
         if user.has_to_change_password
           flash[:notice] = "Ein neues Passwort muss gesetzt werden"
           redirect_to action: "change_password"
@@ -33,12 +33,13 @@ class LoginController < ApplicationController
         end
       else
         flash.now[:notice] = "Ungültige Benutzer/Passwort Kombination"
+        render :login, status: :unprocessable_entity
       end
     end
   end
 
   def logout
-    session[:user_id] = nil
+    terminate_session
     flash[:notice] = "Logged out"
     redirect_to action: "login"
   end
@@ -53,7 +54,7 @@ class LoginController < ApplicationController
       flash.now[:notice] = "Benutzer-Angaben gespeichert."
       redirect_to action: "list_users"
     else
-      render action: "edit_user"
+      render :edit_user, status: :unprocessable_entity
     end
   end
 
@@ -63,8 +64,9 @@ class LoginController < ApplicationController
       begin
         user.destroy
         flash[:notice] = "Benutzer #{user.name} gelöscht"
-      rescue Exception => e
-        flash[:notice] = "#{e.message}"
+      rescue ActiveRecord::ActiveRecordError => e
+        Rails.logger.warn("User ##{user.id} could not be deleted: #{e.message}")
+        flash[:notice] = e.message
       end
     end
     redirect_to action: "list_users"
@@ -75,18 +77,20 @@ class LoginController < ApplicationController
   end
 
   def change_password
-    @user = User.find_by_id(session[:user_id])
+    @user = Current.user
     if request.post?
-      user = User.authenticate(@user.name, params[:old_password])
-      if user
-        if @user.update(user_params)
-          @user.has_to_change_password = false
-          @user.save
-          flash[:notice] = "Passwort geändert"
-          redirect_to action: "list_users"
-        end
+      unless User.authenticate(@user.name, params[:old_password])
+        flash.now[:notice] = "Altes Passwort ist ungültig"
+        return render :change_password, status: :unprocessable_entity
+      end
+      if @user.update(user_params)
+        @user.has_to_change_password = false
+        @user.save
+        flash[:notice] = "Passwort geändert"
+        redirect_to action: "list_users"
       else
-        flash[:notice] = "Altes Passwort ist ungültig"
+        flash.now[:notice] = "Passwort konnte nicht geändert werden"
+        render :change_password, status: :unprocessable_entity
       end
     end
   end

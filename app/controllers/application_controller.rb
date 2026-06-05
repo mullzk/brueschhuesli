@@ -1,19 +1,11 @@
 class ApplicationController < ActionController::Base
+  # Every authenticated user has full access. Role-based authorization was a
+  # deliberate non-goal: the user base is a small, trusted family. Add roles
+  # here (e.g. restricting user management to Miteigentuemer) if that changes.
+  include Authentication
+
   layout "reservation"
 
   helper :all # include all helpers, all the time
   protect_from_forgery # See ActionController::RequestForgeryProtection for details
-
-  # Scrub sensitive parameters from your log
-  # filter_parameter_logging :password
-
-
-  private
-
-  def authorize
-    unless User.find_by_id(session[:user_id])
-      flash[:notice] = "Please log in"
-      redirect_to controller: "login", action: "login"
-    end
-  end
 end

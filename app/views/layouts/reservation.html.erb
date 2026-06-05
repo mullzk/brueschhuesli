@@ -16,6 +16,7 @@
 	<header class="site-header" data-controller="navbar-toggle">
 		<nav class="site-nav">
 			<a class="site-nav__brand" href="/">Brüschhüsli</a>
+			<% if authenticated? %>
 			<button class="site-nav__toggle" type="button" aria-expanded="false" aria-label="Navigation umschalten" data-action="click->navbar-toggle#toggle">
 				<span class="site-nav__toggle-icon"></span>
 			</button>
@@ -28,6 +29,7 @@
 				<li><%= link_to "Passwort ändern", {:controller => "login", :action => "change_password"}, :class => "site-nav__link" %></li>
 				<li><%= link_to "Abmelden", {:controller => "login", :action => "logout"}, :class => "site-nav__link" %></li>
 			</ul>
+			<% end %>
 		</nav>
 	</header>
 

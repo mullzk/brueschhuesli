@@ -56,14 +56,38 @@ class AbrechnungControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
-  private
+  test "jahresstatistik xls sets the Excel download headers" do
+    login_as_user
+    get "/abrechnung/jahresstatistik.xls?year=#{@reservation.start.year}"
+    assert_response :success
+    assert_equal "application/vnd.ms-excel", response.media_type
+    assert_match(/attachment; filename=/, response.headers["Content-Disposition"])
+  end
 
-  def login_as_user
-    @admin = FactoryBot.build(:user)
-    @admin.name = "admin"
-    @admin.email = "email@mail.com"
-    @admin.password = "password"
-    @admin.save
-    post "/login/login", params: { name: @admin.name, password: @admin.password }
+  test "detailliste shows the classified type, not the stored column" do
+    login_as_user
+    get abrechnung_detailliste_url
+    assert_response :success
+    assert_select "td", text: Reservation::FERIENAUFENTHALT
+    assert_not_includes response.body, Reservation::KURZAUFENTHALT
+  end
+
+  test "benutzer report shows the classified type, not the stored column" do
+    login_as_user
+    get abrechnung_benutzer_url(id: @user.id)
+    assert_response :success
+    assert_select "td", text: Reservation::FERIENAUFENTHALT
+    assert_not_includes response.body, Reservation::KURZAUFENTHALT
+  end
+
+  # Verifies the Date.current injection in extract_year: with no params and time
+  # frozen, jahresstatistik defaults to the current year (shown in the filename).
+  test "jahresstatistik without params uses the current year" do
+    travel_to Time.zone.local(2021, 7, 15) do
+      login_as_user
+      get "/abrechnung/jahresstatistik.xls"
+      assert_response :success
+      assert_match "2021", response.headers["Content-Disposition"]
+    end
   end
 end

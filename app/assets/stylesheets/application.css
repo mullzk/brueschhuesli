@@ -303,6 +303,7 @@ div.reservationform div.datebox_right {
 	max-width: 800px;
 	table-layout: fixed;
 	border-collapse: collapse;
+	border: 1px solid black;
 }
 
 #reservationskalender tr {
@@ -310,12 +311,9 @@ div.reservationform div.datebox_right {
 	height: 3.5em;
 }
 
-#reservationskalender td.inactive {
-	color: silver;
-}
-
-#reservationskalender td.inactive p {
-	color: var(--almost-black);
+#reservationskalender thead tr {
+	height: unset;
+	background-color: #d8d8d8;
 }
 
 #reservationskalender td.occupied {
@@ -332,6 +330,10 @@ div.reservationform div.datebox_right {
 	text-align: center;
 	border: 1px black solid;
 	padding: 0;
+}
+
+#reservationskalender td.empty {
+background-color: #d8d8d8;
 }
 
 #reservationskalender th p,
@@ -368,4 +370,11 @@ div.reservationform div.datebox_right {
 
 #reservationskalender .month-navigation a {
 	color: black;
+}
+
+/* ---------- Login ---------- */
+
+.welcomepicture {
+	max-width: 100%;
+	height: auto;
 }

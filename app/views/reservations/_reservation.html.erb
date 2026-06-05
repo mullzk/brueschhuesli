@@ -7,7 +7,7 @@
 		<% else %>
 			<%= reservation.start.strftime("%d.%m., %H:%M")%> bis <%= reservation.finish.strftime("%d.%m., %H:%M")%></div>
 		<% end %>
-	<div><span>Wie:</span> <%= reservation.type_of_reservation %>, <%= reservation.is_exclusive ? "exklusiv" : "offen" %></div>
+	<div><span>Wie:</span> <%= reservation.classified_type %>, <%= reservation.is_exclusive ? "exklusiv" : "offen" %></div>
 	<% unless reservation.comment.empty? %>
 		<div><span>Kommentar:</span> <%= reservation.comment %></div>
 	<% end %>

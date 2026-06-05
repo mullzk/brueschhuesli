@@ -1,7 +1,7 @@
 <div class="page-row">
 	 <div class="month-navigation">
-	<p><%= link_to ">" + (@months.first[:first_of_month] - 1.month).german_month, {controller:"reservations", action:"index", date:(@months.first[:first_of_month] - 1.month)} -%></p>
-	<p><%= link_to ">"+(@months.first[:first_of_month] + 1.month).german_month, {controller:"reservations", action:"index", date:(@months.first[:first_of_month] + 1.month)} -%></p>
+	<p><%= link_to ">" + l(@months.first[:first_of_month] - 1.month, format: :month_year), {controller:"reservations", action:"index", date:(@months.first[:first_of_month] - 1.month)} -%></p>
+	<p><%= link_to ">"+ l(@months.first[:first_of_month] + 1.month, format: :month_year), {controller:"reservations", action:"index", date:(@months.first[:first_of_month] + 1.month)} -%></p>
 	</div>
 </div>
 

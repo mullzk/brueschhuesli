@@ -84,6 +84,7 @@ GEM
       activesupport (>= 6.0.0)
     ast (2.4.3)
     base64 (0.3.0)
+    bcrypt (3.1.22)
     bcrypt_pbkdf (1.1.2)
     bcrypt_pbkdf (1.1.2-arm64-darwin)
     bcrypt_pbkdf (1.1.2-x86_64-darwin)
@@ -122,6 +123,7 @@ GEM
     connection_pool (3.0.2)
     crass (1.0.6)
     date (3.5.1)
+    docile (1.4.1)
     dotenv (3.2.0)
     dotenv-rails (3.2.0)
       dotenv (= 3.2.0)
@@ -180,6 +182,8 @@ GEM
     minitest (6.0.6)
       drb (~> 2.0)
       prism (~> 1.5)
+    mocha (3.1.0)
+      ruby2_keywords (>= 0.0.5)
     msgpack (1.8.1)
     net-imap (0.6.4)
       date
@@ -312,6 +316,7 @@ GEM
       rubocop-performance (>= 1.24)
       rubocop-rails (>= 2.30)
     ruby-progressbar (1.13.0)
+    ruby2_keywords (0.0.5)
     rubyzip (3.3.1)
     securerandom (0.4.1)
     selenium-webdriver (4.44.0)
@@ -320,6 +325,12 @@ GEM
       rexml (~> 3.2, >= 3.2.5)
       rubyzip (>= 1.2.2, < 4.0)
       websocket (~> 1.0)
+    simplecov (0.22.0)
+      docile (~> 1.1)
+      simplecov-html (~> 0.11)
+      simplecov_json_formatter (~> 0.1)
+    simplecov-html (0.13.2)
+    simplecov_json_formatter (0.1.4)
     spring (4.6.0)
     sshkit (1.25.0)
       base64
@@ -374,6 +385,7 @@ PLATFORMS
 
 DEPENDENCIES
   annotaterb
+  bcrypt (~> 3.1.7)
   bcrypt_pbkdf (~> 1.0)
   bootsnap (>= 1.1.0)
   brakeman (~> 8.0)
@@ -389,11 +401,13 @@ DEPENDENCIES
   importmap-rails
   listen
   minitest (~> 6.0)
+  mocha
   propshaft
   puma (>= 6.0)
   rails (~> 8.0)
   rubocop-rails-omakase
   selenium-webdriver
+  simplecov
   spring
   stimulus-rails
   trilogy

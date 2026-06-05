@@ -4,10 +4,10 @@
 #
 #  id                  :bigint           not null, primary key
 #  comment             :text(65535)
-#  finish              :datetime
+#  finish              :datetime         not null
 #  is_exclusive        :boolean
-#  start               :datetime
-#  type_of_reservation :string(255)
+#  start               :datetime         not null
+#  type_of_reservation :string(255)      not null
 #  created_at          :datetime         not null
 #  updated_at          :datetime         not null
 #  user_id             :bigint
@@ -25,7 +25,7 @@ require "test_helper"
 
 class ReservationTest < ActiveSupport::TestCase
   setup do
-    @user = FactoryBot.create(:user, name: "Hans", email: "test@mail.com", password: "test1234")
+    @user = FactoryBot.create(:user, name: "Hans", password: "test1234")
   end
 
   test "Keine negativen oder überlangen Reservationen" do
@@ -114,7 +114,7 @@ class ReservationTest < ActiveSupport::TestCase
   end
 
   test "long KURZAUFENTHALT should be interpreted as FERIENAUFENTHALT" do
-    ruth = FactoryBot.create(:user, name: "Ruth", email: "test@mail.com", password: "test1234", miteigentuemer: true)
+    ruth = FactoryBot.create(:user, name: "Ruth", password: "test1234", miteigentuemer: true)
     r1 = Reservation.new(start: DateTime.new(2010, 6, 1, 12), finish: DateTime.new(2010, 6, 8, 11), user: ruth)
     r2 = Reservation.new(start: DateTime.new(2010, 6, 1, 12), finish: DateTime.new(2010, 6, 8, 12), user: ruth)
     r3 = Reservation.new(start: DateTime.new(2010, 6, 1, 12), finish: DateTime.new(2010, 6, 8, 13), user: ruth)
@@ -126,17 +126,23 @@ class ReservationTest < ActiveSupport::TestCase
     assert_not r3.valid? # Reservation is too long
 
     r1 = Reservation.new(start: DateTime.new(2010, 6, 1, 12), finish: DateTime.new(2010, 6, 8, 11), type_of_reservation: Reservation::KURZAUFENTHALT)
-    assert_equal r1.type_of_reservation, Reservation::FERIENAUFENTHALT
+    assert_equal r1.classified_type, Reservation::FERIENAUFENTHALT
     r1 = Reservation.new(start: DateTime.new(2010, 6, 1, 12), finish: DateTime.new(2010, 6, 3, 12), type_of_reservation: Reservation::KURZAUFENTHALT)
-    assert_equal r1.type_of_reservation, Reservation::KURZAUFENTHALT
+    assert_equal r1.classified_type, Reservation::KURZAUFENTHALT
     r1 = Reservation.new(start: DateTime.new(2010, 6, 1, 12), finish: DateTime.new(2010, 6, 3, 13), type_of_reservation: Reservation::KURZAUFENTHALT)
-    assert_equal r1.type_of_reservation, Reservation::FERIENAUFENTHALT
+    assert_equal r1.classified_type, Reservation::FERIENAUFENTHALT
     r1 = Reservation.new(start: DateTime.new(2010, 6, 1, 12), finish: DateTime.new(2010, 6, 2, 11), type_of_reservation: Reservation::FERIENAUFENTHALT)
-    assert_equal r1.type_of_reservation, Reservation::KURZAUFENTHALT
+    assert_equal r1.classified_type, Reservation::KURZAUFENTHALT
     r1 = Reservation.new(start: DateTime.new(2010, 6, 1, 12), finish: DateTime.new(2010, 6, 3, 12), type_of_reservation: Reservation::FERIENAUFENTHALT)
-    assert_equal r1.type_of_reservation, Reservation::FERIENAUFENTHALT
+    assert_equal r1.classified_type, Reservation::FERIENAUFENTHALT
     r1 = Reservation.new(start: DateTime.new(2010, 6, 1, 12), finish: DateTime.new(2010, 6, 3, 11), type_of_reservation: Reservation::FERIENAUFENTHALT)
-    assert_equal r1.type_of_reservation, Reservation::KURZAUFENTHALT
+    assert_equal r1.classified_type, Reservation::KURZAUFENTHALT
+  end
+
+  test "classified_type can diverge from the stored column" do
+    r = Reservation.new(start: DateTime.new(2010, 6, 1, 12), finish: DateTime.new(2010, 6, 8, 11), type_of_reservation: Reservation::KURZAUFENTHALT)
+    assert_equal Reservation::KURZAUFENTHALT, r.type_of_reservation
+    assert_equal Reservation::FERIENAUFENTHALT, r.classified_type
   end
 
   test "Reservations should be ordered by Start date" do
@@ -149,6 +155,15 @@ class ReservationTest < ActiveSupport::TestCase
     assert_equal reservations[1], r4
     assert_equal reservations[2], r3
     assert_equal reservations.last, r1
+  end
+
+  test "on_day? covers every day a reservation overlaps" do
+    r = Reservation.new(start: DateTime.new(2019, 2, 1, 14), finish: DateTime.new(2019, 2, 3, 18))
+    assert_not r.on_day?(Date.new(2019, 1, 31))
+    assert     r.on_day?(Date.new(2019, 2, 1))
+    assert     r.on_day?(Date.new(2019, 2, 2))
+    assert     r.on_day?(Date.new(2019, 2, 3))
+    assert_not r.on_day?(Date.new(2019, 2, 4))
   end
 
   test "calculare timespans on one particular day" do
@@ -176,9 +191,9 @@ class ReservationTest < ActiveSupport::TestCase
 
 
   test "reservations beginning on timeslot for accounting" do
-    stefan = FactoryBot.create(:user, name: "Stefan", email: "test@mail.com", password: "test1234")
-    kaspar = FactoryBot.create(:user, name: "Kaspar", email: "test@mail.com", password: "test1234")
-    ruth   = FactoryBot.create(:user, name: "Ruth", email: "test@mail.com", password: "test1234")
+    stefan = FactoryBot.create(:user, name: "Stefan", password: "test1234")
+    kaspar = FactoryBot.create(:user, name: "Kaspar", password: "test1234")
+    ruth   = FactoryBot.create(:user, name: "Ruth", password: "test1234")
 
     res_kaspar1 = Reservation.create(start: DateTime.new(2010, 2, 1, 16), finish: DateTime.new(2010, 2, 1, 18), user: kaspar)
     res_ruth1   = Reservation.create(start: DateTime.new(2010, 2, 3, 8, 15), finish: DateTime.new(2010, 2, 3, 10), user: ruth)
@@ -252,7 +267,7 @@ class ReservationTest < ActiveSupport::TestCase
     assert_equal r.duration_in_8_hour_blocks, 3
 
     r = Reservation.new(start: DateTime.new(2010, 6, 1, 0), finish: DateTime.new(2010, 6, 1, 24))
-    assert_equal r.duration_in_days, 2 # see test above
+    assert_equal r.duration_in_days, 1 # Phase 2: a midnight finish no longer counts the next day
     assert_equal r.duration_rounded_to_hours, 24.hours
     assert_equal r.duration_in_8_hour_blocks, 3
   end
@@ -260,8 +275,8 @@ class ReservationTest < ActiveSupport::TestCase
 
 
   test "Tariffing-System" do
-    stefan = FactoryBot.create(:user, name: "Stefan", email: "test@mail.com", password: "test1234")
-    ruth   = FactoryBot.create(:user, name: "Ruth", email: "test@mail.com", password: "test1234", miteigentuemer: true)
+    stefan = FactoryBot.create(:user, name: "Stefan", password: "test1234")
+    ruth   = FactoryBot.create(:user, name: "Ruth", password: "test1234", miteigentuemer: true)
 
 
     r = Reservation.new(start: DateTime.new(2010, 6, 1, 14), finish: DateTime.new(2010, 6, 3, 15))
@@ -302,5 +317,27 @@ class ReservationTest < ActiveSupport::TestCase
     assert_equal r.billed_fee, rate_event   ##### Is this a bug? GROSSANLASS should be maxed to 32 hours, this one is 48 hours ! Who cares
     r.type_of_reservation = Reservation::EXTERNE_NUTZUNG
     assert_equal r.billed_fee, 3*rate_daily
+  end
+
+  # EXTERNE_NUTZUNG is billed per calendar day touched: a stay spanning three
+  # calendar dates bills 3 x 100 CHF. A finish exactly at midnight does not
+  # count the following day.
+  test "EXTERNE_NUTZUNG bills per calendar day" do
+    r = Reservation.new(
+      start: DateTime.new(2010, 6, 1, 14), finish: DateTime.new(2010, 6, 3, 14),
+      user: @user, is_exclusive: true, type_of_reservation: Reservation::EXTERNE_NUTZUNG
+    )
+    assert_equal 3, r.duration_in_days
+    assert_equal 300, r.billed_fee
+  end
+
+  # Reversed Date arguments must not crash (Rails 8 removed Date#to_s(:db)) and
+  # must return the same set as ascending arguments.
+  test "find_reservations_beginning_in_timeslot is argument-order independent" do
+    r = Reservation.create!(user: @user, start: DateTime.new(2010, 2, 4, 8), finish: DateTime.new(2010, 2, 4, 10), type_of_reservation: Reservation::KURZAUFENTHALT)
+    ascending = Reservation.find_reservations_beginning_in_timeslot(Date.new(2010, 2, 3), Date.new(2010, 2, 7))
+    reversed  = Reservation.find_reservations_beginning_in_timeslot(Date.new(2010, 2, 7), Date.new(2010, 2, 3))
+    assert_includes ascending, r
+    assert_includes reversed, r
   end
 end
