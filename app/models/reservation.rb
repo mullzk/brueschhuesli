@@ -103,23 +103,25 @@ class Reservation < ApplicationRecord
     end
   end
 
+  def self.normalize_interval(time_a, time_b)
+    lower, upper = time_a > time_b ? [ time_b, time_a ] : [ time_a, time_b ]
+    [ lower_bound(lower), upper_bound(upper) ]
+  end
+
+  def self.lower_bound(date_or_time)
+    date_or_time.to_formatted_s(:db)
+  end
+
+  def self.upper_bound(date_or_time)
+    # A Date's upper bound is the next day. DateTime already is a precise instant.
+    date_or_time += 1.day unless date_or_time.respond_to?(:hour)
+    date_or_time.to_formatted_s(:db)
+  end
+  private_class_method :normalize_interval, :lower_bound, :upper_bound
+
   # Returns only reservations with beginning in a timeslot, e.g. Reservations that span multiple months are reported only in the first month. This makes calculating the tariffs much easier
   def self.find_reservations_beginning_in_timeslot(time_a, time_b)
-    if time_a > time_b
-      if time_a.respond_to?(:hour)
-        interval_finish = time_a.to_formatted_s(:db)
-      else # End-time is a day, so we look for reservations including this day
-        interval_finish = (time_a+(1.day)).to_formatted_s(:db)
-      end
-      interval_start = time_b.to_formatted_s(:db)
-    else
-      interval_start = time_a.to_formatted_s(:db)
-      if time_b.respond_to?(:hour)
-        interval_finish = time_b.to_formatted_s(:db)
-      else # End-time is a day, so we look for reservations including this day
-        interval_finish = (time_b+(1.day)).to_formatted_s(:db)
-      end
-    end
+    interval_start, interval_finish = normalize_interval(time_a, time_b)
     self.where("start >= ? AND start <= ?", interval_start, interval_finish)
   end
 
@@ -148,21 +150,7 @@ class Reservation < ApplicationRecord
   end
 
   def self.find_reservations_in_timeslot(time_a, time_b)
-    if time_a > time_b
-      if time_a.respond_to?(:hour)
-        interval_finish = time_a.to_formatted_s(:db)
-      else # End-time is a day, so we look for reservations including this day
-        interval_finish = (time_a+(1.day)).to_formatted_s(:db)
-      end
-      interval_start = time_b.to_formatted_s(:db)
-    else
-      interval_start = time_a.to_formatted_s(:db)
-      if time_b.respond_to?(:hour)
-        interval_finish = time_b.to_formatted_s(:db)
-      else # End-time is a day, so we look for reservations including this day
-        interval_finish = (time_b+(1.day)).to_formatted_s(:db)
-      end
-    end
+    interval_start, interval_finish = normalize_interval(time_a, time_b)
     self.where("(start <= ? AND finish > ?) OR (? <= start AND ? > start)", interval_start, interval_start, interval_start, interval_finish).order(:start)
   end
 
