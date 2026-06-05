@@ -51,7 +51,9 @@ class ReservationsController < ApplicationController
       flash[:notice] = "Reservation wurde gespeichert"
       redirect_to action: "index", date: @reservation.start
     else
-      flash[:notice] = "Reservation konnte nicht gespeichert werden"
+      @users = User.all.sort.map { |user| [ user.name, user.id ] }
+      flash.now[:notice] = "Reservation konnte nicht gespeichert werden"
+      render :new, status: :unprocessable_entity
     end
   end
 
@@ -73,7 +75,7 @@ class ReservationsController < ApplicationController
       redirect_to action: "index", date: @reservation.start
     else
       flash.now[:notice] = "Änderungen konnten nicht gespeichert werden."
-      render action: "edit"
+      render :edit, status: :unprocessable_entity
     end
   end
 

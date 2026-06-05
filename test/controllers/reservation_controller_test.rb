@@ -62,9 +62,8 @@ class ReservationControllerTest < ActionDispatch::IntegrationTest
     assert_response :redirect
   end
 
-  # Current behaviour: an invalid create neither redirects nor renders an
-  # explicit template. There is no create view, so Rails falls back to
-  # head :no_content (204). Characterized as-is; revisit in a later phase.
+  # An invalid create re-renders the new form with 422 Unprocessable Entity so
+  # Turbo replaces the page and shows the error (Turbo ignores 200/204).
   test "create with invalid params does not save" do
     user = login_as_user
     assert_no_difference -> { Reservation.count } do
@@ -72,7 +71,7 @@ class ReservationControllerTest < ActionDispatch::IntegrationTest
         reservation: valid_params(user, finish: DateTime.new(2019, 3, 1, 10))
       }
     end
-    assert_response :no_content
+    assert_response :unprocessable_entity
     assert_equal "Reservation konnte nicht gespeichert werden", flash[:notice]
   end
 
@@ -102,7 +101,7 @@ class ReservationControllerTest < ActionDispatch::IntegrationTest
     patch reservation_path(reservation), params: {
       reservation: { finish: DateTime.new(2019, 3, 1, 10) }
     }
-    assert_response :success
+    assert_response :unprocessable_entity
     assert_equal "Änderungen konnten nicht gespeichert werden.", flash[:notice]
   end
 
