@@ -114,16 +114,4 @@ class LoginControllerTest < ActionDispatch::IntegrationTest
     assert_not User.authenticate(user.name, "123")
     assert User.authenticate(user.name, "456")
   end
-
-
-  private
-
-  def login_as_user
-    @admin = FactoryBot.build(:user)
-    @admin.name = "user"
-    @admin.email = "email@mail.com"
-    @admin.password = "password"
-    @admin.save
-    post "/login/login", params: { name: @admin.name, password: @admin.password }
-  end
 end

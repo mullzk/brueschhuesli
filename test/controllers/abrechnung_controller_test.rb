@@ -56,14 +56,14 @@ class AbrechnungControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
-  private
-
-  def login_as_user
-    @admin = FactoryBot.build(:user)
-    @admin.name = "admin"
-    @admin.email = "email@mail.com"
-    @admin.password = "password"
-    @admin.save
-    post "/login/login", params: { name: @admin.name, password: @admin.password }
+  # Verifies the Date.current injection in extract_year: with no params and time
+  # frozen, jahresstatistik defaults to the current year (shown in the filename).
+  test "jahresstatistik without params uses the current year" do
+    travel_to Time.zone.local(2021, 7, 15) do
+      login_as_user
+      get "/abrechnung/jahresstatistik.xls"
+      assert_response :success
+      assert_match "2021", response.headers["Content-Disposition"]
+    end
   end
 end

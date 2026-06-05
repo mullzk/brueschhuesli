@@ -52,4 +52,67 @@ class UserTest < ActiveSupport::TestCase
     user.save
     assert_not User.authenticate("Stefan", "")
   end
+
+  # --- validations -----------------------------------------------------------
+
+  test "name must be unique" do
+    create(:user, name: "Hans")
+    duplicate = build(:user, name: "Hans")
+    assert_not duplicate.valid?
+    assert duplicate.errors[:name].present?
+  end
+
+  test "name, email, hashed_password and salt are required" do
+    user = User.new
+    assert_not user.valid?
+    assert user.errors[:name].present?
+    assert user.errors[:email].present?
+    assert user.errors[:hashed_password].present?
+    assert user.errors[:salt].present?
+  end
+
+  # --- password= -------------------------------------------------------------
+
+  test "blank password is ignored and leaves no hash" do
+    user = User.new(name: "Blank", email: "blank@example.com")
+    user.password = ""
+    assert_nil user.hashed_password
+    assert_nil user.salt
+    assert_not user.valid? # hashed_password/salt presence not satisfied
+  end
+
+  test "nil password is ignored and leaves no hash" do
+    user = User.new(name: "Nil", email: "nil@example.com")
+    user.password = nil
+    assert_nil user.hashed_password
+    assert_nil user.salt
+  end
+
+  test "non-blank password populates hash and salt" do
+    user = User.new(name: "Set", email: "set@example.com")
+    user.password = "secret"
+    assert user.hashed_password.present?
+    assert user.salt.present?
+  end
+
+  test "password confirmation must match when present" do
+    user = build(:user)
+    user.password = "secret"
+    user.password_confirmation = "different"
+    assert_not user.valid?
+    assert user.errors[:password_confirmation].present?
+
+    user.password_confirmation = "secret"
+    assert user.valid?
+  end
+
+  # --- dead code (to be removed in Phase 2) ----------------------------------
+
+  # User#validate is not registered as a validation callback, so AR never calls
+  # it (save/valid? are unaffected). It also shadows ActiveModel's validate
+  # alias of valid? and uses the long-removed errors.add_to_base, so calling it
+  # directly on a record without a hash raises. Frozen here as current state.
+  test "User#validate is dead code and raises when called directly" do
+    assert_raises(NoMethodError) { User.new.validate }
+  end
 end

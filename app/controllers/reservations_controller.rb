@@ -30,9 +30,9 @@ class ReservationsController < ApplicationController
     if params[:date]
       day = Date.parse(params[:date])
     else
-      day = Date.today
+      day = Date.current
     end
-    startDateTime = DateTime.new(day.year, day.month, day.day, Time.now.hour)
+    startDateTime = DateTime.new(day.year, day.month, day.day, Time.current.hour)
     finishDateTime = startDateTime+1.day
 
     @reservation = Reservation.new(
@@ -107,7 +107,7 @@ class ReservationsController < ApplicationController
     elsif params[:month]
       month_and_year_as_time(params[:month])
     else
-      Date.today
+      Date.current
     end
   end
 
