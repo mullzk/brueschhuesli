@@ -1,6 +1,4 @@
 class ReservationsController < ApplicationController
-  before_action :authorize
-
   def index
     @listed_month = parse_date_param
 
@@ -38,7 +36,7 @@ class ReservationsController < ApplicationController
     @reservation = Reservation.new(
       start: startDateTime,
       finish: finishDateTime,
-      user_id: session[:user_id],
+      user_id: Current.user.id,
       type_of_reservation: Reservation::KURZAUFENTHALT,
       is_exclusive: true
     )

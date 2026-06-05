@@ -1,7 +1,7 @@
 class LoginController < ApplicationController
   layout "reservation"
 
-  before_action :authorize, except: :login
+  allow_unauthenticated_access only: :login
 
   def add_user
     @user = User.new(user_params)
@@ -21,11 +21,10 @@ class LoginController < ApplicationController
   end
 
   def login
-    session[:user_id] = nil
     if request.post?
       user = User.authenticate(params[:name], params[:password])
       if user
-        session[:user_id] = user.id
+        start_new_session_for(user)
         if user.has_to_change_password
           flash[:notice] = "Ein neues Passwort muss gesetzt werden"
           redirect_to action: "change_password"
@@ -40,7 +39,7 @@ class LoginController < ApplicationController
   end
 
   def logout
-    session[:user_id] = nil
+    terminate_session
     flash[:notice] = "Logged out"
     redirect_to action: "login"
   end
@@ -78,7 +77,7 @@ class LoginController < ApplicationController
   end
 
   def change_password
-    @user = User.find_by_id(session[:user_id])
+    @user = Current.user
     if request.post?
       unless User.authenticate(@user.name, params[:old_password])
         flash.now[:notice] = "Altes Passwort ist ungültig"

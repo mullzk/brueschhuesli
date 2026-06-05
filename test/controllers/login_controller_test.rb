@@ -39,6 +39,13 @@ class LoginControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to controller: :login, action: :login
   end
 
+  test "an expired session no longer authenticates" do
+    user = login_as_user
+    user.sessions.update_all(created_at: (Session::MAX_AGE + 1.day).ago)
+    get "/login/list_users"
+    assert_redirected_to controller: :login, action: :login
+  end
+
 
   test "add user and then log in with it" do
     login_as_user

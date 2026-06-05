@@ -1,15 +1,8 @@
 class ApplicationController < ActionController::Base
+  include Authentication
+
   layout "reservation"
 
   helper :all # include all helpers, all the time
   protect_from_forgery # See ActionController::RequestForgeryProtection for details
-
-  private
-
-  def authorize
-    unless User.find_by_id(session[:user_id])
-      flash[:notice] = "Please log in"
-      redirect_to controller: "login", action: "login"
-    end
-  end
 end
