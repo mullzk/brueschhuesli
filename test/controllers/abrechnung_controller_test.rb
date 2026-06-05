@@ -56,6 +56,14 @@ class AbrechnungControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
+  test "jahresstatistik xls sets the Excel download headers" do
+    login_as_user
+    get "/abrechnung/jahresstatistik.xls?year=#{@reservation.start.year}"
+    assert_response :success
+    assert_equal "application/vnd.ms-excel", response.media_type
+    assert_match(/attachment; filename=/, response.headers["Content-Disposition"])
+  end
+
   test "detailliste shows the classified type, not the stored column" do
     login_as_user
     get abrechnung_detailliste_url
