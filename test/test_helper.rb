@@ -13,9 +13,6 @@ require "rails/test_help"
 require "mocha/minitest"
 
 class ActiveSupport::TestCase
-  # Setup all fixtures in test/fixtures/*.yml for all tests in alphabetical order.
-  fixtures :all
-
   # Use FactoryBot's short syntax (create/build/...) without the FactoryBot prefix.
   include FactoryBot::Syntax::Methods
 
