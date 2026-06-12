@@ -146,10 +146,10 @@ class ReservationTest < ActiveSupport::TestCase
   end
 
   test "Reservations should be ordered by Start date" do
-    r1 = FactoryBot.create(:kurzaufenthalt_for_testuser, start: DateTime.new(2010, 6, 5, 12), finish: DateTime.new(2010, 6, 6, 12))
-    r2 = FactoryBot.create(:kurzaufenthalt_for_testuser, start: DateTime.new(2010, 6, 1, 12), finish: DateTime.new(2010, 6, 3, 11))
-    r3 = FactoryBot.create(:kurzaufenthalt_for_testuser, start: DateTime.new(2010, 6, 3, 19), finish: DateTime.new(2010, 6, 4, 20))
-    r4 = FactoryBot.create(:kurzaufenthalt_for_testuser, start: DateTime.new(2010, 6, 3, 12), finish: DateTime.new(2010, 6, 3, 18))
+    r1 = FactoryBot.create(:reservation, start: DateTime.new(2010, 6, 5, 12), finish: DateTime.new(2010, 6, 6, 12))
+    r2 = FactoryBot.create(:reservation, start: DateTime.new(2010, 6, 1, 12), finish: DateTime.new(2010, 6, 3, 11))
+    r3 = FactoryBot.create(:reservation, start: DateTime.new(2010, 6, 3, 19), finish: DateTime.new(2010, 6, 4, 20))
+    r4 = FactoryBot.create(:reservation, start: DateTime.new(2010, 6, 3, 12), finish: DateTime.new(2010, 6, 3, 18))
     reservations = Reservation.find_reservations_in_timeslot(Date.new(2010, 6, 1), Date.new(2010, 6, 10))
     assert_equal reservations.first, r2
     assert_equal reservations[1], r4
