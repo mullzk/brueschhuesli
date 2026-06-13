@@ -7,19 +7,12 @@ Rails.application.routes.draw do
   resources "reservations"
 
 
-  get "login/add_user"
-  post "login/add_user"
-  get "login/login"
-  post "login/login"
-  get "login/logout"
-  get "login/edit_user"
-  post "login/update_user"
-  patch "login/update_user"
-  get "login/delete_user"
-  post "login/delete_user"
-  get "login/list_users"
-  get "login/change_password"
-  post "login/change_password"
+  resource :session, only: %i[new create destroy]
+  # Keep the old login URL working for existing bookmarks.
+  get "login/login", to: redirect("/session/new")
+
+  resources :users, except: :show
+  resource :password, only: %i[edit update]
   get "abrechnung/index"
   get "abrechnung/jahresstatistik"
   get "abrechnung/detailliste"

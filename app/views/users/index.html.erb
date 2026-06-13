@@ -1,0 +1,15 @@
+<h1>Benutzer</h1>
+<ul>
+  <% for user in @all_users %>
+    <li>
+      <%= h(user.name) %> 	(<%= mail_to user.email %>, <%= user.telefon %>)
+      <small><i>
+      <%= link_to "[Bearbeiten]", edit_user_path(user) %>
+      <%= link_to "[Löschen]", user_path(user), data: { turbo_method: :delete, turbo_confirm: "#{user.name} wirklich löschen?" } %>
+      <%= link_to "[Reservationen]", :controller => "abrechnung", :action => "benutzer", :id => user %>
+      </small></i>
+    </li>
+  <% end %>
+</ul>
+<%= link_to "Benutzer hinzufügen", new_user_path %><br>
+<%= link_to "Mein Passwort ändern", edit_password_path %>

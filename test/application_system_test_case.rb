@@ -16,7 +16,7 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
 
   def sign_in_as(name: "Resident", email: "resident@example.com", password: "secret-password")
     user = User.create!(name: name, email: email, password: password)
-    visit login_login_path
+    visit new_session_path
     fill_in "name", with: name
     fill_in "password", with: password
     click_button "Login"

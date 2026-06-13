@@ -18,7 +18,7 @@ class ReservationControllerTest < ActionDispatch::IntegrationTest
   test "index redirects to login when not authenticated" do
     get "/"
 
-    assert_redirected_to controller: :login, action: :login
+    assert_redirected_to new_session_path
   end
 
   test "index renders when authenticated" do

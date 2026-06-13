@@ -35,7 +35,7 @@ class ActionDispatch::IntegrationTest
   # user. Shared by the controller/integration tests (previously duplicated).
   def login_as_user(name: "Session User", email: "session-user@example.com", password: "password")
     user = create(:user, name: name, email: email, password: password)
-    post login_login_path, params: { name: name, password: password }
+    post session_path, params: { name: name, password: password }
     user
   end
 end

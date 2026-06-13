@@ -21,14 +21,21 @@
 #
 
 class User < ApplicationRecord
-  has_many :reservations
+  has_many :reservations, dependent: :restrict_with_error
   has_many :sessions, dependent: :destroy
 
-  has_secure_password
+  # validations: false because the built-in digest-presence check rejects
+  # legacy users (bcrypt not set yet, only a SHA1 hash). We validate the
+  # password ourselves, treating a legacy hash as a present password.
+  has_secure_password validations: false
 
   validates_uniqueness_of :name
   validates_uniqueness_of :email
   validates_presence_of :name, :email
+  validates :password, confirmation: true, allow_blank: true
+  validate :password_must_be_set
+
+  before_save :clear_legacy_password, if: -> { password_digest_changed? && password_digest.present? }
 
   def <=>(other)
     name<=>other.name
@@ -54,5 +61,17 @@ class User < ApplicationRecord
 
   def self.legacy_hash(password, salt)
     Digest::SHA1.hexdigest(password + "sdf" + salt)
+  end
+
+  private
+
+  def password_must_be_set
+    return if password_digest.present? || hashed_password.present?
+    errors.add(:password, :blank)
+  end
+
+  def clear_legacy_password
+    self.salt = nil
+    self.hashed_password = nil
   end
 end

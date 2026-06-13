@@ -161,6 +161,32 @@ class UserTest < ActiveSupport::TestCase
     assert_predicate user, :valid?
   end
 
+  test "a legacy user without a bcrypt digest stays valid and editable" do
+    user = make_legacy_user("oldsecret")
+
+    assert_predicate user, :valid?
+    user.email = "moved@example.com"
+
+    assert_predicate user, :valid?
+  end
+
+  test "setting a new password clears the legacy hash" do
+    user = make_legacy_user("oldsecret")
+    user.update!(password: "brandnew")
+
+    assert_nil user.salt
+    assert_nil user.hashed_password
+    assert_predicate user.password_digest, :present?
+  end
+
+  test "a user with reservations cannot be destroyed" do
+    user = create(:user)
+    create(:reservation, user: user)
+
+    assert_not user.destroy
+    assert User.exists?(user.id)
+  end
+
   private
 
   def make_legacy_user(password, salt: "legacy-salt")
