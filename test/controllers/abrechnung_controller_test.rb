@@ -9,37 +9,45 @@ class AbrechnungControllerTest < ActionDispatch::IntegrationTest
 
   test "should get index after login" do
     get abrechnung_index_url
+
     assert_redirected_to controller: :login, action: :login
     login_as_user
 
     get abrechnung_index_url
+
     assert_redirected_to controller: :abrechnung, action: :jahresstatistik
   end
 
   test "should get jahresstatistik" do
     get abrechnung_jahresstatistik_url
+
     assert_redirected_to controller: :login, action: :login
     login_as_user
 
     get abrechnung_jahresstatistik_url
+
     assert_response :success
   end
 
   test "should get detailliste" do
     get abrechnung_detailliste_url
+
     assert_redirected_to controller: :login, action: :login
     login_as_user
 
     get abrechnung_detailliste_url
+
     assert_response :success
   end
 
   test "should get benutzer" do
     get abrechnung_benutzer_url params: { id: 1 }
+
     assert_redirected_to controller: :login, action: :login
     login_as_user
 
     get abrechnung_benutzer_url params: { id: @user.id }
+
     assert_response :success
   end
 
@@ -49,16 +57,19 @@ class AbrechnungControllerTest < ActionDispatch::IntegrationTest
     url = "/abrechnung/jahresstatistik.xls?year=#{year}"
 
     get url
+
     assert_redirected_to controller: :login, action: :login
     login_as_user
 
     get url
+
     assert_response :success
   end
 
   test "jahresstatistik xls sets the Excel download headers" do
     login_as_user
     get "/abrechnung/jahresstatistik.xls?year=#{@reservation.start.year}"
+
     assert_response :success
     assert_equal "application/vnd.ms-excel", response.media_type
     assert_match(/attachment; filename=/, response.headers["Content-Disposition"])
@@ -67,6 +78,7 @@ class AbrechnungControllerTest < ActionDispatch::IntegrationTest
   test "detailliste shows the classified type, not the stored column" do
     login_as_user
     get abrechnung_detailliste_url
+
     assert_response :success
     assert_select "td", text: Reservation::FERIENAUFENTHALT
     assert_not_includes response.body, Reservation::KURZAUFENTHALT
@@ -75,6 +87,7 @@ class AbrechnungControllerTest < ActionDispatch::IntegrationTest
   test "benutzer report shows the classified type, not the stored column" do
     login_as_user
     get abrechnung_benutzer_url(id: @user.id)
+
     assert_response :success
     assert_select "td", text: Reservation::FERIENAUFENTHALT
     assert_not_includes response.body, Reservation::KURZAUFENTHALT
@@ -86,6 +99,7 @@ class AbrechnungControllerTest < ActionDispatch::IntegrationTest
     travel_to Time.zone.local(2021, 7, 15) do
       login_as_user
       get "/abrechnung/jahresstatistik.xls"
+
       assert_response :success
       assert_match "2021", response.headers["Content-Disposition"]
     end
