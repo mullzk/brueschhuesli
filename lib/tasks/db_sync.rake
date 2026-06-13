@@ -1,3 +1,4 @@
+require "fileutils"
 require "securerandom"
 require "shellwords"
 
@@ -111,7 +112,7 @@ module DbSync
   def scp_to_remote(local, ssh, remote)   = sh!("scp #{Shellwords.shellescape(local)} #{Shellwords.shellescape("#{ssh}:#{remote}")}")
 
   def remove_local_file(path)
-    File.delete(path) if File.exist?(path)
+    FileUtils.rm_f(path)
   end
 
   def remove_remote_file(ssh, path)

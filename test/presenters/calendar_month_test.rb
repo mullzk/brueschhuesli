@@ -11,7 +11,7 @@ class CalendarMonthTest < ActiveSupport::TestCase
     assert_equal "März 2019", month.name
     assert_equal Date.new(2019, 3, 1), month.first_of_month
     assert_equal 5, month.weeks.size
-    assert month.weeks.all? { |week| week.size == 7 }
+    assert(month.weeks.all? { |week| week.size == 7 })
 
     first_week = month.weeks.first
 

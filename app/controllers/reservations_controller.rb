@@ -28,12 +28,12 @@ class ReservationsController < ApplicationController
     else
       day = Date.current
     end
-    startDateTime = DateTime.new(day.year, day.month, day.day, Time.current.hour)
-    finishDateTime = startDateTime+1.day
+    start_date_time = DateTime.new(day.year, day.month, day.day, Time.current.hour)
+    finish_date_time = start_date_time + 1.day
 
     @reservation = Reservation.new(
-      start: startDateTime,
-      finish: finishDateTime,
+      start: start_date_time,
+      finish: finish_date_time,
       user_id: Current.user.id,
       type_of_reservation: Reservation::KURZAUFENTHALT,
       is_exclusive: true

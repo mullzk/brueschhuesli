@@ -31,9 +31,9 @@ class CalendarMonth
     leading = (first_of_month - first_of_month.beginning_of_week).to_i
     trailing = (last_of_month.end_of_week - last_of_month).to_i
 
-    [ nil ] * leading +
+    ([ nil ] * leading) +
       (first_of_month..last_of_month).map { |date| CalendarDay.new(date, reservations_on(date)) } +
-      [ nil ] * trailing
+      ([ nil ] * trailing)
   end
 
   def reservations_on(date)

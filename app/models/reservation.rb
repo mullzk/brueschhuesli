@@ -33,7 +33,7 @@ class Reservation < ApplicationRecord
   belongs_to :user
   validates_presence_of :start, :finish, :type_of_reservation
   validates :type_of_reservation, inclusion: { in: TYPES }, allow_blank: true
-  validate :is_timeslot_exclusive?, :is_timeslot_positive?, :is_reservation_not_longer_than_a_week?
+  validate :timeslot_exclusive?, :timeslot_positive?, :reservation_not_longer_than_a_week?
 
   def self.reservation_types
     TYPES.sort
@@ -170,19 +170,19 @@ class Reservation < ApplicationRecord
   end
 
 
-  def is_timeslot_exclusive?
+  def timeslot_exclusive?
     conflicting_reservations = Reservation.find_reservations_in_timeslot(start, finish).to_a
     conflicting_reservations.delete(self) # Needed for validation on Updates, otherwise we conflict with our old version
     errors.add(:start, "Dieser Zeitabschnitt überlappt mit einer bestehenden Reservation") unless conflicting_reservations.empty?
     errors.add(:finish, "Dieser Zeitabschnitt überlappt mit einer bestehenden Reservation") unless conflicting_reservations.empty?
   end
 
-  def is_timeslot_positive?
+  def timeslot_positive?
     errors.add(:finish, "muss zeitlich hinter dem Reservations-Beginn sein") if finish <= start
   end
 
 
-  def is_reservation_not_longer_than_a_week?
+  def reservation_not_longer_than_a_week?
     errors.add(:finish, "Anfang und Ende liegen zu weit auseinander. Das Brüschhüsli kann für maximal 7 Tage reserviert werden") if duration > 7.days
   end
 end

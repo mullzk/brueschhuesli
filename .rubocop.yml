@@ -11,8 +11,21 @@ plugins:
 Minitest/MultipleAssertions:
   Enabled: false
 
-# Selected Rails cops (omakase keeps the Rails department off). Kept narrow on
-# purpose; the broad rollout is the final roadmap phase.
+# Phase 7 broad rollout: omakase disables whole departments and re-enables a
+# hand-picked subset. We turn the departments back on one at a time, fixing
+# their offenses per step. Performance/Security are clean; Lint/Naming had a
+# handful of findings, all fixed.
+Performance:
+  Enabled: true
+Security:
+  Enabled: true
+Lint:
+  Enabled: true
+Naming:
+  Enabled: true
+
+# Enabled in Phase 0.5 before the Rails department comes on (step 3); kept
+# explicit so the zone-aware call sites stay enforced in the meantime.
 Rails/Date:
   Enabled: true
 Rails/TimeZone:
