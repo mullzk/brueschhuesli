@@ -209,63 +209,58 @@ class ReservationTest < ActiveSupport::TestCase
   end
 
 
-  test "reservations beginning on timeslot for accounting" do
-    stefan = FactoryBot.create(:user, name: "Stefan", password: "test1234")
-    kaspar = FactoryBot.create(:user, name: "Kaspar", password: "test1234")
-    ruth   = FactoryBot.create(:user, name: "Ruth", password: "test1234")
+  test "find_reservations_beginning_in_timeslot reports reservations by their start" do
+    r = february_reservations
 
-    res_kaspar1 = Reservation.create(start: DateTime.new(2010, 2, 1, 16), finish: DateTime.new(2010, 2, 1, 18), user: kaspar)
-    res_ruth1   = Reservation.create(start: DateTime.new(2010, 2, 3, 8, 15), finish: DateTime.new(2010, 2, 3, 10), user: ruth)
-    res_kaspar2 = Reservation.create(start: DateTime.new(2010, 2, 4, 8, 15), finish: DateTime.new(2010, 2, 7, 10), user: kaspar)
-    res_kaspar3 = Reservation.create(start: DateTime.new(2010, 2, 8, 8, 15), finish: DateTime.new(2010, 2, 8, 10), user: kaspar)
-    res_ruth2   = Reservation.create(start: DateTime.new(2010, 2, 8, 13), finish: DateTime.new(2010, 2, 8, 15), user: ruth)
-    res_stefan  = Reservation.create(start: DateTime.new(2010, 2, 27, 13), finish: DateTime.new(2010, 3, 3, 15), user: stefan)
+    found = Reservation.find_reservations_beginning_in_timeslot(on("2010-02-03"), on("2010-02-07"))
+    refute_includes found, r[:kaspar_short]
+    assert_includes found, r[:ruth_early]
+    assert_includes found, r[:kaspar_span]
+    refute_includes found, r[:kaspar_morning]
+    refute_includes found, r[:ruth_afternoon]
 
-    [ res_kaspar1, res_kaspar2, res_kaspar3, res_ruth1, res_ruth2, res_stefan ].each do |reservation|
-      reservation.type_of_reservation = Reservation::KURZAUFENTHALT
-      reservation.save!
-    end
+    found = Reservation.find_reservations_beginning_in_timeslot(on("2010-02-04"), on("2010-02-08"))
+    refute_includes found, r[:ruth_early]
+    assert_includes found, r[:kaspar_morning]
+    assert_includes found, r[:ruth_afternoon]
 
-    res = Reservation.find_reservations_beginning_in_timeslot(Date.new(2010, 2, 3), Date.new(2010, 2, 7))
-    assert_not res.include?(res_kaspar1)
-    assert     res.include?(res_ruth1)
-    assert     res.include?(res_kaspar2)
-    assert_not res.include?(res_kaspar3)
-    assert_not res.include?(res_ruth2)
+    found = Reservation.find_reservations_beginning_in_timeslot(on("2010-02-03"), at("2010-02-08 12:00"))
+    refute_includes found, r[:kaspar_short]
+    assert_includes found, r[:ruth_early]
+    assert_includes found, r[:kaspar_span]
+    assert_includes found, r[:kaspar_morning]
+    refute_includes found, r[:ruth_afternoon]
+  end
 
-    res = Reservation.find_reservations_beginning_in_timeslot(Date.new(2010, 2, 4), Date.new(2010, 2, 8))
-    assert_not res.include?(res_ruth1)
-    assert     res.include?(res_kaspar3)
-    assert     res.include?(res_ruth2)
+  test "find_reservations_beginning_in_month reports a reservation by its start month" do
+    r = february_reservations
 
+    february = Reservation.find_reservations_beginning_in_month(on("2010-02-10"))
+    assert_includes february, r[:kaspar_span]
+    assert_includes february, r[:stefan_month_end]
 
-    res = Reservation.find_reservations_beginning_in_timeslot(Date.new(2010, 2, 3), DateTime.new(2010, 2, 8, 12))
-    assert_not res.include?(res_kaspar1)
-    assert     res.include?(res_ruth1)
-    assert     res.include?(res_kaspar2)
-    assert     res.include?(res_kaspar3)
-    assert_not res.include?(res_ruth2)
+    march = Reservation.find_reservations_beginning_in_month(on("2010-03-10"))
+    refute_includes march, r[:kaspar_span]
+    refute_includes march, r[:stefan_month_end]
+  end
 
-    res = Reservation.find_reservations_beginning_in_month(Date.new(2010, 2, 10))
-    assert     res.include?(res_kaspar2)
-    assert     res.include?(res_stefan)
-    res = Reservation.find_reservations_beginning_in_month(Date.new(2010, 3, 10))
-    assert_not res.include?(res_kaspar2)
-    assert_not res.include?(res_stefan)
+  test "reservations_for_user finders scope by user and start" do
+    r = february_reservations
+    kaspar = r[:kaspar_span].user
 
-    res = Reservation.reservations_for_user_in_month(kaspar, Date.new(2010, 2, 10))
-    assert     res.include?(res_kaspar1)
-    assert_not res.include?(res_ruth1)
-    assert     res.include?(res_kaspar2)
-    assert     res.include?(res_kaspar3)
-    assert_not res.include?(res_ruth2)
+    monthly = Reservation.reservations_for_user_in_month(kaspar, on("2010-02-10"))
+    assert_includes monthly, r[:kaspar_short]
+    refute_includes monthly, r[:ruth_early]
+    assert_includes monthly, r[:kaspar_span]
+    assert_includes monthly, r[:kaspar_morning]
+    refute_includes monthly, r[:ruth_afternoon]
 
-    res = Reservation.reservations_for_user_in_timeslot(kaspar, DateTime.new(2010, 2, 3), DateTime.new(2010, 2, 7))
-    assert_not res.include?(res_kaspar1)
-    assert_not res.include?(res_ruth1)
-    assert     res.include?(res_kaspar2)
-    assert_not res.include?(res_kaspar3)
-    assert_not res.include?(res_ruth2)
+    slot = Reservation.reservations_for_user_in_timeslot(kaspar, at("2010-02-03"), at("2010-02-07"))
+    refute_includes slot, r[:kaspar_short]
+    refute_includes slot, r[:ruth_early]
+    assert_includes slot, r[:kaspar_span]
+    refute_includes slot, r[:kaspar_morning]
+    refute_includes slot, r[:ruth_afternoon]
   end
 
 
@@ -350,13 +345,29 @@ class ReservationTest < ActiveSupport::TestCase
     assert_equal 300, r.billed_fee
   end
 
-  # Reversed Date arguments must not crash (Rails 8 removed Date#to_s(:db)) and
-  # must return the same set as ascending arguments.
-  test "find_reservations_beginning_in_timeslot is argument-order independent" do
-    r = Reservation.create!(user: @user, start: DateTime.new(2010, 2, 4, 8), finish: DateTime.new(2010, 2, 4, 10), type_of_reservation: Reservation::KURZAUFENTHALT)
-    ascending = Reservation.find_reservations_beginning_in_timeslot(Date.new(2010, 2, 3), Date.new(2010, 2, 7))
-    reversed  = Reservation.find_reservations_beginning_in_timeslot(Date.new(2010, 2, 7), Date.new(2010, 2, 3))
+  # Guards a Rails 8 regression: Date#to_s(:db) was removed, so reversed Date
+  # arguments must still not crash and must return the ascending result.
+  test "find_reservations_beginning_in_timeslot ignores the order of its arguments" do
+    r = create(:reservation, user: @user, start: at("2010-02-04 08:00"), finish: at("2010-02-04 10:00"))
+    ascending = Reservation.find_reservations_beginning_in_timeslot(on("2010-02-03"), on("2010-02-07"))
+    reversed  = Reservation.find_reservations_beginning_in_timeslot(on("2010-02-07"), on("2010-02-03"))
     assert_includes ascending, r
     assert_includes reversed, r
+  end
+
+  private
+
+  def february_reservations
+    kaspar = create(:user, name: "Kaspar")
+    ruth   = create(:user, name: "Ruth")
+    stefan = create(:user, name: "Stefan")
+    {
+      kaspar_short:     create(:reservation, user: kaspar, start: at("2010-02-01 16:00"), finish: at("2010-02-01 18:00")),
+      ruth_early:       create(:reservation, user: ruth,   start: at("2010-02-03 08:15"), finish: at("2010-02-03 10:00")),
+      kaspar_span:      create(:reservation, user: kaspar, start: at("2010-02-04 08:15"), finish: at("2010-02-07 10:00")),
+      kaspar_morning:   create(:reservation, user: kaspar, start: at("2010-02-08 08:15"), finish: at("2010-02-08 10:00")),
+      ruth_afternoon:   create(:reservation, user: ruth,   start: at("2010-02-08 13:00"), finish: at("2010-02-08 15:00")),
+      stefan_month_end: create(:reservation, user: stefan, start: at("2010-02-27 13:00"), finish: at("2010-03-03 15:00"))
+    }
   end
 end
