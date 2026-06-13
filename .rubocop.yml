@@ -2,8 +2,20 @@
 inherit_gem:
   rubocop-rails-omakase: rubocop.yml
 
+# Lint the Minitest suite (omakase does not load this plugin).
+plugins:
+  - rubocop-minitest
+
+# Our characterization tests deliberately group several boundary asserts per
+# test; do not force them apart.
+Minitest/MultipleAssertions:
+  Enabled: false
+
 # Overrides can be added below; keep this minimal.
 AllCops:
+  # Activate newly released cops in enabled departments (omakase keeps most
+  # departments off, so in practice this opts the Minitest cops in).
+  NewCops: enable
   Exclude:
     - "db/schema.rb"
     - "bin/**/*"

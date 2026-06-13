@@ -39,6 +39,8 @@ group :development do
   gem "annotaterb"
   # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase]
   gem "rubocop-rails-omakase", require: false
+  # Lint the Minitest test suite (not bundled by omakase)
+  gem "rubocop-minitest", require: false
 end
 group :development, :test do
   gem "factory_bot_rails"

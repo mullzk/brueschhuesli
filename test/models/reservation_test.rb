@@ -30,27 +30,32 @@ class ReservationTest < ActiveSupport::TestCase
 
   test "a reservation finishing after it starts is valid" do
     reservation = build(:reservation, user: @user, start: at("2010-02-01 08:00"), finish: at("2010-02-01 10:00"))
-    assert reservation.valid?
+
+    assert_predicate reservation, :valid?
   end
 
   test "a reservation finishing before it starts is invalid" do
     reservation = build(:reservation, user: @user, start: at("2010-02-01 10:00"), finish: at("2010-02-01 08:00"))
+
     assert_not reservation.valid?
   end
 
   test "a reservation longer than a week is invalid" do
     reservation = build(:reservation, user: @user, start: at("2010-02-01 10:00"), finish: at("2010-02-10 08:00"))
+
     assert_not reservation.valid?
   end
 
   test "a slot not overlapping any reservation is valid" do
     create(:reservation, user: @user, start: at("2010-02-01 14:00"), finish: at("2010-02-01 18:00"))
-    assert build(:reservation, user: @user, start: at("2010-02-01 08:00"), finish: at("2010-02-01 10:00")).valid?
-    assert build(:reservation, user: @user, start: at("2010-02-01 19:00"), finish: at("2010-02-01 21:00")).valid?
+
+    assert_predicate build(:reservation, user: @user, start: at("2010-02-01 08:00"), finish: at("2010-02-01 10:00")), :valid?
+    assert_predicate build(:reservation, user: @user, start: at("2010-02-01 19:00"), finish: at("2010-02-01 21:00")), :valid?
   end
 
   test "a slot overlapping an existing reservation is invalid" do
     create(:reservation, user: @user, start: at("2010-02-01 14:00"), finish: at("2010-02-01 18:00"))
+
     assert_not build(:reservation, user: @user, start: at("2010-02-01 08:00"), finish: at("2010-02-01 15:00")).valid?, "overlapping the start"
     assert_not build(:reservation, user: @user, start: at("2010-02-01 08:00"), finish: at("2010-02-01 21:00")).valid?, "enclosing the slot"
     assert_not build(:reservation, user: @user, start: at("2010-02-01 17:00"), finish: at("2010-02-01 21:00")).valid?, "overlapping the end"
@@ -124,8 +129,8 @@ class ReservationTest < ActiveSupport::TestCase
   end
 
   test "a reservation lasting exactly a week is valid, an hour more is not" do
-    assert     build(:reservation, user: @user, start: at("2010-06-01 12:00"), finish: at("2010-06-08 11:00")).valid?
-    assert     build(:reservation, user: @user, start: at("2010-06-01 12:00"), finish: at("2010-06-08 12:00")).valid?
+    assert_predicate     build(:reservation, user: @user, start: at("2010-06-01 12:00"), finish: at("2010-06-08 11:00")), :valid?
+    assert_predicate     build(:reservation, user: @user, start: at("2010-06-01 12:00"), finish: at("2010-06-08 12:00")), :valid?
     assert_not build(:reservation, user: @user, start: at("2010-06-01 12:00"), finish: at("2010-06-08 13:00")).valid?
   end
 
@@ -144,6 +149,7 @@ class ReservationTest < ActiveSupport::TestCase
 
   test "classified_type can diverge from the stored column" do
     r = Reservation.new(start: at("2010-06-01 12:00"), finish: at("2010-06-08 11:00"), type_of_reservation: Reservation::KURZAUFENTHALT)
+
     assert_equal Reservation::KURZAUFENTHALT, r.type_of_reservation
     assert_equal Reservation::FERIENAUFENTHALT, r.classified_type
   end
@@ -155,11 +161,13 @@ class ReservationTest < ActiveSupport::TestCase
     second = create(:reservation, start: at("2010-06-03 12:00"), finish: at("2010-06-03 18:00"))
 
     ordered = Reservation.find_reservations_in_timeslot(on("2010-06-01"), on("2010-06-10"))
+
     assert_equal [ first, second, third, fourth ], ordered.to_a
   end
 
   test "on_day? covers every day a reservation overlaps" do
     r = Reservation.new(start: at("2019-02-01 14:00"), finish: at("2019-02-03 18:00"))
+
     assert_not r.on_day?(on("2019-01-31"))
     assert     r.on_day?(on("2019-02-01"))
     assert     r.on_day?(on("2019-02-02"))
@@ -169,6 +177,7 @@ class ReservationTest < ActiveSupport::TestCase
 
   test "begin_on_day clamps the start to the given day" do
     r = Reservation.new(start: at("2010-06-01 12:00"), finish: at("2010-06-03 11:00"))
+
     assert_equal 12, r.begin_on_day(on("2010-06-01")).hour
     assert_equal 0,  r.begin_on_day(on("2010-06-02")).hour
     assert_equal 0,  r.begin_on_day(on("2010-06-03")).hour
@@ -176,6 +185,7 @@ class ReservationTest < ActiveSupport::TestCase
 
   test "end_on_day clamps the finish to the given day" do
     r = Reservation.new(start: at("2010-06-01 12:00"), finish: at("2010-06-03 11:00"))
+
     assert_equal 23, r.end_on_day(on("2010-06-01")).hour
     assert_equal 23, r.end_on_day(on("2010-06-02")).hour
     assert_equal 11, r.end_on_day(on("2010-06-03")).hour
@@ -183,6 +193,7 @@ class ReservationTest < ActiveSupport::TestCase
 
   test "fills_complete_day? is true only for fully covered days" do
     r = Reservation.new(start: at("2010-06-01 12:00"), finish: at("2010-06-03 11:00"))
+
     assert_not r.fills_complete_day?(on("2010-06-01"))
     assert     r.fills_complete_day?(on("2010-06-02"))
     assert_not r.fills_complete_day?(on("2010-06-03"))
@@ -190,6 +201,7 @@ class ReservationTest < ActiveSupport::TestCase
 
   test "hours_on_day counts the hours falling on the given day" do
     r = Reservation.new(start: at("2010-06-01 12:00"), finish: at("2010-06-03 11:00"))
+
     assert_equal 12, r.hours_on_day(on("2010-06-01"))
     assert_equal 24, r.hours_on_day(on("2010-06-02"))
     assert_equal 11, r.hours_on_day(on("2010-06-03"))
@@ -203,6 +215,7 @@ class ReservationTest < ActiveSupport::TestCase
     r = february_reservations
 
     found = Reservation.find_reservations_beginning_in_timeslot(on("2010-02-03"), on("2010-02-07"))
+
     refute_includes found, r[:kaspar_short]
     assert_includes found, r[:ruth_early]
     assert_includes found, r[:kaspar_span]
@@ -210,11 +223,13 @@ class ReservationTest < ActiveSupport::TestCase
     refute_includes found, r[:ruth_afternoon]
 
     found = Reservation.find_reservations_beginning_in_timeslot(on("2010-02-04"), on("2010-02-08"))
+
     refute_includes found, r[:ruth_early]
     assert_includes found, r[:kaspar_morning]
     assert_includes found, r[:ruth_afternoon]
 
     found = Reservation.find_reservations_beginning_in_timeslot(on("2010-02-03"), at("2010-02-08 12:00"))
+
     refute_includes found, r[:kaspar_short]
     assert_includes found, r[:ruth_early]
     assert_includes found, r[:kaspar_span]
@@ -226,10 +241,12 @@ class ReservationTest < ActiveSupport::TestCase
     r = february_reservations
 
     february = Reservation.find_reservations_beginning_in_month(on("2010-02-10"))
+
     assert_includes february, r[:kaspar_span]
     assert_includes february, r[:stefan_month_end]
 
     march = Reservation.find_reservations_beginning_in_month(on("2010-03-10"))
+
     refute_includes march, r[:kaspar_span]
     refute_includes march, r[:stefan_month_end]
   end
@@ -239,6 +256,7 @@ class ReservationTest < ActiveSupport::TestCase
     kaspar = r[:kaspar_span].user
 
     monthly = Reservation.reservations_for_user_in_month(kaspar, on("2010-02-10"))
+
     assert_includes monthly, r[:kaspar_short]
     refute_includes monthly, r[:ruth_early]
     assert_includes monthly, r[:kaspar_span]
@@ -246,6 +264,7 @@ class ReservationTest < ActiveSupport::TestCase
     refute_includes monthly, r[:ruth_afternoon]
 
     slot = Reservation.reservations_for_user_in_timeslot(kaspar, at("2010-02-03"), at("2010-02-07"))
+
     refute_includes slot, r[:kaspar_short]
     refute_includes slot, r[:ruth_early]
     assert_includes slot, r[:kaspar_span]
@@ -256,6 +275,7 @@ class ReservationTest < ActiveSupport::TestCase
 
   test "duration of a one-hour stay" do
     r = Reservation.new(start: at("2010-06-01 14:00"), finish: at("2010-06-01 15:00"))
+
     assert_equal 1, r.duration_in_days
     assert_equal 1.hour, r.duration_rounded_to_hours
     assert_equal 1, r.duration_in_8_hour_blocks
@@ -263,6 +283,7 @@ class ReservationTest < ActiveSupport::TestCase
 
   test "duration of an overnight stay spanning two days" do
     r = Reservation.new(start: at("2010-06-01 16:00"), finish: at("2010-06-02 15:00"))
+
     assert_equal 2, r.duration_in_days
     assert_equal 23.hours, r.duration_rounded_to_hours
     assert_equal 3, r.duration_in_8_hour_blocks
@@ -271,6 +292,7 @@ class ReservationTest < ActiveSupport::TestCase
   # Rounding to hours drops the final second, so a full day reads as 23 hours.
   test "duration of a stay until the end of the day" do
     r = Reservation.new(start: at("2010-06-01 00:00"), finish: at("2010-06-01").end_of_day)
+
     assert_equal 1, r.duration_in_days
     assert_equal 23.hours, r.duration_rounded_to_hours
     assert_equal 3, r.duration_in_8_hour_blocks
@@ -279,6 +301,7 @@ class ReservationTest < ActiveSupport::TestCase
   # A finish exactly at midnight does not count the following day.
   test "duration of a stay until midnight" do
     r = Reservation.new(start: at("2010-06-01 00:00"), finish: at("2010-06-01 24:00"))
+
     assert_equal 1, r.duration_in_days
     assert_equal 24.hours, r.duration_rounded_to_hours
     assert_equal 3, r.duration_in_8_hour_blocks
@@ -306,18 +329,24 @@ class ReservationTest < ActiveSupport::TestCase
 
     r = Reservation.new(start: at("2010-06-01 14:00"), finish: at("2010-06-03 14:00"),
                         type_of_reservation: Reservation::KURZAUFENTHALT, user: ruth, is_exclusive: false)
+
     assert_equal 6, r.duration_in_8_hour_blocks
 
     assert_equal 0, r.billed_fee  # co-owner, non-exclusive: all 6 blocks free
     r.is_exclusive = true
+
     assert_equal 6 * 15, r.billed_fee
     r.user = stefan
+
     assert_equal 6 * 15, r.billed_fee
     r.type_of_reservation = Reservation::FERIENAUFENTHALT
+
     assert_equal 6 * 15, r.billed_fee
     r.type_of_reservation = Reservation::GROSSANLASS
+
     assert_equal 200, r.billed_fee  # flat fee regardless of duration
     r.type_of_reservation = Reservation::EXTERNE_NUTZUNG
+
     assert_equal 3 * 100, r.billed_fee  # three calendar days
   end
 
@@ -329,6 +358,7 @@ class ReservationTest < ActiveSupport::TestCase
       start: at("2010-06-01 14:00"), finish: at("2010-06-03 14:00"),
       user: @user, is_exclusive: true, type_of_reservation: Reservation::EXTERNE_NUTZUNG
     )
+
     assert_equal 3, r.duration_in_days
     assert_equal 300, r.billed_fee
   end
@@ -339,6 +369,7 @@ class ReservationTest < ActiveSupport::TestCase
     r = create(:reservation, user: @user, start: at("2010-02-04 08:00"), finish: at("2010-02-04 10:00"))
     ascending = Reservation.find_reservations_beginning_in_timeslot(on("2010-02-03"), on("2010-02-07"))
     reversed  = Reservation.find_reservations_beginning_in_timeslot(on("2010-02-07"), on("2010-02-03"))
+
     assert_includes ascending, r
     assert_includes reversed, r
   end

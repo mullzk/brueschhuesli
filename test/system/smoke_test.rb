@@ -6,6 +6,7 @@ require "application_system_test_case"
 class SmokeTest < ApplicationSystemTestCase
   test "login page renders" do
     visit login_login_path
+
     assert_text "Bitte einloggen"
   end
 end
