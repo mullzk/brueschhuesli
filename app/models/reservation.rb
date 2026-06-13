@@ -97,55 +97,49 @@ class Reservation < ApplicationRecord
     end
   end
 
-  def self.normalize_interval(time_a, time_b)
-    lower, upper = time_a > time_b ? [ time_b, time_a ] : [ time_a, time_b ]
-    [ lower_bound(lower), upper_bound(upper) ]
-  end
+  scope :beginning_in, ->(range) { where(start: range) }
+  scope :overlapping, ->(range) { where("start < ? AND finish > ?", range.end, range.begin).order(:start) }
+  scope :for_user, ->(user) { where(user: user) }
 
-  def self.lower_bound(date_or_time)
-    date_or_time.to_formatted_s(:db)
+  # Builds an inclusive range from two endpoints given in any order. A Date upper
+  # bound covers its whole day by extending to the next midnight; a DateTime is
+  # already a precise instant. Active Record casts the bounds to the column type.
+  def self.day_aware_range(time_a, time_b)
+    lower, upper = [ time_a, time_b ].minmax
+    upper += 1.day unless upper.respond_to?(:hour)
+    lower..upper
   end
+  private_class_method :day_aware_range
 
-  def self.upper_bound(date_or_time)
-    # A Date's upper bound is the next day. DateTime already is a precise instant.
-    date_or_time += 1.day unless date_or_time.respond_to?(:hour)
-    date_or_time.to_formatted_s(:db)
-  end
-  private_class_method :normalize_interval, :lower_bound, :upper_bound
-
-  # Returns only reservations with beginning in a timeslot, e.g. Reservations that span multiple months are reported only in the first month. This makes calculating the tariffs much easier
+  # Reservations beginning in a timeslot: one spanning multiple months is reported
+  # only in its first month. This keeps the tariff calculation much simpler.
   def self.find_reservations_beginning_in_timeslot(time_a, time_b)
-    interval_start, interval_finish = normalize_interval(time_a, time_b)
-    self.where("start >= ? AND start <= ?", interval_start, interval_finish)
+    beginning_in(day_aware_range(time_a, time_b))
   end
 
   def self.find_reservations_beginning_in_month(month)
-    self.find_reservations_beginning_in_timeslot(month.beginning_of_month, month.end_of_month)
+    find_reservations_beginning_in_timeslot(month.beginning_of_month, month.end_of_month)
   end
   def self.find_reservations_beginning_in_year(year)
-    self.find_reservations_beginning_in_timeslot(year.beginning_of_year, year.end_of_year)
+    find_reservations_beginning_in_timeslot(year.beginning_of_year, year.end_of_year)
   end
 
   def self.reservations_for_user_in_timeslot(user, time_a, time_b)
-    self.find_reservations_beginning_in_timeslot(time_a, time_b).where(user: user)
+    find_reservations_beginning_in_timeslot(time_a, time_b).for_user(user)
   end
   def self.reservations_for_user_in_month(user, month)
-    self.find_reservations_beginning_in_month(month).where(user: user)
+    find_reservations_beginning_in_month(month).for_user(user)
   end
   def self.reservations_for_user_in_year(user, year)
-    self.find_reservations_beginning_in_year(year).where(user: user)
+    find_reservations_beginning_in_year(year).for_user(user)
   end
 
   def self.find_reservations_on_date(date)
-    from = DateTime.new(date.year, date.month, date.day, 0, 0, 0)
-    to = DateTime.new(date.year, date.month, date.day, 23, 59, 59)
-    reservations = self.find_reservations_in_timeslot(from, to)
-    reservations.sort { |a, b| a.begin_on_day(date) <=> b.begin_on_day(date) }
+    find_reservations_in_timeslot(date, date).sort { |a, b| a.begin_on_day(date) <=> b.begin_on_day(date) }
   end
 
   def self.find_reservations_in_timeslot(time_a, time_b)
-    interval_start, interval_finish = normalize_interval(time_a, time_b)
-    self.where("(start <= ? AND finish > ?) OR (? <= start AND ? > start)", interval_start, interval_start, interval_start, interval_finish).order(:start)
+    overlapping(day_aware_range(time_a, time_b))
   end
 
   def begin_on_day(day)
