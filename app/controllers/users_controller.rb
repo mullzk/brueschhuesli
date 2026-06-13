@@ -36,10 +36,10 @@ class UsersController < ApplicationController
 
   def destroy
     user = User.find(params.expect(:id))
-    if user.destroy
-      flash[:notice] = "Benutzer #{user.name} gelöscht"
+    flash[:notice] = if user.destroy
+      "Benutzer #{user.name} gelöscht"
     else
-      flash[:notice] = "#{user.name} kann nicht gelöscht werden, solange Reservationen bestehen."
+      "#{user.name} kann nicht gelöscht werden, solange Reservationen bestehen."
     end
     redirect_to users_path
   end

@@ -14,10 +14,10 @@ module ApplicationHelper
     days = comps[:days]
     hours = comps[:hours]
 
-    if days > 0
-      "%id %.2ih" % [ days, hours ]
+    if days.positive?
+      format("%id %.2ih", days, hours)
     else
-      "%.ih" % [ hours ]
+      format("%.ih", hours)
     end
   end
 end

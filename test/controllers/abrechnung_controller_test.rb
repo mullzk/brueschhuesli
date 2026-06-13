@@ -61,7 +61,7 @@ class AbrechnungControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should get excel" do
-    year = (DateTime.now - (3.days)).year
+    year = (DateTime.now - 3.days).year
     url = "/abrechnung/jahresstatistik.xlsx?year=#{year}"
 
     get url

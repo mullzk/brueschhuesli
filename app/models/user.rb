@@ -64,7 +64,7 @@ class User < ApplicationRecord
   end
 
   def self.legacy_hash(password, salt)
-    Digest::SHA1.hexdigest(password + "sdf" + salt)
+    Digest::SHA1.hexdigest("#{password}sdf#{salt}")
   end
 
   private

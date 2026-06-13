@@ -35,7 +35,7 @@ class Reservation < ApplicationRecord
   belongs_to :user
   validates :start, :finish, :type_of_reservation, presence: true
   validates :type_of_reservation, inclusion: { in: TYPES }, allow_blank: true
-  validate :timeslot_exclusive?, :timeslot_positive?, :reservation_not_longer_than_a_week?
+  validate :timeslot_must_not_overlap, :finish_must_be_after_start, :duration_must_not_exceed_a_week
 
   def self.reservation_types
     TYPES.sort
@@ -173,7 +173,7 @@ class Reservation < ApplicationRecord
     start <=> other.start
   end
 
-  def timeslot_exclusive?
+  def timeslot_must_not_overlap
     conflicting_reservations = Reservation.find_reservations_in_timeslot(start, finish).to_a
     conflicting_reservations.delete(self) # Needed for validation on Updates, otherwise we conflict with our old version
     return if conflicting_reservations.empty?
@@ -183,11 +183,11 @@ class Reservation < ApplicationRecord
     errors.add(:finish, message)
   end
 
-  def timeslot_positive?
+  def finish_must_be_after_start
     errors.add(:finish, "muss zeitlich hinter dem Reservations-Beginn sein") if finish <= start
   end
 
-  def reservation_not_longer_than_a_week?
+  def duration_must_not_exceed_a_week
     return unless duration > 7.days
 
     errors.add(:finish, "Anfang und Ende liegen zu weit auseinander. " \

@@ -29,10 +29,10 @@ class ReservationsController < ApplicationController
   end
 
   def new
-    if params[:date]
-      day = Date.parse(params[:date])
+    day = if params[:date]
+      Date.parse(params[:date])
     else
-      day = Date.current
+      Date.current
     end
     start_date_time = DateTime.new(day.year, day.month, day.day, Time.current.hour)
     finish_date_time = start_date_time + 1.day

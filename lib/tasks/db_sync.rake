@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require "English"
 require "fileutils"
 require "securerandom"
 require "shellwords"
@@ -14,7 +15,7 @@ module DbSync
   REMOTE_STAGES = DEPLOY_PATHS.keys.freeze
 
   def require_stage!
-    stage = ENV["STAGE"] or abort "Usage: STAGE=integration rails db:pull / db:push"
+    stage = ENV.fetch("STAGE", nil) or abort "Usage: STAGE=integration rails db:pull / db:push"
     abort "Unknown stage: #{stage}. Known: #{REMOTE_STAGES.join(', ')}" unless REMOTE_STAGES.include?(stage)
     stage
   end
@@ -124,7 +125,7 @@ module DbSync
 
   def run_remote(ssh, script)
     IO.popen([ "ssh", ssh, "bash", "-l", "-s" ], "w") { |io| io.write(script) }
-    abort "Schritt fehlgeschlagen." unless $?.success?
+    abort "Schritt fehlgeschlagen." unless $CHILD_STATUS.success?
   end
 
   def step(label)

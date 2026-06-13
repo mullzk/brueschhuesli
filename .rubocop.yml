@@ -24,10 +24,31 @@ Lint:
 Naming:
   Enabled: true
 
-# Freeze string literals everywhere (the rest of the Style department follows
-# in the next step).
-Style/FrozenStringLiteralComment:
+# Style department on. Generated/historical migrations are frozen, so they are
+# out of scope for restyling.
+Style:
   Enabled: true
+  Exclude:
+    - "db/migrate/**/*"
+
+# House rule: comments explain non-obvious "why", never serve as class banners.
+Style/Documentation:
+  Enabled: false
+
+# Empty controller actions read as def/end, not the compact one-liner.
+Style/EmptyMethod:
+  EnforcedStyle: expanded
+
+# The duration helper uses plain %d/%i tokens; keep that simple style rather
+# than forcing verbose annotated tokens.
+Style/FormatStringToken:
+  EnforcedStyle: unannotated
+
+# test_helper reopens framework classes (ActiveSupport::TestCase); compact is
+# the idiomatic Rails form there.
+Style/ClassAndModuleChildren:
+  Exclude:
+    - "test/test_helper.rb"
 
 # Layout department on. Line length is enforced in production code only:
 # tests carry long descriptive data/German strings and generated/historical
