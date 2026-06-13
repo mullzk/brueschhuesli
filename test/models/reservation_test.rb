@@ -133,34 +133,27 @@ class ReservationTest < ActiveSupport::TestCase
     refute_includes Reservation.find_reservations_in_timeslot(on("2010-02-09"), on("2010-02-10")), morning
   end
 
-  test "long KURZAUFENTHALT should be interpreted as FERIENAUFENTHALT" do
-    ruth = FactoryBot.create(:user, name: "Ruth", password: "test1234", miteigentuemer: true)
-    r1 = Reservation.new(start: DateTime.new(2010, 6, 1, 12), finish: DateTime.new(2010, 6, 8, 11), user: ruth)
-    r2 = Reservation.new(start: DateTime.new(2010, 6, 1, 12), finish: DateTime.new(2010, 6, 8, 12), user: ruth)
-    r3 = Reservation.new(start: DateTime.new(2010, 6, 1, 12), finish: DateTime.new(2010, 6, 8, 13), user: ruth)
-    [ r1, r2, r3 ].each do |r|
-      r.type_of_reservation = Reservation::KURZAUFENTHALT
-    end
-    assert r1.valid?
-    assert r2.valid?
-    assert_not r3.valid? # Reservation is too long
+  test "a reservation lasting exactly a week is valid, an hour more is not" do
+    assert     build(:reservation, user: @user, start: at("2010-06-01 12:00"), finish: at("2010-06-08 11:00")).valid?
+    assert     build(:reservation, user: @user, start: at("2010-06-01 12:00"), finish: at("2010-06-08 12:00")).valid?
+    assert_not build(:reservation, user: @user, start: at("2010-06-01 12:00"), finish: at("2010-06-08 13:00")).valid?
+  end
 
-    r1 = Reservation.new(start: DateTime.new(2010, 6, 1, 12), finish: DateTime.new(2010, 6, 8, 11), type_of_reservation: Reservation::KURZAUFENTHALT)
-    assert_equal r1.classified_type, Reservation::FERIENAUFENTHALT
-    r1 = Reservation.new(start: DateTime.new(2010, 6, 1, 12), finish: DateTime.new(2010, 6, 3, 12), type_of_reservation: Reservation::KURZAUFENTHALT)
-    assert_equal r1.classified_type, Reservation::KURZAUFENTHALT
-    r1 = Reservation.new(start: DateTime.new(2010, 6, 1, 12), finish: DateTime.new(2010, 6, 3, 13), type_of_reservation: Reservation::KURZAUFENTHALT)
-    assert_equal r1.classified_type, Reservation::FERIENAUFENTHALT
-    r1 = Reservation.new(start: DateTime.new(2010, 6, 1, 12), finish: DateTime.new(2010, 6, 2, 11), type_of_reservation: Reservation::FERIENAUFENTHALT)
-    assert_equal r1.classified_type, Reservation::KURZAUFENTHALT
-    r1 = Reservation.new(start: DateTime.new(2010, 6, 1, 12), finish: DateTime.new(2010, 6, 3, 12), type_of_reservation: Reservation::FERIENAUFENTHALT)
-    assert_equal r1.classified_type, Reservation::FERIENAUFENTHALT
-    r1 = Reservation.new(start: DateTime.new(2010, 6, 1, 12), finish: DateTime.new(2010, 6, 3, 11), type_of_reservation: Reservation::FERIENAUFENTHALT)
-    assert_equal r1.classified_type, Reservation::KURZAUFENTHALT
+  test "classified_type swaps the stored type around the 48-hour threshold" do
+    classify = lambda do |start, finish, stored|
+      Reservation.new(start: at(start), finish: at(finish), type_of_reservation: stored).classified_type
+    end
+
+    assert_equal Reservation::FERIENAUFENTHALT, classify.call("2010-06-01 12:00", "2010-06-08 11:00", Reservation::KURZAUFENTHALT)
+    assert_equal Reservation::KURZAUFENTHALT,   classify.call("2010-06-01 12:00", "2010-06-03 12:00", Reservation::KURZAUFENTHALT)
+    assert_equal Reservation::FERIENAUFENTHALT, classify.call("2010-06-01 12:00", "2010-06-03 13:00", Reservation::KURZAUFENTHALT)
+    assert_equal Reservation::KURZAUFENTHALT,   classify.call("2010-06-01 12:00", "2010-06-02 11:00", Reservation::FERIENAUFENTHALT)
+    assert_equal Reservation::FERIENAUFENTHALT, classify.call("2010-06-01 12:00", "2010-06-03 12:00", Reservation::FERIENAUFENTHALT)
+    assert_equal Reservation::KURZAUFENTHALT,   classify.call("2010-06-01 12:00", "2010-06-03 11:00", Reservation::FERIENAUFENTHALT)
   end
 
   test "classified_type can diverge from the stored column" do
-    r = Reservation.new(start: DateTime.new(2010, 6, 1, 12), finish: DateTime.new(2010, 6, 8, 11), type_of_reservation: Reservation::KURZAUFENTHALT)
+    r = Reservation.new(start: at("2010-06-01 12:00"), finish: at("2010-06-08 11:00"), type_of_reservation: Reservation::KURZAUFENTHALT)
     assert_equal Reservation::KURZAUFENTHALT, r.type_of_reservation
     assert_equal Reservation::FERIENAUFENTHALT, r.classified_type
   end
