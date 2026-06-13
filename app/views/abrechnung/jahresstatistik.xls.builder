@@ -63,17 +63,17 @@ xml.Workbook({
 
 
 
-      for stat in @stats
+      for line in @statement.lines
         xml.Row do
-          xml.e_cell(h(stat[0].name))
-          xml.e_cell_number(stat[1], "ap_int_precision")
-          xml.e_cell_number(stat[2], "ap_int_precision")
+          xml.e_cell(h(line.user.name))
+          xml.e_cell_number(line.reservation_count, "ap_int_precision")
+          xml.e_cell_number(line.fee, "ap_int_precision")
         end
       end
       xml.Row "ss:StyleID" => "ap_bold" do
         xml.e_cell("Total")
-        xml.e_sum_above(@stats.size)
-        xml.e_sum_above(@stats.size)
+        xml.e_sum_above(@statement.lines.size)
+        xml.e_sum_above(@statement.lines.size)
       end
       xml.Row "ss:StyleID" => "ap_bold" do
       end
