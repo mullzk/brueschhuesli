@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ApplicationHelper
   def time_components_of(numeric)
     (reminder, secs) = numeric.divmod(60)

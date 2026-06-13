@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CalendarDay
   attr_reader :date, :reservations
 

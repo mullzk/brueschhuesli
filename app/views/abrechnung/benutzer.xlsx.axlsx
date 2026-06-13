@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 wb = xlsx_package.workbook
 title = wb.styles.add_style(b: true, sz: 13)
 bold = wb.styles.add_style(b: true)

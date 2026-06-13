@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # SimpleCov must start before any application code is required so that every
 # loaded line is tracked. Keep this block at the very top of the file.
 require "simplecov"

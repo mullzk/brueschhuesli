@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AbrechnungController < ApplicationController
   def index
     redirect_to action: "jahresstatistik"

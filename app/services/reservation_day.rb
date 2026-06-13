@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ReservationDay
   def initialize(start:, finish:, day:)
     @start = start

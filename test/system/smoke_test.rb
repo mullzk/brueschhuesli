@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "application_system_test_case"
 
 # Minimal smoke test that proves the system-test pipeline (headless Chrome +

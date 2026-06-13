@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CalendarMonth
   def self.for(day_in_month)
     first_of_month = day_in_month.beginning_of_month

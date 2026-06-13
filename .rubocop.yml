@@ -24,6 +24,11 @@ Lint:
 Naming:
   Enabled: true
 
+# Freeze string literals everywhere (the rest of the Style department follows
+# in the next step).
+Style/FrozenStringLiteralComment:
+  Enabled: true
+
 # Layout department on. Line length is enforced in production code only:
 # tests carry long descriptive data/German strings and generated/historical
 # migrations are frozen.

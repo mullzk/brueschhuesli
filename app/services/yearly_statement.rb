@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class YearlyStatement
   Line = Data.define(:user, :reservation_count, :fee)
 
