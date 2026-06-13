@@ -26,13 +26,8 @@ class AbrechnungController < ApplicationController
 private
   def respond_to_html_and_excel(filename)
     respond_to do |format|
-      format.html # show.html.erb
-      format.xls   {
-                    headers["Content-Type"] = "application/vnd.ms-excel"
-                    headers["Content-Disposition"] = "attachment; filename=\"#{filename}.xls\""
-                    headers["Cache-Control"] = ""
-                    render layout: false
-                    }
+      format.html
+      format.xlsx { render xlsx: action_name, filename: "#{filename}.xlsx" }
     end
   end
 

@@ -6,6 +6,14 @@ class AbrechnungControllerTest < ActionDispatch::IntegrationTest
     @reservation = FactoryBot.create(:reservation, user: @user, start: (DateTime.now-3.days), finish: DateTime.now, type_of_reservation: Reservation::KURZAUFENTHALT)
   end
 
+  def worksheet_xml(xlsx_body)
+    Zip::InputStream.open(StringIO.new(xlsx_body)) do |io|
+      while (entry = io.get_next_entry)
+        return io.read if entry.name == "xl/worksheets/sheet1.xml"
+      end
+    end
+  end
+
 
   test "should get index after login" do
     get abrechnung_index_url
@@ -54,7 +62,7 @@ class AbrechnungControllerTest < ActionDispatch::IntegrationTest
 
   test "should get excel" do
     year = (DateTime.now-(3.days)).year
-    url = "/abrechnung/jahresstatistik.xls?year=#{year}"
+    url = "/abrechnung/jahresstatistik.xlsx?year=#{year}"
 
     get url
 
@@ -66,13 +74,21 @@ class AbrechnungControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
-  test "jahresstatistik xls sets the Excel download headers" do
+  test "jahresstatistik xlsx sets the Excel download headers and returns a real xlsx" do
     login_as_user
-    get "/abrechnung/jahresstatistik.xls?year=#{@reservation.start.year}"
+    get "/abrechnung/jahresstatistik.xlsx?year=#{@reservation.start.year}"
 
     assert_response :success
-    assert_equal "application/vnd.ms-excel", response.media_type
+    assert_equal "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", response.media_type
     assert_match(/attachment; filename=/, response.headers["Content-Disposition"])
+    assert response.body.start_with?("PK"), "expected a zip-based .xlsx payload"
+  end
+
+  test "jahresstatistik xlsx writes the totals as live SUM formulas" do
+    login_as_user
+    get "/abrechnung/jahresstatistik.xlsx?year=#{@reservation.start.year}"
+
+    assert_includes worksheet_xml(response.body), "<f>SUM("
   end
 
   test "detailliste shows the classified type, not the stored column" do
@@ -98,7 +114,7 @@ class AbrechnungControllerTest < ActionDispatch::IntegrationTest
   test "jahresstatistik without params uses the current year" do
     travel_to Time.zone.local(2021, 7, 15) do
       login_as_user
-      get "/abrechnung/jahresstatistik.xls"
+      get "/abrechnung/jahresstatistik.xlsx"
 
       assert_response :success
       assert_match "2021", response.headers["Content-Disposition"]

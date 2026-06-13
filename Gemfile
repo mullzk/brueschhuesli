@@ -34,6 +34,9 @@ gem "bootsnap", ">= 1.1.0", require: false
 
 # Gems for this project, added by mullzk
 gem "will_paginate"
+# Real .xlsx export for the yearly billing reports
+gem "caxlsx"
+gem "caxlsx_rails"
 
 group :development do
   gem "annotaterb"

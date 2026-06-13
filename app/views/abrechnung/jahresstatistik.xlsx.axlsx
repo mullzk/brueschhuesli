@@ -1,0 +1,23 @@
+wb = xlsx_package.workbook
+title = wb.styles.add_style(b: true, sz: 13)
+bold = wb.styles.add_style(b: true)
+smaller = wb.styles.add_style(sz: 9)
+int = wb.styles.add_style(num_fmt: 1)
+
+wb.add_worksheet(name: @listed_year.year.to_s) do |sheet|
+  sheet.add_row [ "Brüschhüsli-Abrechnung für #{@listed_year.year}" ], style: title
+  sheet.add_row []
+  sheet.add_row [ "Wer", "Anzahl Reservationen", "Total Kosten" ], style: bold
+
+  @statement.lines.each do |line|
+    sheet.add_row [ line.user.name, line.reservation_count, line.fee ], style: [ nil, int, int ]
+  end
+
+  first_data_row = 4
+  last_data_row = first_data_row + @statement.lines.size - 1
+  sheet.add_row [ "Total",
+                  "=SUM(B#{first_data_row}:B#{last_data_row})",
+                  "=SUM(C#{first_data_row}:C#{last_data_row})" ], style: bold, escape_formulas: false
+  sheet.add_row [], style: bold
+  sheet.add_row [ "Stand #{Time.zone.today.strftime('%d.%m.%Y')}" ], style: smaller
+end

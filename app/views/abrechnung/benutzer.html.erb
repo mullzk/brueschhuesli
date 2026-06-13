@@ -24,7 +24,7 @@
     <td align="right"><%= @reservations.inject(0) {|sum, res| sum + res.billed_fee} %>.-</td>
 </table>
 <p style="text-align:right; font-size:xx-small;">
-  <%= link_to "Excel", :id => @user, :year => @listed_year.year, :format => :xls %> -
+  <%= link_to "Excel", :id => @user, :year => @listed_year.year, :format => :xlsx %> -
   Alle Daten gemäss DB-Stand vom <%= Date.today.strftime("%d.%m.%Y") %>
 </p>
 <hr>

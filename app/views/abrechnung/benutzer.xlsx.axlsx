@@ -1,0 +1,33 @@
+wb = xlsx_package.workbook
+title = wb.styles.add_style(b: true, sz: 13)
+bold = wb.styles.add_style(b: true)
+smaller = wb.styles.add_style(sz: 9)
+int = wb.styles.add_style(num_fmt: 1)
+datetime = wb.styles.add_style(format_code: "DD.MM.YYYY HH:MM")
+
+wb.add_worksheet(name: @listed_year.year.to_s) do |sheet|
+  sheet.add_row [ "Brüschhüsli-Nutzungen für #{@user.name} im #{@listed_year.year}" ], style: title
+  sheet.add_row []
+  sheet.add_row [ "Beginn", "Ende", "Dauer (h)", "Typ", "Excl?", "Kosten", "", "Kommentar" ], style: bold
+
+  @reservations.each do |reservation|
+    sheet.add_row [ reservation.start.to_time,
+                    reservation.finish.to_time,
+                    reservation.duration_rounded_to_hours / (60 * 60),
+                    reservation.classified_type,
+                    reservation.is_exclusive ? "Excl." : "Offen",
+                    reservation.billed_fee,
+                    "",
+                    reservation.comment ],
+                  style: [ datetime, datetime, int, nil, nil, int, nil, nil ],
+                  types: [ :time, :time, nil, nil, nil, nil, nil, nil ]
+  end
+
+  first_data_row = 4
+  last_data_row = first_data_row + @reservations.size - 1
+  sheet.add_row [ "Total", "",
+                  "=SUM(C#{first_data_row}:C#{last_data_row})", "", "",
+                  "=SUM(F#{first_data_row}:F#{last_data_row})" ], style: bold, escape_formulas: false
+  sheet.add_row [], style: bold
+  sheet.add_row [ "Stand #{Time.zone.today.strftime('%d.%m.%Y')}" ], style: smaller
+end
