@@ -1,8 +1,6 @@
 class LoginController < ApplicationController
   layout "reservation"
 
-  allow_unauthenticated_access only: :login
-
   def add_user
     @user = User.new(user_params)
 
@@ -18,30 +16,6 @@ class LoginController < ApplicationController
         render :add_user, status: :unprocessable_entity
       end
     end
-  end
-
-  def login
-    if request.post?
-      user = User.authenticate(params[:name], params[:password])
-      if user
-        start_new_session_for(user)
-        if user.has_to_change_password
-          flash[:notice] = "Ein neues Passwort muss gesetzt werden"
-          redirect_to action: "change_password"
-        else
-          redirect_to controller: "reservations", action: "index"
-        end
-      else
-        flash.now[:notice] = "Ungültige Benutzer/Passwort Kombination"
-        render :login, status: :unprocessable_entity
-      end
-    end
-  end
-
-  def logout
-    terminate_session
-    flash[:notice] = "Logged out"
-    redirect_to action: "login"
   end
 
   def edit_user

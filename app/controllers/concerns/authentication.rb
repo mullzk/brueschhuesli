@@ -36,7 +36,7 @@ module Authentication
 
   def request_authentication
     flash[:notice] = "Please log in"
-    redirect_to controller: "login", action: "login"
+    redirect_to new_session_path
   end
 
   def start_new_session_for(user)

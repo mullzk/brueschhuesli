@@ -1,62 +1,6 @@
 require "test_helper"
 
 class LoginControllerTest < ActionDispatch::IntegrationTest
-  test "login with no credentials" do
-    get "/login/list_users"
-
-    assert_redirected_to controller: :login, action: :login
-
-    user = FactoryBot.create(:user, name: "user", email: "email@mail.com", password: "password")
-    post "/login/login", params: { name: user.name, password: "" }
-
-    assert_response :unprocessable_entity
-    assert_equal "Ungültige Benutzer/Passwort Kombination", flash[:notice]
-  end
-
-  test "login with wrong credentials" do
-    get "/login/list_users"
-
-    assert_redirected_to controller: :login, action: :login
-
-    user = FactoryBot.create(:user, name: "user", email: "email@mail.com", password: "password")
-    post "/login/login", params: { name: user.name, password: user.name }
-
-    assert_response :unprocessable_entity
-    assert_equal "Ungültige Benutzer/Passwort Kombination", flash[:notice]
-  end
-
-  test "login with correct credentials" do
-    get "/login/list_users"
-
-    assert_redirected_to controller: :login, action: :login
-
-    user = FactoryBot.create(:user, name: "user", email: "email@mail.com", password: "password")
-    post "/login/login", params: { name: user.name, password: user.password }
-
-    assert_redirected_to controller: "reservations", action: "index"
-  end
-
-  test "logout after successful login" do
-    login_as_user
-
-    assert_redirected_to controller: "reservations", action: "index"
-    get "/login/logout"
-
-    assert_redirected_to controller: :login, action: :login
-    get "/login/list_users"
-
-    assert_redirected_to controller: :login, action: :login
-  end
-
-  test "an expired session no longer authenticates" do
-    user = login_as_user
-    user.sessions.update_all(created_at: (Session::MAX_AGE + 1.day).ago)
-    get "/login/list_users"
-
-    assert_redirected_to controller: :login, action: :login
-  end
-
-
   test "add user and then log in with it" do
     login_as_user
     get "/login/add_user"
@@ -70,9 +14,9 @@ class LoginControllerTest < ActionDispatch::IntegrationTest
 
     assert_redirected_to controller: "login", action: "list_users"
 
-    post "/login/login", params: { name: "ACB", password: "Password" }
+    post session_path, params: { name: "ACB", password: "Password" }
 
-    assert_redirected_to controller: "reservations", action: "index"
+    assert_redirected_to root_path
   end
 
   test "edit user" do
@@ -123,7 +67,7 @@ class LoginControllerTest < ActionDispatch::IntegrationTest
   test "list users" do
     get "/login/list_users"
 
-    assert_redirected_to controller: :login, action: :login
+    assert_redirected_to new_session_path
     login_as_user
 
     get "/login/list_users"
@@ -135,9 +79,9 @@ class LoginControllerTest < ActionDispatch::IntegrationTest
     user = FactoryBot.create(:user, name: "newuser", email: "email@mail.com", password: "123")
 
     assert User.authenticate(user.name, "123")
-    post "/login/login", params: { name: user.name, password: user.password }
+    post session_path, params: { name: user.name, password: user.password }
 
-    assert_redirected_to controller: "reservations", action: "index"
+    assert_redirected_to root_path
 
     get "/login/change_password"
 

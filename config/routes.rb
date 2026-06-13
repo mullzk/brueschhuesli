@@ -7,11 +7,12 @@ Rails.application.routes.draw do
   resources "reservations"
 
 
+  resource :session, only: %i[new create destroy]
+  # Keep the old login URL working for existing bookmarks.
+  get "login/login", to: redirect("/session/new")
+
   get "login/add_user"
   post "login/add_user"
-  get "login/login"
-  post "login/login"
-  get "login/logout"
   get "login/edit_user"
   post "login/update_user"
   patch "login/update_user"

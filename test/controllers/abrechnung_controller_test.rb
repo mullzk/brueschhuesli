@@ -10,7 +10,7 @@ class AbrechnungControllerTest < ActionDispatch::IntegrationTest
   test "should get index after login" do
     get abrechnung_index_url
 
-    assert_redirected_to controller: :login, action: :login
+    assert_redirected_to new_session_path
     login_as_user
 
     get abrechnung_index_url
@@ -21,7 +21,7 @@ class AbrechnungControllerTest < ActionDispatch::IntegrationTest
   test "should get jahresstatistik" do
     get abrechnung_jahresstatistik_url
 
-    assert_redirected_to controller: :login, action: :login
+    assert_redirected_to new_session_path
     login_as_user
 
     get abrechnung_jahresstatistik_url
@@ -32,7 +32,7 @@ class AbrechnungControllerTest < ActionDispatch::IntegrationTest
   test "should get detailliste" do
     get abrechnung_detailliste_url
 
-    assert_redirected_to controller: :login, action: :login
+    assert_redirected_to new_session_path
     login_as_user
 
     get abrechnung_detailliste_url
@@ -43,7 +43,7 @@ class AbrechnungControllerTest < ActionDispatch::IntegrationTest
   test "should get benutzer" do
     get abrechnung_benutzer_url params: { id: 1 }
 
-    assert_redirected_to controller: :login, action: :login
+    assert_redirected_to new_session_path
     login_as_user
 
     get abrechnung_benutzer_url params: { id: @user.id }
@@ -58,7 +58,7 @@ class AbrechnungControllerTest < ActionDispatch::IntegrationTest
 
     get url
 
-    assert_redirected_to controller: :login, action: :login
+    assert_redirected_to new_session_path
     login_as_user
 
     get url
