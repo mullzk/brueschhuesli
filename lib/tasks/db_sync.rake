@@ -43,7 +43,7 @@ module DbSync
   end
 
   def dump_filename(label)
-    "brueschhuesli-#{label}-#{Time.now.strftime('%Y%m%d-%H%M%S')}-#{SecureRandom.hex(4)}.sql"
+    "brueschhuesli-#{label}-#{Time.zone.now.strftime('%Y%m%d-%H%M%S')}-#{SecureRandom.hex(4)}.sql"
   end
 
   def mysqldump_cmd(db)

@@ -90,7 +90,7 @@ xml.Workbook({
       xml.Row "ss:StyleID" => "ap_bold" do
       end
       xml.Row "ss:StyleID" => "ap_smaller" do
-        xml.e_cell("Stand #{Date.today.strftime("%d.%m.%Y")}")
+        xml.e_cell("Stand #{Time.zone.today.strftime("%d.%m.%Y")}")
       end
     end
   end

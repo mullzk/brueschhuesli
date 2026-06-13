@@ -11,6 +11,13 @@ plugins:
 Minitest/MultipleAssertions:
   Enabled: false
 
+# Selected Rails cops (omakase keeps the Rails department off). Kept narrow on
+# purpose; the broad rollout is the final roadmap phase.
+Rails/Date:
+  Enabled: true
+Rails/TimeZone:
+  Enabled: true
+
 # Overrides can be added below; keep this minimal.
 AllCops:
   # Activate newly released cops in enabled departments (omakase keeps most
