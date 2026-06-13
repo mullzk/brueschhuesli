@@ -1,4 +1,6 @@
 class ReservationsController < ApplicationController
+  before_action :set_user_options, only: %i[new create edit update]
+
   def index
     @listed_month = parse_date_param
     @months = (0..2).map { |i| CalendarMonth.for(@listed_month.beginning_of_month + i.months) }
@@ -22,7 +24,6 @@ class ReservationsController < ApplicationController
   end
 
   def new
-    @users = User.all.sort.map { |user| [ user.name, user.id ] }
     if params[:date]
       day = Date.parse(params[:date])
     else
@@ -47,7 +48,6 @@ class ReservationsController < ApplicationController
       flash[:notice] = "Reservation wurde gespeichert"
       redirect_to action: "index", date: @reservation.start
     else
-      @users = User.all.sort.map { |user| [ user.name, user.id ] }
       flash.now[:notice] = "Reservation konnte nicht gespeichert werden"
       render :new, status: :unprocessable_entity
     end
@@ -60,12 +60,10 @@ class ReservationsController < ApplicationController
 
   def edit
     @reservation = Reservation.find(params[:id])
-    @users = User.all.sort.map { |user| [ user.name, user.id ] }
   end
 
   def update
     @reservation = Reservation.find(params[:id])
-    @users = User.all.sort.map { |user| [ user.name, user.id ] }
     if @reservation.update(reservation_params)
       flash[:notice] = "Änderungen gespeichert."
       redirect_to action: "index", date: @reservation.start
@@ -85,6 +83,10 @@ class ReservationsController < ApplicationController
 
 
   private
+
+  def set_user_options
+    @users = User.all.sort.map { |user| [ user.name, user.id ] }
+  end
 
   def month_and_year_as_time(string)
     Date.strptime(string, "%Y-%m")

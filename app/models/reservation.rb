@@ -52,10 +52,11 @@ class Reservation < ApplicationRecord
   end
 
   def duration_rounded_to_hours
-    fin = DateTime.new(finish.year, finish.month, finish.day, finish.hour, 0).in_time_zone
-    sta = DateTime.new(start.year, start.month, start.day, start.hour, 0).in_time_zone
+    floor_to_hour(finish) - floor_to_hour(start)
+  end
 
-    fin - sta
+  def floor_to_hour(time)
+    DateTime.new(time.year, time.month, time.day, time.hour, 0).in_time_zone
   end
 
   def duration_in_8_hour_blocks

@@ -24,6 +24,28 @@ Lint:
 Naming:
   Enabled: true
 
+# Length/complexity ceilings, tuned to this deliberately-shaped code rather
+# than rubocop's tight defaults: the controllers and the Reservation model
+# went through the earlier refactor phases and are idiomatic as they stand.
+# Test, migration and rake-DSL lengths are not a complexity signal here.
+Metrics:
+  Enabled: true
+  Exclude:
+    - "test/**/*"
+    - "db/migrate/**/*"
+Metrics/AbcSize:
+  Max: 23
+Metrics/MethodLength:
+  Max: 15
+Metrics/ClassLength:
+  Max: 130
+Metrics/BlockLength:
+  Exclude:
+    - "lib/tasks/**/*"
+Metrics/ModuleLength:
+  Exclude:
+    - "lib/tasks/**/*"
+
 # Enabled in Phase 0.5 before the Rails department comes on (step 3); kept
 # explicit so the zone-aware call sites stay enforced in the meantime.
 Rails/Date:
