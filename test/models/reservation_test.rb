@@ -169,35 +169,43 @@ class ReservationTest < ActiveSupport::TestCase
   end
 
   test "on_day? covers every day a reservation overlaps" do
-    r = Reservation.new(start: DateTime.new(2019, 2, 1, 14), finish: DateTime.new(2019, 2, 3, 18))
-    assert_not r.on_day?(Date.new(2019, 1, 31))
-    assert     r.on_day?(Date.new(2019, 2, 1))
-    assert     r.on_day?(Date.new(2019, 2, 2))
-    assert     r.on_day?(Date.new(2019, 2, 3))
-    assert_not r.on_day?(Date.new(2019, 2, 4))
+    r = Reservation.new(start: at("2019-02-01 14:00"), finish: at("2019-02-03 18:00"))
+    assert_not r.on_day?(on("2019-01-31"))
+    assert     r.on_day?(on("2019-02-01"))
+    assert     r.on_day?(on("2019-02-02"))
+    assert     r.on_day?(on("2019-02-03"))
+    assert_not r.on_day?(on("2019-02-04"))
   end
 
-  test "calculare timespans on one particular day" do
-    r = Reservation.new(start: DateTime.new(2010, 6, 1, 12), finish: DateTime.new(2010, 6, 3, 11))
-    assert_equal r.begin_on_day(Date.new(2010, 6, 1)).hour, 12
-    assert_equal r.begin_on_day(Date.new(2010, 6, 2)).hour, 0
-    assert_equal r.begin_on_day(Date.new(2010, 6, 3)).hour, 0
-    assert_equal r.end_on_day(Date.new(2010, 6, 1)).hour, 23
-    assert_equal r.end_on_day(Date.new(2010, 6, 2)).hour, 23
-    assert_equal r.end_on_day(Date.new(2010, 6, 3)).hour, 11
+  test "begin_on_day clamps the start to the given day" do
+    r = Reservation.new(start: at("2010-06-01 12:00"), finish: at("2010-06-03 11:00"))
+    assert_equal 12, r.begin_on_day(on("2010-06-01")).hour
+    assert_equal 0,  r.begin_on_day(on("2010-06-02")).hour
+    assert_equal 0,  r.begin_on_day(on("2010-06-03")).hour
+  end
 
-    assert_not r.fills_complete_day?(Date.new(2010, 6, 1))
-    assert r.fills_complete_day?(Date.new(2010, 6, 2))
-    assert_not r.fills_complete_day?(Date.new(2010, 6, 3))
+  test "end_on_day clamps the finish to the given day" do
+    r = Reservation.new(start: at("2010-06-01 12:00"), finish: at("2010-06-03 11:00"))
+    assert_equal 23, r.end_on_day(on("2010-06-01")).hour
+    assert_equal 23, r.end_on_day(on("2010-06-02")).hour
+    assert_equal 11, r.end_on_day(on("2010-06-03")).hour
+  end
 
-    assert_equal r.hours_on_day(Date.new(2010, 6, 1)), 12
-    assert_equal r.hours_on_day(Date.new(2010, 6, 2)), 24
-    assert_equal r.hours_on_day(Date.new(2010, 6, 3)), 11
+  test "fills_complete_day? is true only for fully covered days" do
+    r = Reservation.new(start: at("2010-06-01 12:00"), finish: at("2010-06-03 11:00"))
+    assert_not r.fills_complete_day?(on("2010-06-01"))
+    assert     r.fills_complete_day?(on("2010-06-02"))
+    assert_not r.fills_complete_day?(on("2010-06-03"))
+  end
 
-    r = Reservation.new(start: DateTime.new(2010, 6, 1, 1), finish: DateTime.new(2010, 6, 1, 24))
-    assert_equal r.hours_on_day(Date.new(2010, 6, 1)), 23
-    r = Reservation.new(start: DateTime.new(2010, 6, 1, 0), finish: DateTime.new(2010, 6, 1, 23))
-    assert_equal r.hours_on_day(Date.new(2010, 6, 1)), 23
+  test "hours_on_day counts the hours falling on the given day" do
+    r = Reservation.new(start: at("2010-06-01 12:00"), finish: at("2010-06-03 11:00"))
+    assert_equal 12, r.hours_on_day(on("2010-06-01"))
+    assert_equal 24, r.hours_on_day(on("2010-06-02"))
+    assert_equal 11, r.hours_on_day(on("2010-06-03"))
+
+    assert_equal 23, Reservation.new(start: at("2010-06-01 01:00"), finish: at("2010-06-01 24:00")).hours_on_day(on("2010-06-01"))
+    assert_equal 23, Reservation.new(start: at("2010-06-01 00:00"), finish: at("2010-06-01 23:00")).hours_on_day(on("2010-06-01"))
   end
 
 
