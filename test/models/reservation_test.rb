@@ -33,6 +33,11 @@ class ReservationTest < ActiveSupport::TestCase
     DateTime.parse(iso_formatted_date_or_datetime)
   end
 
+  # takes on("2010-02-01") for a whole calendar day (a Date, not an instant)
+  def on(iso_formatted_date)
+    Date.parse(iso_formatted_date)
+  end
+
   test "a reservation finishing after it starts is valid" do
     reservation = build(:reservation, user: @user, start: at("2010-02-01 08:00"), finish: at("2010-02-01 10:00"))
     assert reservation.valid?
@@ -62,72 +67,70 @@ class ReservationTest < ActiveSupport::TestCase
     assert_not build(:reservation, user: @user, start: at("2010-01-31 19:00"), finish: at("2010-02-03 21:00")).valid?, "spanning across the slot"
   end
 
-  test "find all reservations an a day" do
-     first_reservation = FactoryBot.create(:reservation, user: @user, start: DateTime.new(2019, 2, 1, 14, 00), finish: DateTime.new(2019, 2, 2, 18, 00), type_of_reservation: Reservation::KURZAUFENTHALT)
-    second_reservation = FactoryBot.create(:reservation, user: @user, start: DateTime.new(2019, 2, 2, 20, 00), finish: DateTime.new(2019, 2, 3, 18, 00), type_of_reservation: Reservation::KURZAUFENTHALT)
+  test "find_reservations_on_date returns reservations overlapping that day" do
+    spanning  = create(:reservation, user: @user, start: at("2019-02-01 14:00"), finish: at("2019-02-02 18:00"))
+    following = create(:reservation, user: @user, start: at("2019-02-02 20:00"), finish: at("2019-02-03 18:00"))
 
-    assert     Reservation.find_reservations_on_date(Date.new(2019, 1, 31)).empty?
-    assert     Reservation.find_reservations_on_date(Date.new(2019, 2, 1)).include?(first_reservation)
-    assert_not Reservation.find_reservations_on_date(Date.new(2019, 2, 1)).include?(second_reservation)
-    assert     Reservation.find_reservations_on_date(Date.new(2019, 2, 2)).include?(first_reservation)
-    assert     Reservation.find_reservations_on_date(Date.new(2019, 2, 2)).include?(second_reservation)
-    assert_not Reservation.find_reservations_on_date(Date.new(2019, 2, 3)).include?(first_reservation)
-    assert     Reservation.find_reservations_on_date(Date.new(2019, 2, 3)).include?(second_reservation)
-    assert_not Reservation.find_reservations_on_date(Date.new(2019, 2, 4)).include?(second_reservation)
+    assert_empty    Reservation.find_reservations_on_date(on("2019-01-31"))
+    assert_includes Reservation.find_reservations_on_date(on("2019-02-01")), spanning
+    refute_includes Reservation.find_reservations_on_date(on("2019-02-01")), following
+    assert_includes Reservation.find_reservations_on_date(on("2019-02-02")), spanning
+    assert_includes Reservation.find_reservations_on_date(on("2019-02-02")), following
+    refute_includes Reservation.find_reservations_on_date(on("2019-02-03")), spanning
+    assert_includes Reservation.find_reservations_on_date(on("2019-02-03")), following
+    refute_includes Reservation.find_reservations_on_date(on("2019-02-04")), following
   end
 
-  test "find reservations that span multiple days" do
-    res =  FactoryBot.create(:reservation, user: @user, start: DateTime.new(2010, 2, 4, 8, 15), finish: DateTime.new(2010, 2, 7, 10, 0), type_of_reservation: Reservation::KURZAUFENTHALT)
+  test "find_reservations_in_timeslot finds any reservation the slot overlaps" do
+    res = create(:reservation, user: @user, start: at("2010-02-04 08:15"), finish: at("2010-02-07 10:00"))
 
-    # Interesting Timeslot is bigger or equal than reservation
-    assert Reservation.find_reservations_in_timeslot(DateTime.new(2010, 2, 4, 7), DateTime.new(2010, 2, 7, 23)).include?(res)
-    assert Reservation.find_reservations_in_timeslot(DateTime.new(2010, 2, 4, 8), DateTime.new(2010, 2, 7, 23)).include?(res)
-    assert Reservation.find_reservations_in_timeslot(DateTime.new(2010, 2, 4, 8, 14), DateTime.new(2010, 2, 7, 23)).include?(res)
-    assert Reservation.find_reservations_in_timeslot(DateTime.new(2010, 2, 4, 8, 15), DateTime.new(2010, 2, 7, 23)).include?(res)
-    assert Reservation.find_reservations_in_timeslot(DateTime.new(2010, 2, 4, 7), DateTime.new(2010, 2, 7, 11)).include?(res)
-    assert Reservation.find_reservations_in_timeslot(DateTime.new(2010, 2, 4, 7), DateTime.new(2010, 2, 7, 10)).include?(res)
-
-    # Interesting Timeslot collides on one side with reservation
-    assert Reservation.find_reservations_in_timeslot(DateTime.new(2010, 2, 4, 8, 15), DateTime.new(2010, 2, 7, 9)).include?(res)
-    assert Reservation.find_reservations_in_timeslot(DateTime.new(2010, 2, 4, 9), DateTime.new(2010, 2, 7, 23)).include?(res)
-
-    # Interesting Timeslot is inside a reservation
-    assert Reservation.find_reservations_in_timeslot(DateTime.new(2010, 2, 4, 9), DateTime.new(2010, 2, 7, 9)).include?(res)
-    assert Reservation.find_reservations_in_timeslot(DateTime.new(2010, 2, 4, 10), DateTime.new(2010, 2, 4, 11)).include?(res)
-
-    # The order is of no importance
-    assert Reservation.find_reservations_in_timeslot(DateTime.new(2010, 2, 4, 11), DateTime.new(2010, 2, 4, 10)).include?(res)
-    assert Reservation.find_reservations_in_timeslot(DateTime.new(2010, 2, 6, 11), DateTime.new(2010, 2, 4, 10)).include?(res)
-
-    # Timeslot before
-    assert_not Reservation.find_reservations_in_timeslot(DateTime.new(2010, 2, 4, 7), DateTime.new(2010, 2, 4, 8)).include?(res)
-    assert_not Reservation.find_reservations_in_timeslot(DateTime.new(2010, 2, 4, 7), DateTime.new(2010, 2, 4, 8, 15)).include?(res)
-    assert Reservation.find_reservations_in_timeslot(DateTime.new(2010, 2, 4, 7), DateTime.new(2010, 2, 4, 9)).include?(res)
-
-    # Timeslot after
-    assert Reservation.find_reservations_in_timeslot(DateTime.new(2010, 2, 7, 9), DateTime.new(2010, 2, 7, 12)).include?(res)
-    assert_not Reservation.find_reservations_in_timeslot(DateTime.new(2010, 2, 7, 10), DateTime.new(2010, 2, 7, 12)).include?(res)
-    assert_not Reservation.find_reservations_in_timeslot(DateTime.new(2010, 2, 7, 11), DateTime.new(2010, 2, 7, 12)).include?(res)
-    assert_not Reservation.find_reservations_in_timeslot(DateTime.new(2010, 2, 8, 8), DateTime.new(2010, 2, 9, 9)).include?(res)
+    assert_includes Reservation.find_reservations_in_timeslot(at("2010-02-04 07:00"), at("2010-02-07 23:00")), res
+    assert_includes Reservation.find_reservations_in_timeslot(at("2010-02-04 08:00"), at("2010-02-07 23:00")), res
+    assert_includes Reservation.find_reservations_in_timeslot(at("2010-02-04 08:14"), at("2010-02-07 23:00")), res
+    assert_includes Reservation.find_reservations_in_timeslot(at("2010-02-04 08:15"), at("2010-02-07 23:00")), res
+    assert_includes Reservation.find_reservations_in_timeslot(at("2010-02-04 07:00"), at("2010-02-07 11:00")), res
+    assert_includes Reservation.find_reservations_in_timeslot(at("2010-02-04 07:00"), at("2010-02-07 10:00")), res
+    assert_includes Reservation.find_reservations_in_timeslot(at("2010-02-04 08:15"), at("2010-02-07 09:00")), res
+    assert_includes Reservation.find_reservations_in_timeslot(at("2010-02-04 09:00"), at("2010-02-07 23:00")), res
+    assert_includes Reservation.find_reservations_in_timeslot(at("2010-02-04 09:00"), at("2010-02-07 09:00")), res
+    assert_includes Reservation.find_reservations_in_timeslot(at("2010-02-04 10:00"), at("2010-02-04 11:00")), res
   end
 
-  test "find reservations in timeslot on one day" do
-    r1 =  FactoryBot.create(:reservation, user: @user, start: DateTime.new(2010, 2, 4, 8, 15), finish: DateTime.new(2010, 2, 7, 10, 0), type_of_reservation: Reservation::KURZAUFENTHALT)
-    r2 =  FactoryBot.create(:reservation, user: @user, start: DateTime.new(2010, 2, 8, 8, 15), finish: DateTime.new(2010, 2, 8, 10, 0), type_of_reservation: Reservation::KURZAUFENTHALT)
-    r3 =  FactoryBot.create(:reservation, user: @user, start: DateTime.new(2010, 2, 8, 13, 0), finish: DateTime.new(2010, 2, 8, 15, 0), type_of_reservation: Reservation::KURZAUFENTHALT)
+  test "find_reservations_in_timeslot ignores the order of its arguments" do
+    res = create(:reservation, user: @user, start: at("2010-02-04 08:15"), finish: at("2010-02-07 10:00"))
 
-    assert_not Reservation.find_reservations_in_timeslot(Date.new(2010, 2, 2), Date.new(2010, 2, 3)).include?(r1)
-    assert Reservation.find_reservations_in_timeslot(Date.new(2010, 2, 2), Date.new(2010, 2, 4)).include?(r1)
-    assert Reservation.find_reservations_in_timeslot(Date.new(2010, 2, 4), Date.new(2010, 2, 6)).include?(r1)
-    assert Reservation.find_reservations_in_timeslot(Date.new(2010, 2, 5), Date.new(2010, 2, 6)).include?(r1)
-    assert Reservation.find_reservations_in_timeslot(Date.new(2010, 2, 5), Date.new(2010, 2, 9)).include?(r1)
-    assert Reservation.find_reservations_in_timeslot(Date.new(2010, 2, 7), Date.new(2010, 2, 9)).include?(r1)
-    assert_not Reservation.find_reservations_in_timeslot(Date.new(2010, 2, 8), Date.new(2010, 2, 9)).include?(r1)
+    assert_includes Reservation.find_reservations_in_timeslot(at("2010-02-04 11:00"), at("2010-02-04 10:00")), res
+    assert_includes Reservation.find_reservations_in_timeslot(at("2010-02-06 11:00"), at("2010-02-04 10:00")), res
+  end
 
-    assert Reservation.find_reservations_in_timeslot(Date.new(2010, 2, 6), Date.new(2010, 2, 8)).include?(r2)
-    assert Reservation.find_reservations_in_timeslot(Date.new(2010, 2, 8), Date.new(2010, 2, 8)).include?(r2)
-    assert Reservation.find_reservations_in_timeslot(Date.new(2010, 2, 8), Date.new(2010, 2, 10)).include?(r2)
-    assert_not Reservation.find_reservations_in_timeslot(Date.new(2010, 2, 9), Date.new(2010, 2, 10)).include?(r2)
+  test "find_reservations_in_timeslot respects the slot boundaries" do
+    res = create(:reservation, user: @user, start: at("2010-02-04 08:15"), finish: at("2010-02-07 10:00"))
+
+    refute_includes Reservation.find_reservations_in_timeslot(at("2010-02-04 07:00"), at("2010-02-04 08:00")), res
+    refute_includes Reservation.find_reservations_in_timeslot(at("2010-02-04 07:00"), at("2010-02-04 08:15")), res
+    assert_includes Reservation.find_reservations_in_timeslot(at("2010-02-04 07:00"), at("2010-02-04 09:00")), res
+    assert_includes Reservation.find_reservations_in_timeslot(at("2010-02-07 09:00"), at("2010-02-07 12:00")), res
+    refute_includes Reservation.find_reservations_in_timeslot(at("2010-02-07 10:00"), at("2010-02-07 12:00")), res
+    refute_includes Reservation.find_reservations_in_timeslot(at("2010-02-07 11:00"), at("2010-02-07 12:00")), res
+    refute_includes Reservation.find_reservations_in_timeslot(at("2010-02-08 08:00"), at("2010-02-09 09:00")), res
+  end
+
+  test "find_reservations_in_timeslot treats date arguments as whole days" do
+    long    = create(:reservation, user: @user, start: at("2010-02-04 08:15"), finish: at("2010-02-07 10:00"))
+    morning = create(:reservation, user: @user, start: at("2010-02-08 08:15"), finish: at("2010-02-08 10:00"))
+
+    refute_includes Reservation.find_reservations_in_timeslot(on("2010-02-02"), on("2010-02-03")), long
+    assert_includes Reservation.find_reservations_in_timeslot(on("2010-02-02"), on("2010-02-04")), long
+    assert_includes Reservation.find_reservations_in_timeslot(on("2010-02-04"), on("2010-02-06")), long
+    assert_includes Reservation.find_reservations_in_timeslot(on("2010-02-05"), on("2010-02-06")), long
+    assert_includes Reservation.find_reservations_in_timeslot(on("2010-02-05"), on("2010-02-09")), long
+    assert_includes Reservation.find_reservations_in_timeslot(on("2010-02-07"), on("2010-02-09")), long
+    refute_includes Reservation.find_reservations_in_timeslot(on("2010-02-08"), on("2010-02-09")), long
+
+    assert_includes Reservation.find_reservations_in_timeslot(on("2010-02-06"), on("2010-02-08")), morning
+    assert_includes Reservation.find_reservations_in_timeslot(on("2010-02-08"), on("2010-02-08")), morning
+    assert_includes Reservation.find_reservations_in_timeslot(on("2010-02-08"), on("2010-02-10")), morning
+    refute_includes Reservation.find_reservations_in_timeslot(on("2010-02-09"), on("2010-02-10")), morning
   end
 
   test "long KURZAUFENTHALT should be interpreted as FERIENAUFENTHALT" do
