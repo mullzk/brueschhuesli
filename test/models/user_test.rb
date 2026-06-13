@@ -28,7 +28,7 @@ class UserTest < ActiveSupport::TestCase
     assert_not dbuser
   end
 
-  test "User gets created, Passwort is not stored in clear-text" do
+  test "a saved user stores its password hashed, not in clear text" do
     user = FactoryBot.build(:user, name: "Stefan", email: "test@mail.com")
     user.password="test1234"
     user.save
@@ -38,21 +38,21 @@ class UserTest < ActiveSupport::TestCase
   end
 
 
-  test "authentication with correct password should pass" do
+  test "authentication with the correct password passes" do
     user = FactoryBot.build(:user, name: "Stefan", email: "test@mail.com")
     user.password="test1234"
     user.save
     assert User.authenticate("Stefan", "test1234")
   end
 
-  test "authentifcation with wrong password should be rejected" do
+  test "authentication with a wrong password is rejected" do
     user = FactoryBot.build(:user, name: "Stefan", email: "test@mail.com")
     user.password="test1234"
     user.save
     assert_not User.authenticate("Stefan", "test")
   end
 
-  test "authentification with no password should be rejected" do
+  test "authentication with no password is rejected" do
     user = FactoryBot.build(:user, name: "Stefan", email: "test@mail.com")
     user.password="test1234"
     user.save
