@@ -7,7 +7,7 @@ module DbSync
 
   DEPLOY_PATHS = {
     "integration" => "/var/www/brueschhueslidev",
-    "production"  => "/var/www/brueschhuesliprod"
+    "production" => "/var/www/brueschhuesliprod"
   }.freeze
   REMOTE_STAGES = DEPLOY_PATHS.keys.freeze
 
@@ -19,6 +19,7 @@ module DbSync
 
   def confirm_production!(stage)
     return unless stage == "production"
+
     print "Wirklich Production überschreiben? Tippe 'yes': "
     abort "Abgebrochen." unless $stdin.gets.to_s.strip == "yes"
   end
@@ -26,8 +27,8 @@ module DbSync
   def stage_credentials(stage)
     prefix = "DEPLOY_#{stage.upcase}_"
     {
-      host:     ENV.fetch("#{prefix}HOST")   { abort "#{prefix}HOST not set (lokal in .env)" },
-      user:     ENV.fetch("#{prefix}USER")   { abort "#{prefix}USER not set (lokal in .env)" },
+      host: ENV.fetch("#{prefix}HOST")   { abort "#{prefix}HOST not set (lokal in .env)" },
+      user: ENV.fetch("#{prefix}USER")   { abort "#{prefix}USER not set (lokal in .env)" },
       env_file: "#{DEPLOY_PATHS.fetch(stage)}/shared/config/env"
     }
   end
@@ -159,7 +160,7 @@ namespace :db do
 
   desc "Push local dev data to remote stage, replacing its DB. Usage: STAGE=integration rails db:push"
   task push: :environment do
-    stage      = DbSync.require_stage!
+    stage = DbSync.require_stage!
     DbSync.confirm_production!(stage)
     cfg        = DbSync.stage_credentials(stage)
     ssh_target = DbSync.ssh_target_for(stage)

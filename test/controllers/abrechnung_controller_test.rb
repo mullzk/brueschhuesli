@@ -3,7 +3,7 @@ require "test_helper"
 class AbrechnungControllerTest < ActionDispatch::IntegrationTest
   def setup
     @user = FactoryBot.create(:user, name: "User", email: "test@mail.com", password: "test1234")
-    @reservation = FactoryBot.create(:reservation, user: @user, start: (DateTime.now-3.days), finish: DateTime.now, type_of_reservation: Reservation::KURZAUFENTHALT)
+    @reservation = FactoryBot.create(:reservation, user: @user, start: (DateTime.now - 3.days), finish: DateTime.now, type_of_reservation: Reservation::KURZAUFENTHALT)
   end
 
   def worksheet_xml(xlsx_body)
@@ -13,7 +13,6 @@ class AbrechnungControllerTest < ActionDispatch::IntegrationTest
       end
     end
   end
-
 
   test "should get index after login" do
     get abrechnung_index_url
@@ -59,9 +58,8 @@ class AbrechnungControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
-
   test "should get excel" do
-    year = (DateTime.now-(3.days)).year
+    year = (DateTime.now - (3.days)).year
     url = "/abrechnung/jahresstatistik.xlsx?year=#{year}"
 
     get url

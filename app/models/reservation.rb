@@ -39,9 +39,8 @@ class Reservation < ApplicationRecord
     TYPES.sort
   end
 
-
   def duration
-    finish-start
+    finish - start
   end
 
   def duration_in_days
@@ -82,7 +81,6 @@ class Reservation < ApplicationRecord
   end
   private :billing
 
-
   def classified_type
     saved = self[:type_of_reservation]
     if saved == KURZAUFENTHALT && duration > LONG_STAY_THRESHOLD
@@ -117,6 +115,7 @@ class Reservation < ApplicationRecord
   def self.find_reservations_beginning_in_month(month)
     find_reservations_beginning_in_timeslot(month.beginning_of_month, month.end_of_month)
   end
+
   def self.find_reservations_beginning_in_year(year)
     find_reservations_beginning_in_timeslot(year.beginning_of_year, year.end_of_year)
   end
@@ -124,9 +123,11 @@ class Reservation < ApplicationRecord
   def self.reservations_for_user_in_timeslot(user, time_a, time_b)
     find_reservations_beginning_in_timeslot(time_a, time_b).for_user(user)
   end
+
   def self.reservations_for_user_in_month(user, month)
     find_reservations_beginning_in_month(month).for_user(user)
   end
+
   def self.reservations_for_user_in_year(user, year)
     find_reservations_beginning_in_year(year).for_user(user)
   end
@@ -170,20 +171,24 @@ class Reservation < ApplicationRecord
     start <=> other.start
   end
 
-
   def timeslot_exclusive?
     conflicting_reservations = Reservation.find_reservations_in_timeslot(start, finish).to_a
     conflicting_reservations.delete(self) # Needed for validation on Updates, otherwise we conflict with our old version
-    errors.add(:start, "Dieser Zeitabschnitt überlappt mit einer bestehenden Reservation") unless conflicting_reservations.empty?
-    errors.add(:finish, "Dieser Zeitabschnitt überlappt mit einer bestehenden Reservation") unless conflicting_reservations.empty?
+    return if conflicting_reservations.empty?
+
+    message = "Dieser Zeitabschnitt überlappt mit einer bestehenden Reservation"
+    errors.add(:start, message)
+    errors.add(:finish, message)
   end
 
   def timeslot_positive?
     errors.add(:finish, "muss zeitlich hinter dem Reservations-Beginn sein") if finish <= start
   end
 
-
   def reservation_not_longer_than_a_week?
-    errors.add(:finish, "Anfang und Ende liegen zu weit auseinander. Das Brüschhüsli kann für maximal 7 Tage reserviert werden") if duration > 7.days
+    return unless duration > 7.days
+
+    errors.add(:finish, "Anfang und Ende liegen zu weit auseinander. " \
+                        "Das Brüschhüsli kann für maximal 7 Tage reserviert werden")
   end
 end

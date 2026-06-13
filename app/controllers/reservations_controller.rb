@@ -12,7 +12,6 @@ class ReservationsController < ApplicationController
     render partial: "month", object: @month, template: "reservations"
   end
 
-
   def on_day
     if params[:date]
       @day = Date.parse(params[:date])
@@ -45,7 +44,6 @@ class ReservationsController < ApplicationController
     )
   end
 
-
   def edit
     @reservation = Reservation.find(params.expect(:id))
   end
@@ -61,7 +59,6 @@ class ReservationsController < ApplicationController
     end
   end
 
-
   def update
     @reservation = Reservation.find(params.expect(:id))
     if @reservation.update(reservation_params)
@@ -73,14 +70,11 @@ class ReservationsController < ApplicationController
     end
   end
 
-
   def destroy
     Reservation.find(params.expect(:id)).destroy
     flash[:notice] = "Reservierung gelöscht"
     redirect_to action: "index"
   end
-
-
 
   private
 

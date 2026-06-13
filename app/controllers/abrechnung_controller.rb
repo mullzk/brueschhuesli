@@ -22,8 +22,8 @@ class AbrechnungController < ApplicationController
     respond_to_html_and_excel "brüschhüsli_nutzungen_#{(@user.name)}_#{@listed_year.year}"
   end
 
+  private
 
-private
   def respond_to_html_and_excel(filename)
     respond_to do |format|
       format.html

@@ -93,11 +93,11 @@ class ReservationControllerTest < ActionDispatch::IntegrationTest
   test "edit preselects the classified type for a long stay stored as short" do
     user = login_as_user
     reservation = Reservation.create!(valid_params(user,
-      start: at("2019-03-01 12:00"), finish: at("2019-03-04 12:00")))
+                                                   start: at("2019-03-01 12:00"), finish: at("2019-03-04 12:00")))
     get edit_reservation_path(reservation)
 
     assert_select "select#reservation_type_of_reservation option[selected='selected']",
-      text: Reservation::FERIENAUFENTHALT
+                  text: Reservation::FERIENAUFENTHALT
   end
 
   test "update with valid params saves and redirects" do
@@ -147,7 +147,7 @@ class ReservationControllerTest < ActionDispatch::IntegrationTest
   test "month marks every day a reservation spans as occupied" do
     user = login_as_user
     Reservation.create!(valid_params(user,
-      start: at("2019-03-10 14:00"), finish: at("2019-03-12 18:00")))
+                                     start: at("2019-03-10 14:00"), finish: at("2019-03-12 18:00")))
     get "/reservations/month/2019-03-01"
 
     assert_select "td.occupied[data-enter-href-url-value$='on_day/2019-03-10']"

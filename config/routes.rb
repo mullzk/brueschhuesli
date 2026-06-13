@@ -6,7 +6,6 @@ Rails.application.routes.draw do
 
   resources "reservations"
 
-
   resource :session, only: %i[new create destroy]
   # Keep the old login URL working for existing bookmarks.
   get "login/login", to: redirect("/session/new")
@@ -17,8 +16,6 @@ Rails.application.routes.draw do
   get "abrechnung/jahresstatistik"
   get "abrechnung/detailliste"
   get "abrechnung/benutzer"
-
-
 
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 end

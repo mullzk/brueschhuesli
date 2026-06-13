@@ -24,6 +24,17 @@ Lint:
 Naming:
   Enabled: true
 
+# Layout department on. Line length is enforced in production code only:
+# tests carry long descriptive data/German strings and generated/historical
+# migrations are frozen.
+Layout:
+  Enabled: true
+Layout/LineLength:
+  Exclude:
+    - "test/**/*"
+    - "db/migrate/**/*"
+    - "lib/tasks/**/*"
+
 # Length/complexity ceilings, tuned to this deliberately-shaped code rather
 # than rubocop's tight defaults: the controllers and the Reservation model
 # went through the earlier refactor phases and are idiomatic as they stand.

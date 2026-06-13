@@ -225,7 +225,6 @@ class ReservationTest < ActiveSupport::TestCase
     assert_equal 23, Reservation.new(start: at("2010-06-01 00:00"), finish: at("2010-06-01 23:00")).hours_on_day(on("2010-06-01"))
   end
 
-
   test "find_reservations_beginning_in_timeslot reports reservations by their start" do
     r = february_reservations
 
@@ -287,7 +286,6 @@ class ReservationTest < ActiveSupport::TestCase
     assert_not_includes slot, r[:ruth_afternoon]
   end
 
-
   test "duration of a one-hour stay" do
     r = Reservation.new(start: at("2010-06-01 14:00"), finish: at("2010-06-01 15:00"))
 
@@ -322,8 +320,6 @@ class ReservationTest < ActiveSupport::TestCase
     assert_equal 3, r.duration_in_8_hour_blocks
   end
 
-
-
   test "paid_blocks gives co-owners six free blocks on non-exclusive stays" do
     stefan = create(:user, name: "Stefan")
     ruth   = create(:user, name: "Ruth", miteigentuemer: true)
@@ -347,7 +343,7 @@ class ReservationTest < ActiveSupport::TestCase
 
     assert_equal 6, r.duration_in_8_hour_blocks
 
-    assert_equal 0, r.billed_fee  # co-owner, non-exclusive: all 6 blocks free
+    assert_equal 0, r.billed_fee # co-owner, non-exclusive: all 6 blocks free
     r.is_exclusive = true
 
     assert_equal 6 * 15, r.billed_fee
@@ -359,10 +355,10 @@ class ReservationTest < ActiveSupport::TestCase
     assert_equal 6 * 15, r.billed_fee
     r.type_of_reservation = Reservation::GROSSANLASS
 
-    assert_equal 200, r.billed_fee  # flat fee regardless of duration
+    assert_equal 200, r.billed_fee # flat fee regardless of duration
     r.type_of_reservation = Reservation::EXTERNE_NUTZUNG
 
-    assert_equal 3 * 100, r.billed_fee  # three calendar days
+    assert_equal 3 * 100, r.billed_fee # three calendar days
   end
 
   # EXTERNE_NUTZUNG is billed per calendar day touched: a stay spanning three
@@ -396,11 +392,11 @@ class ReservationTest < ActiveSupport::TestCase
     ruth   = create(:user, name: "Ruth")
     stefan = create(:user, name: "Stefan")
     {
-      kaspar_short:     create(:reservation, user: kaspar, start: at("2010-02-01 16:00"), finish: at("2010-02-01 18:00")),
-      ruth_early:       create(:reservation, user: ruth,   start: at("2010-02-03 08:15"), finish: at("2010-02-03 10:00")),
-      kaspar_span:      create(:reservation, user: kaspar, start: at("2010-02-04 08:15"), finish: at("2010-02-07 10:00")),
-      kaspar_morning:   create(:reservation, user: kaspar, start: at("2010-02-08 08:15"), finish: at("2010-02-08 10:00")),
-      ruth_afternoon:   create(:reservation, user: ruth,   start: at("2010-02-08 13:00"), finish: at("2010-02-08 15:00")),
+      kaspar_short: create(:reservation, user: kaspar, start: at("2010-02-01 16:00"), finish: at("2010-02-01 18:00")),
+      ruth_early: create(:reservation, user: ruth, start: at("2010-02-03 08:15"), finish: at("2010-02-03 10:00")),
+      kaspar_span: create(:reservation, user: kaspar, start: at("2010-02-04 08:15"), finish: at("2010-02-07 10:00")),
+      kaspar_morning: create(:reservation, user: kaspar, start: at("2010-02-08 08:15"), finish: at("2010-02-08 10:00")),
+      ruth_afternoon: create(:reservation, user: ruth,   start: at("2010-02-08 13:00"), finish: at("2010-02-08 15:00")),
       stefan_month_end: create(:reservation, user: stefan, start: at("2010-02-27 13:00"), finish: at("2010-03-03 15:00"))
     }
   end

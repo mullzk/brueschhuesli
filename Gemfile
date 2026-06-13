@@ -29,9 +29,6 @@ gem "bcrypt", "~> 3.1.7"
 # Reduces boot times through caching; required in config/boot.rb
 gem "bootsnap", ">= 1.1.0", require: false
 
-
-
-
 # Gems for this project, added by mullzk
 gem "will_paginate"
 # Real .xlsx export for the yearly billing reports
@@ -50,8 +47,6 @@ end
 group :development, :test do
   gem "factory_bot_rails"
 end
-
-
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console

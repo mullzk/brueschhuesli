@@ -38,7 +38,7 @@ class User < ApplicationRecord
   before_save :clear_legacy_password, if: -> { password_digest_changed? && password_digest.present? }
 
   def <=>(other)
-    name<=>other.name
+    name <=> other.name
   end
 
   def self.authenticate(login, password)
@@ -46,11 +46,13 @@ class User < ApplicationRecord
     return nil unless user
     return user if user.authenticate(password)
     return user.rehash_legacy_password(password) if user.legacy_password?(password)
+
     nil
   end
 
   def legacy_password?(password)
     return false if salt.blank? || hashed_password.blank?
+
     ActiveSupport::SecurityUtils.secure_compare(self.class.legacy_hash(password, salt), hashed_password)
   end
 
@@ -67,6 +69,7 @@ class User < ApplicationRecord
 
   def password_must_be_set
     return if password_digest.present? || hashed_password.present?
+
     errors.add(:password, :blank)
   end
 

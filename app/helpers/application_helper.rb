@@ -6,6 +6,7 @@ module ApplicationHelper
 
     { seconds: secs, minutes: mins, hours: hours, days: days }
   end
+
   def time_component_string_of(numeric)
     comps = time_components_of(numeric)
     days = comps[:days]
