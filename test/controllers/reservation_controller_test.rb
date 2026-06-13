@@ -5,8 +5,8 @@ class ReservationControllerTest < ActionDispatch::IntegrationTest
   def valid_params(user, overrides = {})
     {
       user_id: user.id,
-      start: DateTime.new(2019, 3, 1, 14),
-      finish: DateTime.new(2019, 3, 1, 18),
+      start: at("2019-03-01 14:00"),
+      finish: at("2019-03-01 18:00"),
       type_of_reservation: Reservation::KURZAUFENTHALT,
       is_exclusive: true,
       comment: ""
@@ -68,7 +68,7 @@ class ReservationControllerTest < ActionDispatch::IntegrationTest
     user = login_as_user
     assert_no_difference -> { Reservation.count } do
       post reservations_path, params: {
-        reservation: valid_params(user, finish: DateTime.new(2019, 3, 1, 10))
+        reservation: valid_params(user, finish: at("2019-03-01 10:00"))
       }
     end
     assert_response :unprocessable_entity
@@ -87,7 +87,7 @@ class ReservationControllerTest < ActionDispatch::IntegrationTest
   test "edit preselects the classified type for a long stay stored as short" do
     user = login_as_user
     reservation = Reservation.create!(valid_params(user,
-      start: DateTime.new(2019, 3, 1, 12), finish: DateTime.new(2019, 3, 4, 12)))
+      start: at("2019-03-01 12:00"), finish: at("2019-03-04 12:00")))
     get edit_reservation_path(reservation)
     assert_select "select#reservation_type_of_reservation option[selected='selected']",
       text: Reservation::FERIENAUFENTHALT
@@ -97,18 +97,18 @@ class ReservationControllerTest < ActionDispatch::IntegrationTest
     user = login_as_user
     reservation = Reservation.create!(valid_params(user))
     patch reservation_path(reservation), params: {
-      reservation: { finish: DateTime.new(2019, 3, 1, 20) }
+      reservation: { finish: at("2019-03-01 20:00") }
     }
     assert_equal "Änderungen gespeichert.", flash[:notice]
     assert_response :redirect
-    assert_equal DateTime.new(2019, 3, 1, 20), reservation.reload.finish
+    assert_equal at("2019-03-01 20:00"), reservation.reload.finish
   end
 
   test "update with invalid params re-renders edit" do
     user = login_as_user
     reservation = Reservation.create!(valid_params(user))
     patch reservation_path(reservation), params: {
-      reservation: { finish: DateTime.new(2019, 3, 1, 10) }
+      reservation: { finish: at("2019-03-01 10:00") }
     }
     assert_response :unprocessable_entity
     assert_equal "Änderungen konnten nicht gespeichert werden.", flash[:notice]
@@ -137,7 +137,7 @@ class ReservationControllerTest < ActionDispatch::IntegrationTest
   test "month marks every day a reservation spans as occupied" do
     user = login_as_user
     Reservation.create!(valid_params(user,
-      start: DateTime.new(2019, 3, 10, 14), finish: DateTime.new(2019, 3, 12, 18)))
+      start: at("2019-03-10 14:00"), finish: at("2019-03-12 18:00")))
     get "/reservations/month/2019-03-01"
     assert_select "td.occupied[data-enter-href-url-value$='on_day/2019-03-10']"
     assert_select "td.occupied[data-enter-href-url-value$='on_day/2019-03-11']"

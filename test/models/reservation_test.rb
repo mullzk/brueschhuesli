@@ -28,16 +28,6 @@ class ReservationTest < ActiveSupport::TestCase
     @user = FactoryBot.create(:user, name: "Hans", password: "test1234")
   end
 
-  # takes at("2010-02-01") or at("2010-02-01 14:30")
-  def at(iso_formatted_date_or_datetime)
-    DateTime.parse(iso_formatted_date_or_datetime)
-  end
-
-  # takes on("2010-02-01") for a whole calendar day (a Date, not an instant)
-  def on(iso_formatted_date)
-    Date.parse(iso_formatted_date)
-  end
-
   test "a reservation finishing after it starts is valid" do
     reservation = build(:reservation, user: @user, start: at("2010-02-01 08:00"), finish: at("2010-02-01 10:00"))
     assert reservation.valid?

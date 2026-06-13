@@ -16,9 +16,18 @@ class ActiveSupport::TestCase
   # Use FactoryBot's short syntax (create/build/...) without the FactoryBot prefix.
   include FactoryBot::Syntax::Methods
 
-  # Add more helper methods to be used by all tests here...
   # Time-dependent behaviour is exercised via travel_to/freeze_time from
   # ActiveSupport::Testing::TimeHelpers (already mixed into this base class).
+
+  # takes at("2010-02-01") or at("2010-02-01 14:30")
+  def at(iso_formatted_date_or_datetime)
+    DateTime.parse(iso_formatted_date_or_datetime)
+  end
+
+  # takes on("2010-02-01") for a whole calendar day (a Date, not an instant)
+  def on(iso_formatted_date)
+    Date.parse(iso_formatted_date)
+  end
 end
 
 class ActionDispatch::IntegrationTest
