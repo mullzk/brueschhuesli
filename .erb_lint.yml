@@ -1,0 +1,13 @@
+---
+# Vendored gems install into vendor/bundle in CI; don't lint their templates.
+exclude:
+  - "vendor/**/*"
+  - "bin/**/*"
+  - "node_modules/**/*"
+
+# ERB linting. The default linters (formatting, ErbSafety, void tags, input
+# autocomplete, indentation) are on. The Rubocop linter — running RuboCop on
+# the Ruby inside ERB — is deferred to the final roadmap phase.
+linters:
+  Rubocop:
+    enabled: false

@@ -41,6 +41,8 @@ group :development do
   gem "rubocop-rails-omakase", require: false
   # Lint the Minitest test suite (not bundled by omakase)
   gem "rubocop-minitest", require: false
+  # Lint ERB templates (RuboCop only sees .rb files)
+  gem "erb_lint", require: false
 end
 group :development, :test do
   gem "factory_bot_rails"

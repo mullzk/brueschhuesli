@@ -86,6 +86,8 @@ jobs:
         run: bin/brakeman -q -w2
       - name: Lint Ruby code
         run: bin/rubocop -f github
+      - name: Lint ERB templates
+        run: bin/erb_lint --lint-all
 
   deploy_integration:
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'

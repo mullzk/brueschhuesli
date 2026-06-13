@@ -1,29 +1,29 @@
 <h2><%= month[:name] %></h2>
 <table class="calendar">
-	<thead>
-		<tr>
-			<th>Mo</th>
-			<th>Di</th>
-			<th>Mi</th>
-			<th>Do</th>
-			<th>Fr</th>
-			<th>Sa</th>
-			<th>So</th>
-		</tr>
-	</thead>
-	<tbody>
-	<% for week in month[:weeks] %>
-		<tr>
-			<% for day in week %>
-				<% if day %>
-					<%= render partial: "day", locals: { day: day } %>
-				<% else %>
-					<td class="empty"></td>
-				<% end %>
-			<% end %>
-		</tr>
-	<%end%>
-	</tbody>
+  <thead>
+    <tr>
+      <th>Mo</th>
+      <th>Di</th>
+      <th>Mi</th>
+      <th>Do</th>
+      <th>Fr</th>
+      <th>Sa</th>
+      <th>So</th>
+    </tr>
+  </thead>
+  <tbody>
+  <% for week in month[:weeks] %>
+    <tr>
+      <% for day in week %>
+        <% if day %>
+          <%= render partial: "day", locals: { day: day } %>
+        <% else %>
+          <td class="empty"></td>
+        <% end %>
+      <% end %>
+    </tr>
+  <% end %>
+  </tbody>
 </table>
-<div data-prev-month-url="<%= url_for controller:"reservations", action:"month", date:(month[:first_of_month] - 1.month)%>" ></div>
-<div data-next-month-url="<%= url_for controller:"reservations", action:"month", date:(month[:first_of_month] + 1.month)%>" ></div>
+<div data-prev-month-url="<%= url_for controller:"reservations", action:"month", date:(month[:first_of_month] - 1.month) %>"></div>
+<div data-next-month-url="<%= url_for controller:"reservations", action:"month", date:(month[:first_of_month] + 1.month) %>"></div>
