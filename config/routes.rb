@@ -12,9 +12,7 @@ Rails.application.routes.draw do
   get "login/login", to: redirect("/session/new")
 
   resources :users, except: :show
-
-  get "login/change_password"
-  post "login/change_password"
+  resource :password, only: %i[edit update]
   get "abrechnung/index"
   get "abrechnung/jahresstatistik"
   get "abrechnung/detailliste"

@@ -10,7 +10,7 @@ class SessionsController < ApplicationController
       start_new_session_for(user)
       if user.has_to_change_password
         flash[:notice] = "Ein neues Passwort muss gesetzt werden"
-        redirect_to controller: "login", action: "change_password"
+        redirect_to edit_password_path
       else
         redirect_to root_path
       end

@@ -1,6 +1,6 @@
     <% if @user.errors.any? %>
       <div id="error_explanation">
-        <h2><%= pluralize(@user.errors.count, "error") %> prohibited this reservation from being saved:</h2>
+        <h2><%= pluralize(@user.errors.count, "error") %> verhinderte(n), dass das Passwort geändert werden konnte:</h2>
 
         <ul>
         <% @user.errors.full_messages.each do |message| %>
@@ -12,7 +12,7 @@
 
   <fieldset>
     <legend>Passwort von Benutzer '<%= @user.name %>' ändern:</legend>
-    <%= form_for :user do |form | %>
+    <%= form_with scope: :user, url: password_path, method: :patch do |form| %>
     <table class="reservation-detail">
       <tr>
         <td class="legend">Altes Passwort:</td>
@@ -20,11 +20,11 @@
       </tr>
       <tr>
         <td class="legend">Neues Passwort:</td>
-        <td class="data"><%= form.password_field :password, :size=>40 %></td>
+        <td class="data"><%= form.password_field :password, size: 40, autocomplete: "new-password" %></td>
       </tr>
       <tr>
         <td class="legend">Bestätigen:</td>
-        <td class="data"><%= form.password_field :password_confirmation, :size => 40 %></td>
+        <td class="data"><%= form.password_field :password_confirmation, size: 40, autocomplete: "new-password" %></td>
       </tr>
     </table>
     <%= submit_tag "Speichern", :class => "submit" %>
