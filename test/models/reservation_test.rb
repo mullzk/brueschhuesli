@@ -158,16 +158,14 @@ class ReservationTest < ActiveSupport::TestCase
     assert_equal Reservation::FERIENAUFENTHALT, r.classified_type
   end
 
-  test "Reservations should be ordered by Start date" do
-    r1 = FactoryBot.create(:reservation, start: DateTime.new(2010, 6, 5, 12), finish: DateTime.new(2010, 6, 6, 12))
-    r2 = FactoryBot.create(:reservation, start: DateTime.new(2010, 6, 1, 12), finish: DateTime.new(2010, 6, 3, 11))
-    r3 = FactoryBot.create(:reservation, start: DateTime.new(2010, 6, 3, 19), finish: DateTime.new(2010, 6, 4, 20))
-    r4 = FactoryBot.create(:reservation, start: DateTime.new(2010, 6, 3, 12), finish: DateTime.new(2010, 6, 3, 18))
-    reservations = Reservation.find_reservations_in_timeslot(Date.new(2010, 6, 1), Date.new(2010, 6, 10))
-    assert_equal reservations.first, r2
-    assert_equal reservations[1], r4
-    assert_equal reservations[2], r3
-    assert_equal reservations.last, r1
+  test "find_reservations_in_timeslot orders results by start" do
+    fourth = create(:reservation, start: at("2010-06-05 12:00"), finish: at("2010-06-06 12:00"))
+    first  = create(:reservation, start: at("2010-06-01 12:00"), finish: at("2010-06-03 11:00"))
+    third  = create(:reservation, start: at("2010-06-03 19:00"), finish: at("2010-06-04 20:00"))
+    second = create(:reservation, start: at("2010-06-03 12:00"), finish: at("2010-06-03 18:00"))
+
+    ordered = Reservation.find_reservations_in_timeslot(on("2010-06-01"), on("2010-06-10"))
+    assert_equal [ first, second, third, fourth ], ordered.to_a
   end
 
   test "on_day? covers every day a reservation overlaps" do
