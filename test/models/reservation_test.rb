@@ -264,73 +264,71 @@ class ReservationTest < ActiveSupport::TestCase
   end
 
 
-  test "Duration-Calculations for accounting" do
-    r = Reservation.new(start: DateTime.new(2010, 6, 1, 14), finish: DateTime.new(2010, 6, 1, 15))
-    assert_equal r.duration_in_days, 1
-    assert_equal r.duration_rounded_to_hours, 1.hour
-    assert_equal r.duration_in_8_hour_blocks, 1
+  test "duration of a one-hour stay" do
+    r = Reservation.new(start: at("2010-06-01 14:00"), finish: at("2010-06-01 15:00"))
+    assert_equal 1, r.duration_in_days
+    assert_equal 1.hour, r.duration_rounded_to_hours
+    assert_equal 1, r.duration_in_8_hour_blocks
+  end
 
-    r = Reservation.new(start: DateTime.new(2010, 6, 1, 16), finish: DateTime.new(2010, 6, 2, 15))
-    assert_equal r.duration_in_days, 2
-    assert_equal r.duration_rounded_to_hours, 23.hours
-    assert_equal r.duration_in_8_hour_blocks, 3
+  test "duration of an overnight stay spanning two days" do
+    r = Reservation.new(start: at("2010-06-01 16:00"), finish: at("2010-06-02 15:00"))
+    assert_equal 2, r.duration_in_days
+    assert_equal 23.hours, r.duration_rounded_to_hours
+    assert_equal 3, r.duration_in_8_hour_blocks
+  end
 
-    r = Reservation.new(start: DateTime.new(2010, 6, 1, 0), finish: DateTime.new(2010, 6, 1).end_of_day)
-    assert_equal r.duration_in_days, 1
-    assert_equal r.duration_rounded_to_hours, 23.hours # Now of course, this looks like a bug! But we round to hours, an 24 hours would be a complete day, but we miss one second. Doesn't matter though.
-    assert_equal r.duration_in_8_hour_blocks, 3
+  # Rounding to hours drops the final second, so a full day reads as 23 hours.
+  test "duration of a stay until the end of the day" do
+    r = Reservation.new(start: at("2010-06-01 00:00"), finish: at("2010-06-01").end_of_day)
+    assert_equal 1, r.duration_in_days
+    assert_equal 23.hours, r.duration_rounded_to_hours
+    assert_equal 3, r.duration_in_8_hour_blocks
+  end
 
-    r = Reservation.new(start: DateTime.new(2010, 6, 1, 0), finish: DateTime.new(2010, 6, 1, 24))
-    assert_equal r.duration_in_days, 1 # Phase 2: a midnight finish no longer counts the next day
-    assert_equal r.duration_rounded_to_hours, 24.hours
-    assert_equal r.duration_in_8_hour_blocks, 3
+  # A finish exactly at midnight does not count the following day.
+  test "duration of a stay until midnight" do
+    r = Reservation.new(start: at("2010-06-01 00:00"), finish: at("2010-06-01 24:00"))
+    assert_equal 1, r.duration_in_days
+    assert_equal 24.hours, r.duration_rounded_to_hours
+    assert_equal 3, r.duration_in_8_hour_blocks
   end
 
 
 
-  test "Tariffing-System" do
-    stefan = FactoryBot.create(:user, name: "Stefan", password: "test1234")
-    ruth   = FactoryBot.create(:user, name: "Ruth", password: "test1234", miteigentuemer: true)
+  test "paid_blocks gives co-owners six free blocks on non-exclusive stays" do
+    stefan = create(:user, name: "Stefan")
+    ruth   = create(:user, name: "Ruth", miteigentuemer: true)
+    seven_block_stay = lambda do |user, exclusive|
+      Reservation.new(start: at("2010-06-01 14:00"), finish: at("2010-06-03 15:00"),
+                      type_of_reservation: Reservation::KURZAUFENTHALT, user: user, is_exclusive: exclusive)
+    end
 
+    assert_equal 7, seven_block_stay.call(stefan, false).duration_in_8_hour_blocks
+    assert_equal 7, seven_block_stay.call(stefan, false).paid_blocks  # not a co-owner
+    assert_equal 1, seven_block_stay.call(ruth, false).paid_blocks    # co-owner, 7 - 6 free
+    assert_equal 7, seven_block_stay.call(ruth, true).paid_blocks     # exclusive: no free blocks
+  end
 
-    r = Reservation.new(start: DateTime.new(2010, 6, 1, 14), finish: DateTime.new(2010, 6, 3, 15))
-    r.user = stefan
-    r.is_exclusive = false
-    r.type_of_reservation = Reservation::KURZAUFENTHALT
+  test "billed_fee depends on the reservation type" do
+    stefan = create(:user, name: "Stefan")
+    ruth   = create(:user, name: "Ruth", miteigentuemer: true)
 
-    assert_equal r.duration_in_8_hour_blocks, 7
-    assert_equal r.paid_blocks, 7
+    r = Reservation.new(start: at("2010-06-01 14:00"), finish: at("2010-06-03 14:00"),
+                        type_of_reservation: Reservation::KURZAUFENTHALT, user: ruth, is_exclusive: false)
+    assert_equal 6, r.duration_in_8_hour_blocks
 
-    r.user = ruth
-    assert_equal r.duration_in_8_hour_blocks, 7
-    assert_equal r.paid_blocks, 1  # as she is a miteigenuemer
-
+    assert_equal 0, r.billed_fee  # co-owner, non-exclusive: all 6 blocks free
     r.is_exclusive = true
-    assert_equal r.paid_blocks, 7
-
-    r = Reservation.new(start: DateTime.new(2010, 6, 1, 14), finish: DateTime.new(2010, 6, 3, 14))
-    r.user = ruth
-    r.is_exclusive = false
-    r.type_of_reservation = Reservation::KURZAUFENTHALT
-    assert_equal r.duration_in_8_hour_blocks, 6
-    assert_equal r.paid_blocks, 0
-
-    # 8-hour-fee: 15 Franken
-    rate_hourly = 15
-    rate_daily = 100
-    rate_event = 200
-
-    assert_equal r.billed_fee, 0*rate_hourly
-    r.is_exclusive = true
-    assert_equal r.billed_fee, 6*rate_hourly
+    assert_equal 6 * 15, r.billed_fee
     r.user = stefan
-    assert_equal r.billed_fee, 6*rate_hourly
+    assert_equal 6 * 15, r.billed_fee
     r.type_of_reservation = Reservation::FERIENAUFENTHALT
-    assert_equal r.billed_fee, 6*rate_hourly
+    assert_equal 6 * 15, r.billed_fee
     r.type_of_reservation = Reservation::GROSSANLASS
-    assert_equal r.billed_fee, rate_event   ##### Is this a bug? GROSSANLASS should be maxed to 32 hours, this one is 48 hours ! Who cares
+    assert_equal 200, r.billed_fee  # flat fee regardless of duration
     r.type_of_reservation = Reservation::EXTERNE_NUTZUNG
-    assert_equal r.billed_fee, 3*rate_daily
+    assert_equal 3 * 100, r.billed_fee  # three calendar days
   end
 
   # EXTERNE_NUTZUNG is billed per calendar day touched: a stay spanning three
@@ -338,7 +336,7 @@ class ReservationTest < ActiveSupport::TestCase
   # count the following day.
   test "EXTERNE_NUTZUNG bills per calendar day" do
     r = Reservation.new(
-      start: DateTime.new(2010, 6, 1, 14), finish: DateTime.new(2010, 6, 3, 14),
+      start: at("2010-06-01 14:00"), finish: at("2010-06-03 14:00"),
       user: @user, is_exclusive: true, type_of_reservation: Reservation::EXTERNE_NUTZUNG
     )
     assert_equal 3, r.duration_in_days
