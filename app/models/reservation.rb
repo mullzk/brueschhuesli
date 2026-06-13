@@ -22,24 +22,21 @@
 #
 
 class Reservation < ApplicationRecord
-  belongs_to :user
-  validates_presence_of :start, :finish, :type_of_reservation
-  validate :is_timeslot_exclusive?, :is_timeslot_positive?, :is_reservation_not_longer_than_a_week?
-
   KURZAUFENTHALT = "Kurzaufenthalt"
   FERIENAUFENTHALT = "Ferienaufenthalt"
   GROSSANLASS = "Grossanlass"
   EXTERNE_NUTZUNG = "Nutzung durch Dritte"
+  TYPES = [ KURZAUFENTHALT, FERIENAUFENTHALT, GROSSANLASS, EXTERNE_NUTZUNG ].freeze
 
-  LONG_STAY_THRESHOLD = 48.hours.to_i
+  LONG_STAY_THRESHOLD = 48.hours
+
+  belongs_to :user
+  validates_presence_of :start, :finish, :type_of_reservation
+  validates :type_of_reservation, inclusion: { in: TYPES }, allow_blank: true
+  validate :is_timeslot_exclusive?, :is_timeslot_positive?, :is_reservation_not_longer_than_a_week?
 
   def self.reservation_types
-    @reservation_types ||= {}
-    @reservation_types[:KURZAUFENTHALT] = KURZAUFENTHALT
-    @reservation_types[:FERIENAUFENTHALT] = FERIENAUFENTHALT
-    @reservation_types[:GROSSANLASS] = GROSSANLASS
-    @reservation_types[:EXTERNE_NUTZUNG] = EXTERNE_NUTZUNG
-    @reservation_types.sort { |a, b| a[1]<=>b[1] }
+    TYPES.sort
   end
 
 
@@ -62,8 +59,7 @@ class Reservation < ApplicationRecord
   end
 
   def duration_in_8_hour_blocks
-    eight_hours = 8 * 60 * 60
-    (duration_rounded_to_hours/eight_hours).ceil
+    (duration_rounded_to_hours / 8.hours.to_i).ceil
   end
 
   def paid_blocks
@@ -143,38 +139,29 @@ class Reservation < ApplicationRecord
   end
 
   def begin_on_day(day)
-    if start < day.beginning_of_day
-      day.beginning_of_day
-    else
-      start
-    end
+    day_projection(day).begins_at
   end
 
   def end_on_day(day)
-    if finish > day.end_of_day
-      day.end_of_day
-    else
-      finish
-    end
+    day_projection(day).ends_at
   end
 
   def fills_complete_day?(day)
-    start <= day.beginning_of_day && finish > day.end_of_day
+    day_projection(day).complete?
   end
 
   def on_day?(day)
-    start <= day.end_of_day && finish > day.beginning_of_day
+    day_projection(day).overlaps?
   end
 
   def hours_on_day(day)
-    if fills_complete_day?(day)
-      24
-    else
-      e = end_on_day(day.to_datetime.in_time_zone)
-      b = begin_on_day(day.to_datetime.in_time_zone)
-      ((e-b)/60/60).round
-    end
+    day_projection(day).hours
   end
+
+  def day_projection(day)
+    ReservationDay.new(start: start, finish: finish, day: day)
+  end
+  private :day_projection
 
   protected
 
@@ -196,6 +183,6 @@ class Reservation < ApplicationRecord
 
 
   def is_reservation_not_longer_than_a_week?
-    errors.add(:finish, "Anfang und Ende liegen zu weit auseinander. Das Brüschhüsli kann für maximal 7 Tage reserviert werden") if duration > 60 * 60 * 24 * 7
+    errors.add(:finish, "Anfang und Ende liegen zu weit auseinander. Das Brüschhüsli kann für maximal 7 Tage reserviert werden") if duration > 7.days
   end
 end

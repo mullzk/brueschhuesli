@@ -46,6 +46,21 @@ class ReservationTest < ActiveSupport::TestCase
     assert_not reservation.valid?
   end
 
+  test "a type outside the known list is invalid" do
+    reservation = build(:reservation, user: @user, type_of_reservation: "Picknick")
+
+    assert_not reservation.valid?
+    assert_predicate reservation.errors[:type_of_reservation], :present?
+  end
+
+  test "every known type is valid" do
+    Reservation::TYPES.each do |type|
+      reservation = build(:reservation, user: @user, type_of_reservation: type)
+
+      assert_predicate reservation, :valid?, "expected #{type} to be valid"
+    end
+  end
+
   test "a slot not overlapping any reservation is valid" do
     create(:reservation, user: @user, start: at("2010-02-01 14:00"), finish: at("2010-02-01 18:00"))
 
