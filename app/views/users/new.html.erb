@@ -1,6 +1,7 @@
+<div>
     <% if @user.errors.any? %>
       <div id="error_explanation">
-        <h2><%= pluralize(@user.errors.count, "error") %> prohibited this reservation from being saved:</h2>
+        <h2><%= pluralize(@user.errors.count, "error") %> verhinderte(n), dass der Benutzer gespeichert werden konnte:</h2>
 
         <ul>
         <% @user.errors.full_messages.each do |message| %>
@@ -12,8 +13,7 @@
 
   <fieldset>
     <legend>Benutzer Details:</legend>
-
-    <%= form_for @user, :url => { :action => "update_user", :id => @user } do |form | %>
+    <%= form_with model: @user do |form| %>
     <table class="reservation-detail">
       <tr>
         <td class="legend">Name:</td>
@@ -32,14 +32,11 @@
         <td class="data"><%= form.text_field :telefon, :size=>40 %></td>
       </tr>
       <tr>
-        <td class="legend">Passwort:</td>
-        <td class="data"><%= form.password_field :password, :size=>40 %></td>
-      </tr>
-      <tr>
-        <td class="legend">Bestätigen:</td>
-        <td class="data"><%= form.password_field :password_confirmation, :size => 40 %></td>
+        <td class="legend">Initial-Passwort:</td>
+        <td class="data"><%= form.text_field :password, :size=>40 %></td>
       </tr>
     </table>
-    <%= submit_tag "Benutzer Speichern", :class => "submit" %>
+    <%= submit_tag "Benutzer hinzufügen", :class => "submit" %>
     <% end %>
   </fieldset>
+</div>

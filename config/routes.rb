@@ -11,14 +11,8 @@ Rails.application.routes.draw do
   # Keep the old login URL working for existing bookmarks.
   get "login/login", to: redirect("/session/new")
 
-  get "login/add_user"
-  post "login/add_user"
-  get "login/edit_user"
-  post "login/update_user"
-  patch "login/update_user"
-  get "login/delete_user"
-  post "login/delete_user"
-  get "login/list_users"
+  resources :users, except: :show
+
   get "login/change_password"
   post "login/change_password"
   get "abrechnung/index"
