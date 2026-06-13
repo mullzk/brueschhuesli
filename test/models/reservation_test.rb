@@ -28,21 +28,38 @@ class ReservationTest < ActiveSupport::TestCase
     @user = FactoryBot.create(:user, name: "Hans", password: "test1234")
   end
 
-  test "Keine negativen oder überlangen Reservationen" do
-    assert Reservation.new(user: @user, is_exclusive: true, start: DateTime.new(2019, 2, 1, 8, 00), finish: DateTime.new(2019, 2, 1, 10, 00), type_of_reservation: Reservation::KURZAUFENTHALT).valid?
-    assert_not Reservation.new(user: @user, is_exclusive: true, start: DateTime.new(2019, 2, 1, 10, 00), finish: DateTime.new(2019, 2, 1, 8, 00), type_of_reservation: Reservation::KURZAUFENTHALT).valid?
-    assert_not Reservation.new(user: @user, is_exclusive: true, start: DateTime.new(2019, 2, 1, 10, 00), finish: DateTime.new(2019, 2, 10, 8, 00), type_of_reservation: Reservation::KURZAUFENTHALT).valid?
+  # takes at("2010-02-01") or at("2010-02-01 14:30")
+  def at(iso_formatted_date_or_datetime)
+    DateTime.parse(iso_formatted_date_or_datetime)
   end
 
-  test "overlapping Reservations" do
-    reservation_afternoon = FactoryBot.create(:reservation, user: @user, start: DateTime.new(2019, 2, 1, 14, 00), finish: DateTime.new(2019, 2, 1, 18, 00), type_of_reservation: Reservation::KURZAUFENTHALT)
+  test "a reservation finishing after it starts is valid" do
+    reservation = build(:reservation, user: @user, start: at("2010-02-01 08:00"), finish: at("2010-02-01 10:00"))
+    assert reservation.valid?
+  end
 
-    assert Reservation.new(user: @user, is_exclusive: true, start: DateTime.new(2019, 2, 1, 8, 00), finish: DateTime.new(2019, 2, 1, 10, 00), type_of_reservation: Reservation::KURZAUFENTHALT).valid?
-    assert_not Reservation.new(user: @user, is_exclusive: true, start: DateTime.new(2019, 2, 1, 8, 00), finish: DateTime.new(2019, 2, 1, 15, 00), type_of_reservation: Reservation::KURZAUFENTHALT).valid?
-    assert_not Reservation.new(user: @user, is_exclusive: true, start: DateTime.new(2019, 2, 1, 8, 00), finish: DateTime.new(2019, 2, 1, 21, 00), type_of_reservation: Reservation::KURZAUFENTHALT).valid?
-    assert_not Reservation.new(user: @user, is_exclusive: true, start: DateTime.new(2019, 2, 1, 17, 00), finish: DateTime.new(2019, 2, 1, 21, 00), type_of_reservation: Reservation::KURZAUFENTHALT).valid?
-    assert Reservation.new(user: @user, is_exclusive: true, start: DateTime.new(2019, 2, 1, 19, 00), finish: DateTime.new(2019, 2, 1, 21, 00), type_of_reservation: Reservation::KURZAUFENTHALT).valid?
-    assert_not Reservation.new(user: @user, is_exclusive: true, start: DateTime.new(2019, 1, 31, 19, 00), finish: DateTime.new(2019, 2, 3, 21, 00), type_of_reservation: Reservation::KURZAUFENTHALT).valid?
+  test "a reservation finishing before it starts is invalid" do
+    reservation = build(:reservation, user: @user, start: at("2010-02-01 10:00"), finish: at("2010-02-01 08:00"))
+    assert_not reservation.valid?
+  end
+
+  test "a reservation longer than a week is invalid" do
+    reservation = build(:reservation, user: @user, start: at("2010-02-01 10:00"), finish: at("2010-02-10 08:00"))
+    assert_not reservation.valid?
+  end
+
+  test "a slot not overlapping any reservation is valid" do
+    create(:reservation, user: @user, start: at("2010-02-01 14:00"), finish: at("2010-02-01 18:00"))
+    assert build(:reservation, user: @user, start: at("2010-02-01 08:00"), finish: at("2010-02-01 10:00")).valid?
+    assert build(:reservation, user: @user, start: at("2010-02-01 19:00"), finish: at("2010-02-01 21:00")).valid?
+  end
+
+  test "a slot overlapping an existing reservation is invalid" do
+    create(:reservation, user: @user, start: at("2010-02-01 14:00"), finish: at("2010-02-01 18:00"))
+    assert_not build(:reservation, user: @user, start: at("2010-02-01 08:00"), finish: at("2010-02-01 15:00")).valid?, "overlapping the start"
+    assert_not build(:reservation, user: @user, start: at("2010-02-01 08:00"), finish: at("2010-02-01 21:00")).valid?, "enclosing the slot"
+    assert_not build(:reservation, user: @user, start: at("2010-02-01 17:00"), finish: at("2010-02-01 21:00")).valid?, "overlapping the end"
+    assert_not build(:reservation, user: @user, start: at("2010-01-31 19:00"), finish: at("2010-02-03 21:00")).valid?, "spanning across the slot"
   end
 
   test "find all reservations an a day" do
