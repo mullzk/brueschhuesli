@@ -29,9 +29,9 @@ class User < ApplicationRecord
   # password ourselves, treating a legacy hash as a present password.
   has_secure_password validations: false
 
-  validates_uniqueness_of :name
-  validates_uniqueness_of :email
-  validates_presence_of :name, :email
+  validates :name, uniqueness: true
+  validates :email, uniqueness: true
+  validates :name, :email, presence: true
   validates :password, confirmation: true, allow_blank: true
   validate :password_must_be_set
 

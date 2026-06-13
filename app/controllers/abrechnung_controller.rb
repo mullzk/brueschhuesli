@@ -17,7 +17,7 @@ class AbrechnungController < ApplicationController
 
   def benutzer
     @listed_year = extract_year
-    @user = User.find(params[:id])
+    @user = User.find(params.expect(:id))
     @reservations = Reservation.reservations_for_user_in_year(@user, @listed_year).includes(:user).sort
     respond_to_html_and_excel "brüschhüsli_nutzungen_#{(@user.name)}_#{@listed_year.year}"
   end

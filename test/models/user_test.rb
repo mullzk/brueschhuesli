@@ -24,7 +24,7 @@ require "test_helper"
 
 class UserTest < ActiveSupport::TestCase
   test "Unknown User is not found" do
-    dbuser = User.find_by_name("rumpelstilzchen")
+    dbuser = User.find_by(name: "rumpelstilzchen")
 
     assert_not dbuser
   end
@@ -33,7 +33,7 @@ class UserTest < ActiveSupport::TestCase
     user = FactoryBot.build(:user, name: "Stefan", email: "test@mail.com")
     user.password="test1234"
     user.save
-    dbuser = User.find_by_name("Stefan")
+    dbuser = User.find_by(name: "Stefan")
 
     assert dbuser
     assert_not dbuser.password=="test1234"

@@ -31,7 +31,7 @@ class Reservation < ApplicationRecord
   LONG_STAY_THRESHOLD = 48.hours
 
   belongs_to :user
-  validates_presence_of :start, :finish, :type_of_reservation
+  validates :start, :finish, :type_of_reservation, presence: true
   validates :type_of_reservation, inclusion: { in: TYPES }, allow_blank: true
   validate :timeslot_exclusive?, :timeslot_positive?, :reservation_not_longer_than_a_week?
 

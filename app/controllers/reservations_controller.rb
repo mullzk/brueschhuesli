@@ -23,6 +23,10 @@ class ReservationsController < ApplicationController
     @reservations = Reservation.find_reservations_on_date @day
   end
 
+  def show
+    @reservation = Reservation.find(params.expect(:id))
+  end
+
   def new
     if params[:date]
       day = Date.parse(params[:date])
@@ -42,6 +46,10 @@ class ReservationsController < ApplicationController
   end
 
 
+  def edit
+    @reservation = Reservation.find(params.expect(:id))
+  end
+
   def create
     @reservation = Reservation.new(reservation_params)
     if @reservation.save
@@ -49,33 +57,25 @@ class ReservationsController < ApplicationController
       redirect_to action: "index", date: @reservation.start
     else
       flash.now[:notice] = "Reservation konnte nicht gespeichert werden"
-      render :new, status: :unprocessable_entity
+      render :new, status: :unprocessable_content
     end
   end
 
 
-  def show
-    @reservation = Reservation.find(params[:id])
-  end
-
-  def edit
-    @reservation = Reservation.find(params[:id])
-  end
-
   def update
-    @reservation = Reservation.find(params[:id])
+    @reservation = Reservation.find(params.expect(:id))
     if @reservation.update(reservation_params)
       flash[:notice] = "Änderungen gespeichert."
       redirect_to action: "index", date: @reservation.start
     else
       flash.now[:notice] = "Änderungen konnten nicht gespeichert werden."
-      render :edit, status: :unprocessable_entity
+      render :edit, status: :unprocessable_content
     end
   end
 
 
   def destroy
-    Reservation.find(params[:id]).destroy
+    Reservation.find(params.expect(:id)).destroy
     flash[:notice] = "Reservierung gelöscht"
     redirect_to action: "index"
   end
@@ -91,7 +91,7 @@ class ReservationsController < ApplicationController
   def month_and_year_as_time(string)
     Date.strptime(string, "%Y-%m")
   rescue ArgumentError, TypeError => e
-    Rails.logger.debug("Unparseable month param #{string.inspect}: #{e.message}")
+    Rails.logger.debug { "Unparseable month param #{string.inspect}: #{e.message}" }
     nil
   end
 

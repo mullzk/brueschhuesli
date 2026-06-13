@@ -7,7 +7,7 @@ class PasswordsController < ApplicationController
     @user = Current.user
     unless User.authenticate(@user.name, params[:old_password])
       flash.now[:notice] = "Altes Passwort ist ungültig"
-      return render :edit, status: :unprocessable_entity
+      return render :edit, status: :unprocessable_content
     end
 
     if @user.update(password_params.merge(has_to_change_password: false))
@@ -16,7 +16,7 @@ class PasswordsController < ApplicationController
       redirect_to users_path
     else
       flash.now[:notice] = "Passwort konnte nicht geändert werden"
-      render :edit, status: :unprocessable_entity
+      render :edit, status: :unprocessable_content
     end
   end
 

@@ -16,7 +16,7 @@ class SessionsController < ApplicationController
       end
     else
       flash.now[:notice] = "Ungültige Benutzer/Passwort Kombination"
-      render :new, status: :unprocessable_entity
+      render :new, status: :unprocessable_content
     end
   end
 

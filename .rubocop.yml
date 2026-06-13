@@ -46,12 +46,34 @@ Metrics/ModuleLength:
   Exclude:
     - "lib/tasks/**/*"
 
-# Enabled in Phase 0.5 before the Rails department comes on (step 3); kept
-# explicit so the zone-aware call sites stay enforced in the meantime.
-Rails/Date:
+# Rails department on (supersedes the narrow Rails/Date + Rails/TimeZone
+# enables from Phase 0.5, now covered by the department default). Historical
+# and generated migrations are frozen, so the migration-shape cops
+# (BulkChangeTable, ThreeStateBooleanColumn) and update_all-in-migration are
+# out of scope.
+Rails:
   Enabled: true
-Rails/TimeZone:
-  Enabled: true
+  Exclude:
+    - "db/migrate/**/*"
+
+# Single-locale German app with no i18n layer; inline German UI strings are the
+# documented, deliberate pattern.
+Rails/I18nLocaleTexts:
+  Enabled: false
+
+# The billing delegators (paid_blocks/billed_fee) are intentionally uniform
+# one-line methods; one renames (fee -> billed_fee) and cannot be a `delegate`,
+# so converting only its sibling would fragment the block.
+Rails/Delegate:
+  Enabled: false
+
+# Tests bypass validations on purpose to set up state (password digests,
+# session expiry); not a production smell. A cop-level Exclude replaces the
+# department's, so db/migrate is repeated here.
+Rails/SkipsModelValidations:
+  Exclude:
+    - "test/**/*"
+    - "db/migrate/**/*"
 
 # Overrides can be added below; keep this minimal.
 AllCops:

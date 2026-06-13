@@ -28,7 +28,7 @@ class CalendarMonthTest < ActiveSupport::TestCase
       assert_predicate days[Date.new(2019, 3, 10)], :occupied?
       assert_predicate days[Date.new(2019, 3, 11)], :free?
       assert_predicate days[Date.new(2019, 3, 15)], :today?
-      refute_predicate days[Date.new(2019, 3, 10)], :today?
+      assert_not_predicate days[Date.new(2019, 3, 10)], :today?
     end
   end
 
@@ -39,8 +39,8 @@ class CalendarMonthTest < ActiveSupport::TestCase
     assert_includes days[Date.new(2019, 3, 10)].reservations, reservation
     assert_includes days[Date.new(2019, 3, 11)].reservations, reservation
     assert_includes days[Date.new(2019, 3, 12)].reservations, reservation
-    refute_includes days[Date.new(2019, 3, 9)].reservations, reservation
-    refute_includes days[Date.new(2019, 3, 13)].reservations, reservation
+    assert_not_includes days[Date.new(2019, 3, 9)].reservations, reservation
+    assert_not_includes days[Date.new(2019, 3, 13)].reservations, reservation
   end
 
   private

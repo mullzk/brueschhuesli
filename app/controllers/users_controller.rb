@@ -7,6 +7,10 @@ class UsersController < ApplicationController
     @user = User.new
   end
 
+  def edit
+    @user = User.find(params.expect(:id))
+  end
+
   def create
     @user = User.new(user_params)
     if @user.save
@@ -14,26 +18,22 @@ class UsersController < ApplicationController
       redirect_to users_path
     else
       flash.now[:notice] = "Benutzer konnte nicht erstellt werden"
-      render :new, status: :unprocessable_entity
+      render :new, status: :unprocessable_content
     end
   end
 
-  def edit
-    @user = User.find(params[:id])
-  end
-
   def update
-    @user = User.find(params[:id])
+    @user = User.find(params.expect(:id))
     if @user.update(user_update_params)
       flash[:notice] = "Benutzer-Angaben gespeichert."
       redirect_to users_path
     else
-      render :edit, status: :unprocessable_entity
+      render :edit, status: :unprocessable_content
     end
   end
 
   def destroy
-    user = User.find(params[:id])
+    user = User.find(params.expect(:id))
     if user.destroy
       flash[:notice] = "Benutzer #{user.name} gelöscht"
     else
