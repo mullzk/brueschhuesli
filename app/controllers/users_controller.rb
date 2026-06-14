@@ -65,7 +65,7 @@ class UsersController < ApplicationController
   end
 
   def user_params
-    params.fetch(:user, {}).permit(:name, :email, :telefon, :miteigentuemer, :password, :password_confirmation)
+    params.fetch(:user, {}).permit(:name, :email, :telefon, :password, :password_confirmation)
   end
 
   # Role is assigned explicitly (never mass-assigned) and only by owners; a

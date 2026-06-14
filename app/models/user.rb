@@ -37,6 +37,10 @@ class User < ApplicationRecord
     "shared_account" => "Haus-Login"
   }.freeze
 
+  # external is only assignable once the responsible_user flow exists
+  # (Vorhaben #5); until then it is not offered as a selectable role.
+  ASSIGNABLE_ROLE_LABELS = ROLE_LABELS.except("external").freeze
+
   enum :role, ROLE_LABELS.keys.index_with(&:itself), default: "member"
 
   has_many :reservations, dependent: :restrict_with_error

@@ -215,6 +215,11 @@ class UserTest < ActiveSupport::TestCase
     assert_equal User.roles.keys.sort, User::ROLE_LABELS.keys.map(&:to_s).sort
   end
 
+  test "external is not assignable until the responsible_user flow exists" do
+    assert_not_includes User::ASSIGNABLE_ROLE_LABELS.keys, "external"
+    assert_includes User::ROLE_LABELS.keys, "external"
+  end
+
   test "an external user requires a responsible owner" do
     external = build(:user, role: :external, responsible_user: nil)
 

@@ -41,13 +41,13 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to root_path
   end
 
-  test "create persists miteigentuemer and telefon" do
+  test "create persists role and telefon" do
     login_as_owner
-    post users_path, params: { user: { name: "Owner", email: "owner@example.com", telefon: "079", miteigentuemer: "1", password: "Password" } }
-    owner = User.find_by(name: "Owner")
+    post users_path, params: { user: { name: "Owner", email: "owner@example.com", telefon: "079", role: "owner", password: "Password" } }
+    created = User.find_by(name: "Owner")
 
-    assert_predicate owner, :miteigentuemer
-    assert_equal "079", owner.telefon
+    assert_predicate created, :owner?
+    assert_equal "079", created.telefon
   end
 
   test "edit renders the form" do
