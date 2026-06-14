@@ -72,6 +72,10 @@ class User < ApplicationRecord
     ROLE_LABELS.fetch(role)
   end
 
+  def may_reserve?
+    owner? || member?
+  end
+
   def self.authenticate(login, password)
     user = find_by(name: login) || find_by(email: login)
     return nil unless user

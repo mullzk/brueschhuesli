@@ -72,6 +72,10 @@ class Reservation < ApplicationRecord
     billing.fee
   end
 
+  def editable_by?(user)
+    user.owner? || user_id == user.id
+  end
+
   def billing
     ReservationBilling.new(
       type: classified_type,

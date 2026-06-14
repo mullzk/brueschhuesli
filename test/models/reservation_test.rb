@@ -322,6 +322,23 @@ class ReservationTest < ActiveSupport::TestCase
     assert_equal 3, r.duration_in_8_hour_blocks
   end
 
+  test "editable_by? lets an owner edit any reservation" do
+    owner = create(:user, role: :owner)
+    foreign = create(:reservation, user: create(:user, role: :member))
+
+    assert foreign.editable_by?(owner)
+  end
+
+  test "editable_by? lets a member edit only their own reservation" do
+    member = create(:user, role: :member)
+    own = create(:reservation, user: member)
+    foreign = create(:reservation, user: create(:user, role: :member),
+                                   start: at("2019-02-05 14:00"), finish: at("2019-02-05 18:00"))
+
+    assert own.editable_by?(member)
+    assert_not foreign.editable_by?(member)
+  end
+
   test "paid_blocks gives co-owners six free blocks on non-exclusive stays" do
     stefan = create(:user, name: "Stefan")
     ruth   = create(:user, name: "Ruth", role: :owner)

@@ -83,14 +83,11 @@ class ReservationsController < ApplicationController
   private
 
   def require_reservation_manager
-    deny_access unless current_user.owner? || current_user.member?
+    deny_access unless current_user.may_reserve?
   end
 
-  # Owners may act on any reservation; members only on their own.
   def require_own_reservation
-    return if current_user.owner?
-
-    deny_access unless Reservation.find(params.expect(:id)).user_id == current_user.id
+    deny_access unless Reservation.find(params.expect(:id)).editable_by?(current_user)
   end
 
   def set_user_options

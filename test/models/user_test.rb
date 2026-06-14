@@ -210,6 +210,13 @@ class UserTest < ActiveSupport::TestCase
     assert_equal "Haus-Login", build(:user, role: :shared_account).role_label
   end
 
+  test "may_reserve? is true only for owners and members" do
+    assert_predicate build(:user, role: :owner), :may_reserve?
+    assert_predicate build(:user, role: :member), :may_reserve?
+    assert_not build(:user, role: :shared_account).may_reserve?
+    assert_not build(:user, role: :external).may_reserve?
+  end
+
   test "ROLE_LABELS covers every enum role" do
     assert_equal User.roles.keys.sort, User::ROLE_LABELS.keys.map(&:to_s).sort
   end

@@ -2,9 +2,6 @@
 
 require "test_helper"
 
-# Authorization spec for Vorhaben #1 (Rollen-Modell). See roles-spec.local.md
-# §5 for the access matrix this file encodes. A forbidden action redirects to
-# root with a German flash (spec §8, O-2).
 class RoleAuthorizationTest < ActionDispatch::IntegrationTest
   # --- Reservations: viewing is open to all roles ----------------------------
 
