@@ -6,5 +6,7 @@ class ApplicationController < ActionController::Base
 
   layout "reservation"
 
+  before_action { Current.request_host = request.host_with_port }
+
   protect_from_forgery # See ActionController::RequestForgeryProtection for details
 end
