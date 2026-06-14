@@ -8,18 +8,24 @@
 #  email                  :string(255)
 #  has_to_change_password :boolean
 #  hashed_password        :string(255)
-#  miteigentuemer         :boolean
 #  name                   :string(255)
 #  password_digest        :string(255)
+#  role                   :string(255)      default("member"), not null
 #  salt                   :string(255)
 #  telefon                :string(255)
 #  created_at             :datetime         not null
 #  updated_at             :datetime         not null
+#  responsible_user_id    :bigint
 #
 # Indexes
 #
-#  index_users_on_email  (email) UNIQUE
-#  index_users_on_name   (name) UNIQUE
+#  index_users_on_email                (email) UNIQUE
+#  index_users_on_name                 (name) UNIQUE
+#  index_users_on_responsible_user_id  (responsible_user_id)
+#
+# Foreign Keys
+#
+#  fk_rails_...  (responsible_user_id => users.id)
 #
 
 require "test_helper"
@@ -186,6 +192,67 @@ class UserTest < ActiveSupport::TestCase
 
     assert_not user.destroy
     assert User.exists?(user.id)
+  end
+
+  # --- role model ------------------------------------------------------------
+
+  test "a new user defaults to the member role" do
+    assert_predicate build(:user), :member?
+  end
+
+  test "role predicates reflect the assigned role" do
+    assert_predicate build(:user, role: :owner), :owner?
+    assert_not build(:user, role: :owner).member?
+  end
+
+  test "role_label returns the German label" do
+    assert_equal "Miteigentümer/in", build(:user, role: :owner).role_label
+    assert_equal "Haus-Login", build(:user, role: :shared_account).role_label
+  end
+
+  test "may_reserve? is true only for owners and members" do
+    assert_predicate build(:user, role: :owner), :may_reserve?
+    assert_predicate build(:user, role: :member), :may_reserve?
+    assert_not build(:user, role: :shared_account).may_reserve?
+    assert_not build(:user, role: :external).may_reserve?
+  end
+
+  test "ROLE_LABELS covers every enum role" do
+    assert_equal User.roles.keys.sort, User::ROLE_LABELS.keys.map(&:to_s).sort
+  end
+
+  test "external is not assignable until the responsible_user flow exists" do
+    assert_not_includes User::ASSIGNABLE_ROLE_LABELS.keys, "external"
+    assert_includes User::ROLE_LABELS.keys, "external"
+  end
+
+  test "an external user requires a responsible owner" do
+    external = build(:user, role: :external, responsible_user: nil)
+
+    assert_not external.valid?
+    assert_predicate external.errors[:responsible_user], :present?
+  end
+
+  test "the responsible user must itself be an owner" do
+    member = create(:user, role: :member)
+    external = build(:user, role: :external, responsible_user: member)
+
+    assert_not external.valid?
+  end
+
+  test "an external user with a responsible owner is valid" do
+    owner = create(:user, role: :owner)
+    external = build(:user, role: :external, responsible_user: owner)
+
+    assert_predicate external, :valid?
+  end
+
+  test "non-external roles must not have a responsible user" do
+    owner = create(:user, role: :owner)
+    member = build(:user, role: :member, responsible_user: owner)
+
+    assert_not member.valid?
+    assert_predicate member.errors[:responsible_user], :present?
   end
 
   private

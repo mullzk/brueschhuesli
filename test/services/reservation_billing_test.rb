@@ -3,9 +3,9 @@
 require "test_helper"
 
 class ReservationBillingTest < ActiveSupport::TestCase
-  def billing(type:, blocks: 0, days: 0, miteigentuemer: false, exclusive: false)
+  def billing(type:, blocks: 0, days: 0, owner: false, exclusive: false)
     ReservationBilling.new(type: type, blocks: blocks, days: days,
-                           miteigentuemer: miteigentuemer, exclusive: exclusive)
+                           owner: owner, exclusive: exclusive)
   end
 
   test "short and long stays bill 15 CHF per block" do
@@ -22,19 +22,19 @@ class ReservationBillingTest < ActiveSupport::TestCase
   end
 
   test "co-owner gets the first 6 blocks free on non-exclusive stays" do
-    assert_equal 1, billing(blocks: 7, miteigentuemer: true, exclusive: false,
+    assert_equal 1, billing(blocks: 7, owner: true, exclusive: false,
                             type: Reservation::KURZAUFENTHALT).paid_blocks
-    assert_equal 0, billing(blocks: 6, miteigentuemer: true, exclusive: false,
+    assert_equal 0, billing(blocks: 6, owner: true, exclusive: false,
                             type: Reservation::KURZAUFENTHALT).paid_blocks
   end
 
   test "co-owner discount does not apply to exclusive stays" do
-    assert_equal 7, billing(blocks: 7, miteigentuemer: true, exclusive: true,
+    assert_equal 7, billing(blocks: 7, owner: true, exclusive: true,
                             type: Reservation::KURZAUFENTHALT).paid_blocks
   end
 
   test "non co-owner pays for every block" do
-    assert_equal 7, billing(blocks: 7, miteigentuemer: false, exclusive: false,
+    assert_equal 7, billing(blocks: 7, owner: false, exclusive: false,
                             type: Reservation::KURZAUFENTHALT).paid_blocks
   end
 end
