@@ -26,6 +26,7 @@ class AdminControllerTest < ActionDispatch::IntegrationTest
 
   test "test_email delivers one mail to the given address and redirects" do
     login_as_owner
+    stub_smtp_credentials
 
     assert_difference -> { ActionMailer::Base.deliveries.size }, 1 do
       post "/admin/test_email", params: { email: "ziel@example.com" }
@@ -60,5 +61,13 @@ class AdminControllerTest < ActionDispatch::IntegrationTest
     get root_path
 
     assert_select "a[href=?]", "/admin", count: 0
+  end
+
+  private
+
+  def stub_smtp_credentials
+    smtp = Struct.new(:from, :production_host, keyword_init: true)
+                 .new(from: "from@example.com", production_host: "prod.example")
+    Rails.application.credentials.stubs(:smtp).returns(smtp)
   end
 end
