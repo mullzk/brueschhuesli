@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: reservations
@@ -22,29 +24,25 @@
 #
 
 class Reservation < ApplicationRecord
-  belongs_to :user
-  validates_presence_of :start, :finish, :type_of_reservation
-  validate :is_timeslot_exclusive?, :is_timeslot_positive?, :is_reservation_not_longer_than_a_week?
-
   KURZAUFENTHALT = "Kurzaufenthalt"
   FERIENAUFENTHALT = "Ferienaufenthalt"
   GROSSANLASS = "Grossanlass"
   EXTERNE_NUTZUNG = "Nutzung durch Dritte"
+  TYPES = [ KURZAUFENTHALT, FERIENAUFENTHALT, GROSSANLASS, EXTERNE_NUTZUNG ].freeze
 
-  LONG_STAY_THRESHOLD = 48.hours.to_i
+  LONG_STAY_THRESHOLD = 48.hours
+
+  belongs_to :user
+  validates :start, :finish, :type_of_reservation, presence: true
+  validates :type_of_reservation, inclusion: { in: TYPES }, allow_blank: true
+  validate :timeslot_must_not_overlap, :finish_must_be_after_start, :duration_must_not_exceed_a_week
 
   def self.reservation_types
-    @reservation_types ||= {}
-    @reservation_types[:KURZAUFENTHALT] = KURZAUFENTHALT
-    @reservation_types[:FERIENAUFENTHALT] = FERIENAUFENTHALT
-    @reservation_types[:GROSSANLASS] = GROSSANLASS
-    @reservation_types[:EXTERNE_NUTZUNG] = EXTERNE_NUTZUNG
-    @reservation_types.sort { |a, b| a[1]<=>b[1] }
+    TYPES.sort
   end
 
-
   def duration
-    finish-start
+    finish - start
   end
 
   def duration_in_days
@@ -55,15 +53,15 @@ class Reservation < ApplicationRecord
   end
 
   def duration_rounded_to_hours
-    fin = DateTime.new(finish.year, finish.month, finish.day, finish.hour, 0).in_time_zone
-    sta = DateTime.new(start.year, start.month, start.day, start.hour, 0).in_time_zone
+    floor_to_hour(finish) - floor_to_hour(start)
+  end
 
-    fin - sta
+  def floor_to_hour(time)
+    DateTime.new(time.year, time.month, time.day, time.hour, 0).in_time_zone
   end
 
   def duration_in_8_hour_blocks
-    eight_hours = 8 * 60 * 60
-    (duration_rounded_to_hours/eight_hours).ceil
+    (duration_rounded_to_hours / 8.hours.to_i).ceil
   end
 
   def paid_blocks
@@ -85,7 +83,6 @@ class Reservation < ApplicationRecord
   end
   private :billing
 
-
   def classified_type
     saved = self[:type_of_reservation]
     if saved == KURZAUFENTHALT && duration > LONG_STAY_THRESHOLD
@@ -97,90 +94,78 @@ class Reservation < ApplicationRecord
     end
   end
 
-  def self.normalize_interval(time_a, time_b)
-    lower, upper = time_a > time_b ? [ time_b, time_a ] : [ time_a, time_b ]
-    [ lower_bound(lower), upper_bound(upper) ]
-  end
+  scope :beginning_in, ->(range) { where(start: range) }
+  scope :overlapping, ->(range) { where("start < ? AND finish > ?", range.end, range.begin).order(:start) }
+  scope :for_user, ->(user) { where(user: user) }
 
-  def self.lower_bound(date_or_time)
-    date_or_time.to_formatted_s(:db)
+  # Builds an inclusive range from two endpoints given in any order. A Date upper
+  # bound covers its whole day by extending to the next midnight; a DateTime is
+  # already a precise instant. Active Record casts the bounds to the column type.
+  def self.day_aware_range(time_a, time_b)
+    lower, upper = [ time_a, time_b ].minmax
+    upper += 1.day unless upper.respond_to?(:hour)
+    lower..upper
   end
+  private_class_method :day_aware_range
 
-  def self.upper_bound(date_or_time)
-    # A Date's upper bound is the next day. DateTime already is a precise instant.
-    date_or_time += 1.day unless date_or_time.respond_to?(:hour)
-    date_or_time.to_formatted_s(:db)
-  end
-  private_class_method :normalize_interval, :lower_bound, :upper_bound
-
-  # Returns only reservations with beginning in a timeslot, e.g. Reservations that span multiple months are reported only in the first month. This makes calculating the tariffs much easier
+  # Reservations beginning in a timeslot: one spanning multiple months is reported
+  # only in its first month. This keeps the tariff calculation much simpler.
   def self.find_reservations_beginning_in_timeslot(time_a, time_b)
-    interval_start, interval_finish = normalize_interval(time_a, time_b)
-    self.where("start >= ? AND start <= ?", interval_start, interval_finish)
+    beginning_in(day_aware_range(time_a, time_b))
   end
 
   def self.find_reservations_beginning_in_month(month)
-    self.find_reservations_beginning_in_timeslot(month.beginning_of_month, month.end_of_month)
+    find_reservations_beginning_in_timeslot(month.beginning_of_month, month.end_of_month)
   end
+
   def self.find_reservations_beginning_in_year(year)
-    self.find_reservations_beginning_in_timeslot(year.beginning_of_year, year.end_of_year)
+    find_reservations_beginning_in_timeslot(year.beginning_of_year, year.end_of_year)
   end
 
   def self.reservations_for_user_in_timeslot(user, time_a, time_b)
-    self.find_reservations_beginning_in_timeslot(time_a, time_b).where(user: user)
+    find_reservations_beginning_in_timeslot(time_a, time_b).for_user(user)
   end
+
   def self.reservations_for_user_in_month(user, month)
-    self.find_reservations_beginning_in_month(month).where(user: user)
+    find_reservations_beginning_in_month(month).for_user(user)
   end
+
   def self.reservations_for_user_in_year(user, year)
-    self.find_reservations_beginning_in_year(year).where(user: user)
+    find_reservations_beginning_in_year(year).for_user(user)
   end
 
   def self.find_reservations_on_date(date)
-    from = DateTime.new(date.year, date.month, date.day, 0, 0, 0)
-    to = DateTime.new(date.year, date.month, date.day, 23, 59, 59)
-    reservations = self.find_reservations_in_timeslot(from, to)
-    reservations.sort { |a, b| a.begin_on_day(date) <=> b.begin_on_day(date) }
+    find_reservations_in_timeslot(date, date).sort { |a, b| a.begin_on_day(date) <=> b.begin_on_day(date) }
   end
 
   def self.find_reservations_in_timeslot(time_a, time_b)
-    interval_start, interval_finish = normalize_interval(time_a, time_b)
-    self.where("(start <= ? AND finish > ?) OR (? <= start AND ? > start)", interval_start, interval_start, interval_start, interval_finish).order(:start)
+    overlapping(day_aware_range(time_a, time_b))
   end
 
   def begin_on_day(day)
-    if start < day.beginning_of_day
-      day.beginning_of_day
-    else
-      start
-    end
+    day_projection(day).begins_at
   end
 
   def end_on_day(day)
-    if finish > day.end_of_day
-      day.end_of_day
-    else
-      finish
-    end
+    day_projection(day).ends_at
   end
 
   def fills_complete_day?(day)
-    start <= day.beginning_of_day && finish > day.end_of_day
+    day_projection(day).complete?
   end
 
   def on_day?(day)
-    start <= day.end_of_day && finish > day.beginning_of_day
+    day_projection(day).overlaps?
   end
 
   def hours_on_day(day)
-    if fills_complete_day?(day)
-      24
-    else
-      e = end_on_day(day.to_datetime.in_time_zone)
-      b = begin_on_day(day.to_datetime.in_time_zone)
-      ((e-b)/60/60).round
-    end
+    day_projection(day).hours
   end
+
+  def day_projection(day)
+    ReservationDay.new(start: start, finish: finish, day: day)
+  end
+  private :day_projection
 
   protected
 
@@ -188,20 +173,24 @@ class Reservation < ApplicationRecord
     start <=> other.start
   end
 
-
-  def is_timeslot_exclusive?
+  def timeslot_must_not_overlap
     conflicting_reservations = Reservation.find_reservations_in_timeslot(start, finish).to_a
     conflicting_reservations.delete(self) # Needed for validation on Updates, otherwise we conflict with our old version
-    errors.add(:start, "Dieser Zeitabschnitt überlappt mit einer bestehenden Reservation") unless conflicting_reservations.empty?
-    errors.add(:finish, "Dieser Zeitabschnitt überlappt mit einer bestehenden Reservation") unless conflicting_reservations.empty?
+    return if conflicting_reservations.empty?
+
+    message = "Dieser Zeitabschnitt überlappt mit einer bestehenden Reservation"
+    errors.add(:start, message)
+    errors.add(:finish, message)
   end
 
-  def is_timeslot_positive?
+  def finish_must_be_after_start
     errors.add(:finish, "muss zeitlich hinter dem Reservations-Beginn sein") if finish <= start
   end
 
+  def duration_must_not_exceed_a_week
+    return unless duration > 7.days
 
-  def is_reservation_not_longer_than_a_week?
-    errors.add(:finish, "Anfang und Ende liegen zu weit auseinander. Das Brüschhüsli kann für maximal 7 Tage reserviert werden") if duration > 60 * 60 * 24 * 7
+    errors.add(:finish, "Anfang und Ende liegen zu weit auseinander. " \
+                        "Das Brüschhüsli kann für maximal 7 Tage reserviert werden")
   end
 end

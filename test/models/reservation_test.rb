@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: reservations
@@ -46,6 +48,21 @@ class ReservationTest < ActiveSupport::TestCase
     assert_not reservation.valid?
   end
 
+  test "a type outside the known list is invalid" do
+    reservation = build(:reservation, user: @user, type_of_reservation: "Picknick")
+
+    assert_not reservation.valid?
+    assert_predicate reservation.errors[:type_of_reservation], :present?
+  end
+
+  test "every known type is valid" do
+    Reservation::TYPES.each do |type|
+      reservation = build(:reservation, user: @user, type_of_reservation: type)
+
+      assert_predicate reservation, :valid?, "expected #{type} to be valid"
+    end
+  end
+
   test "a slot not overlapping any reservation is valid" do
     create(:reservation, user: @user, start: at("2010-02-01 14:00"), finish: at("2010-02-01 18:00"))
 
@@ -68,12 +85,12 @@ class ReservationTest < ActiveSupport::TestCase
 
     assert_empty    Reservation.find_reservations_on_date(on("2019-01-31"))
     assert_includes Reservation.find_reservations_on_date(on("2019-02-01")), spanning
-    refute_includes Reservation.find_reservations_on_date(on("2019-02-01")), following
+    assert_not_includes Reservation.find_reservations_on_date(on("2019-02-01")), following
     assert_includes Reservation.find_reservations_on_date(on("2019-02-02")), spanning
     assert_includes Reservation.find_reservations_on_date(on("2019-02-02")), following
-    refute_includes Reservation.find_reservations_on_date(on("2019-02-03")), spanning
+    assert_not_includes Reservation.find_reservations_on_date(on("2019-02-03")), spanning
     assert_includes Reservation.find_reservations_on_date(on("2019-02-03")), following
-    refute_includes Reservation.find_reservations_on_date(on("2019-02-04")), following
+    assert_not_includes Reservation.find_reservations_on_date(on("2019-02-04")), following
   end
 
   test "find_reservations_in_timeslot finds any reservation the slot overlaps" do
@@ -101,31 +118,31 @@ class ReservationTest < ActiveSupport::TestCase
   test "find_reservations_in_timeslot respects the slot boundaries" do
     res = create(:reservation, user: @user, start: at("2010-02-04 08:15"), finish: at("2010-02-07 10:00"))
 
-    refute_includes Reservation.find_reservations_in_timeslot(at("2010-02-04 07:00"), at("2010-02-04 08:00")), res
-    refute_includes Reservation.find_reservations_in_timeslot(at("2010-02-04 07:00"), at("2010-02-04 08:15")), res
+    assert_not_includes Reservation.find_reservations_in_timeslot(at("2010-02-04 07:00"), at("2010-02-04 08:00")), res
+    assert_not_includes Reservation.find_reservations_in_timeslot(at("2010-02-04 07:00"), at("2010-02-04 08:15")), res
     assert_includes Reservation.find_reservations_in_timeslot(at("2010-02-04 07:00"), at("2010-02-04 09:00")), res
     assert_includes Reservation.find_reservations_in_timeslot(at("2010-02-07 09:00"), at("2010-02-07 12:00")), res
-    refute_includes Reservation.find_reservations_in_timeslot(at("2010-02-07 10:00"), at("2010-02-07 12:00")), res
-    refute_includes Reservation.find_reservations_in_timeslot(at("2010-02-07 11:00"), at("2010-02-07 12:00")), res
-    refute_includes Reservation.find_reservations_in_timeslot(at("2010-02-08 08:00"), at("2010-02-09 09:00")), res
+    assert_not_includes Reservation.find_reservations_in_timeslot(at("2010-02-07 10:00"), at("2010-02-07 12:00")), res
+    assert_not_includes Reservation.find_reservations_in_timeslot(at("2010-02-07 11:00"), at("2010-02-07 12:00")), res
+    assert_not_includes Reservation.find_reservations_in_timeslot(at("2010-02-08 08:00"), at("2010-02-09 09:00")), res
   end
 
   test "find_reservations_in_timeslot treats date arguments as whole days" do
     long    = create(:reservation, user: @user, start: at("2010-02-04 08:15"), finish: at("2010-02-07 10:00"))
     morning = create(:reservation, user: @user, start: at("2010-02-08 08:15"), finish: at("2010-02-08 10:00"))
 
-    refute_includes Reservation.find_reservations_in_timeslot(on("2010-02-02"), on("2010-02-03")), long
+    assert_not_includes Reservation.find_reservations_in_timeslot(on("2010-02-02"), on("2010-02-03")), long
     assert_includes Reservation.find_reservations_in_timeslot(on("2010-02-02"), on("2010-02-04")), long
     assert_includes Reservation.find_reservations_in_timeslot(on("2010-02-04"), on("2010-02-06")), long
     assert_includes Reservation.find_reservations_in_timeslot(on("2010-02-05"), on("2010-02-06")), long
     assert_includes Reservation.find_reservations_in_timeslot(on("2010-02-05"), on("2010-02-09")), long
     assert_includes Reservation.find_reservations_in_timeslot(on("2010-02-07"), on("2010-02-09")), long
-    refute_includes Reservation.find_reservations_in_timeslot(on("2010-02-08"), on("2010-02-09")), long
+    assert_not_includes Reservation.find_reservations_in_timeslot(on("2010-02-08"), on("2010-02-09")), long
 
     assert_includes Reservation.find_reservations_in_timeslot(on("2010-02-06"), on("2010-02-08")), morning
     assert_includes Reservation.find_reservations_in_timeslot(on("2010-02-08"), on("2010-02-08")), morning
     assert_includes Reservation.find_reservations_in_timeslot(on("2010-02-08"), on("2010-02-10")), morning
-    refute_includes Reservation.find_reservations_in_timeslot(on("2010-02-09"), on("2010-02-10")), morning
+    assert_not_includes Reservation.find_reservations_in_timeslot(on("2010-02-09"), on("2010-02-10")), morning
   end
 
   test "a reservation lasting exactly a week is valid, an hour more is not" do
@@ -210,31 +227,30 @@ class ReservationTest < ActiveSupport::TestCase
     assert_equal 23, Reservation.new(start: at("2010-06-01 00:00"), finish: at("2010-06-01 23:00")).hours_on_day(on("2010-06-01"))
   end
 
-
   test "find_reservations_beginning_in_timeslot reports reservations by their start" do
     r = february_reservations
 
     found = Reservation.find_reservations_beginning_in_timeslot(on("2010-02-03"), on("2010-02-07"))
 
-    refute_includes found, r[:kaspar_short]
+    assert_not_includes found, r[:kaspar_short]
     assert_includes found, r[:ruth_early]
     assert_includes found, r[:kaspar_span]
-    refute_includes found, r[:kaspar_morning]
-    refute_includes found, r[:ruth_afternoon]
+    assert_not_includes found, r[:kaspar_morning]
+    assert_not_includes found, r[:ruth_afternoon]
 
     found = Reservation.find_reservations_beginning_in_timeslot(on("2010-02-04"), on("2010-02-08"))
 
-    refute_includes found, r[:ruth_early]
+    assert_not_includes found, r[:ruth_early]
     assert_includes found, r[:kaspar_morning]
     assert_includes found, r[:ruth_afternoon]
 
     found = Reservation.find_reservations_beginning_in_timeslot(on("2010-02-03"), at("2010-02-08 12:00"))
 
-    refute_includes found, r[:kaspar_short]
+    assert_not_includes found, r[:kaspar_short]
     assert_includes found, r[:ruth_early]
     assert_includes found, r[:kaspar_span]
     assert_includes found, r[:kaspar_morning]
-    refute_includes found, r[:ruth_afternoon]
+    assert_not_includes found, r[:ruth_afternoon]
   end
 
   test "find_reservations_beginning_in_month reports a reservation by its start month" do
@@ -247,8 +263,8 @@ class ReservationTest < ActiveSupport::TestCase
 
     march = Reservation.find_reservations_beginning_in_month(on("2010-03-10"))
 
-    refute_includes march, r[:kaspar_span]
-    refute_includes march, r[:stefan_month_end]
+    assert_not_includes march, r[:kaspar_span]
+    assert_not_includes march, r[:stefan_month_end]
   end
 
   test "reservations_for_user finders scope by user and start" do
@@ -258,20 +274,19 @@ class ReservationTest < ActiveSupport::TestCase
     monthly = Reservation.reservations_for_user_in_month(kaspar, on("2010-02-10"))
 
     assert_includes monthly, r[:kaspar_short]
-    refute_includes monthly, r[:ruth_early]
+    assert_not_includes monthly, r[:ruth_early]
     assert_includes monthly, r[:kaspar_span]
     assert_includes monthly, r[:kaspar_morning]
-    refute_includes monthly, r[:ruth_afternoon]
+    assert_not_includes monthly, r[:ruth_afternoon]
 
     slot = Reservation.reservations_for_user_in_timeslot(kaspar, at("2010-02-03"), at("2010-02-07"))
 
-    refute_includes slot, r[:kaspar_short]
-    refute_includes slot, r[:ruth_early]
+    assert_not_includes slot, r[:kaspar_short]
+    assert_not_includes slot, r[:ruth_early]
     assert_includes slot, r[:kaspar_span]
-    refute_includes slot, r[:kaspar_morning]
-    refute_includes slot, r[:ruth_afternoon]
+    assert_not_includes slot, r[:kaspar_morning]
+    assert_not_includes slot, r[:ruth_afternoon]
   end
-
 
   test "duration of a one-hour stay" do
     r = Reservation.new(start: at("2010-06-01 14:00"), finish: at("2010-06-01 15:00"))
@@ -307,8 +322,6 @@ class ReservationTest < ActiveSupport::TestCase
     assert_equal 3, r.duration_in_8_hour_blocks
   end
 
-
-
   test "paid_blocks gives co-owners six free blocks on non-exclusive stays" do
     stefan = create(:user, name: "Stefan")
     ruth   = create(:user, name: "Ruth", miteigentuemer: true)
@@ -332,7 +345,7 @@ class ReservationTest < ActiveSupport::TestCase
 
     assert_equal 6, r.duration_in_8_hour_blocks
 
-    assert_equal 0, r.billed_fee  # co-owner, non-exclusive: all 6 blocks free
+    assert_equal 0, r.billed_fee # co-owner, non-exclusive: all 6 blocks free
     r.is_exclusive = true
 
     assert_equal 6 * 15, r.billed_fee
@@ -344,10 +357,10 @@ class ReservationTest < ActiveSupport::TestCase
     assert_equal 6 * 15, r.billed_fee
     r.type_of_reservation = Reservation::GROSSANLASS
 
-    assert_equal 200, r.billed_fee  # flat fee regardless of duration
+    assert_equal 200, r.billed_fee # flat fee regardless of duration
     r.type_of_reservation = Reservation::EXTERNE_NUTZUNG
 
-    assert_equal 3 * 100, r.billed_fee  # three calendar days
+    assert_equal 3 * 100, r.billed_fee # three calendar days
   end
 
   # EXTERNE_NUTZUNG is billed per calendar day touched: a stay spanning three
@@ -381,11 +394,11 @@ class ReservationTest < ActiveSupport::TestCase
     ruth   = create(:user, name: "Ruth")
     stefan = create(:user, name: "Stefan")
     {
-      kaspar_short:     create(:reservation, user: kaspar, start: at("2010-02-01 16:00"), finish: at("2010-02-01 18:00")),
-      ruth_early:       create(:reservation, user: ruth,   start: at("2010-02-03 08:15"), finish: at("2010-02-03 10:00")),
-      kaspar_span:      create(:reservation, user: kaspar, start: at("2010-02-04 08:15"), finish: at("2010-02-07 10:00")),
-      kaspar_morning:   create(:reservation, user: kaspar, start: at("2010-02-08 08:15"), finish: at("2010-02-08 10:00")),
-      ruth_afternoon:   create(:reservation, user: ruth,   start: at("2010-02-08 13:00"), finish: at("2010-02-08 15:00")),
+      kaspar_short: create(:reservation, user: kaspar, start: at("2010-02-01 16:00"), finish: at("2010-02-01 18:00")),
+      ruth_early: create(:reservation, user: ruth, start: at("2010-02-03 08:15"), finish: at("2010-02-03 10:00")),
+      kaspar_span: create(:reservation, user: kaspar, start: at("2010-02-04 08:15"), finish: at("2010-02-07 10:00")),
+      kaspar_morning: create(:reservation, user: kaspar, start: at("2010-02-08 08:15"), finish: at("2010-02-08 10:00")),
+      ruth_afternoon: create(:reservation, user: ruth,   start: at("2010-02-08 13:00"), finish: at("2010-02-08 15:00")),
       stefan_month_end: create(:reservation, user: stefan, start: at("2010-02-27 13:00"), finish: at("2010-03-03 15:00"))
     }
   end

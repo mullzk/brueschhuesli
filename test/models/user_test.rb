@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: users
@@ -24,25 +26,24 @@ require "test_helper"
 
 class UserTest < ActiveSupport::TestCase
   test "Unknown User is not found" do
-    dbuser = User.find_by_name("rumpelstilzchen")
+    dbuser = User.find_by(name: "rumpelstilzchen")
 
     assert_not dbuser
   end
 
   test "a saved user stores its password hashed, not in clear text" do
     user = FactoryBot.build(:user, name: "Stefan", email: "test@mail.com")
-    user.password="test1234"
+    user.password = "test1234"
     user.save
-    dbuser = User.find_by_name("Stefan")
+    dbuser = User.find_by(name: "Stefan")
 
     assert dbuser
-    assert_not dbuser.password=="test1234"
+    assert_not dbuser.password == "test1234"
   end
-
 
   test "authentication with the correct password passes" do
     user = FactoryBot.build(:user, name: "Stefan", email: "test@mail.com")
-    user.password="test1234"
+    user.password = "test1234"
     user.save
 
     assert User.authenticate("Stefan", "test1234")
@@ -50,7 +51,7 @@ class UserTest < ActiveSupport::TestCase
 
   test "authentication with a wrong password is rejected" do
     user = FactoryBot.build(:user, name: "Stefan", email: "test@mail.com")
-    user.password="test1234"
+    user.password = "test1234"
     user.save
 
     assert_not User.authenticate("Stefan", "test")
@@ -58,7 +59,7 @@ class UserTest < ActiveSupport::TestCase
 
   test "authentication with no password is rejected" do
     user = FactoryBot.build(:user, name: "Stefan", email: "test@mail.com")
-    user.password="test1234"
+    user.password = "test1234"
     user.save
 
     assert_not User.authenticate("Stefan", "")
@@ -159,6 +160,32 @@ class UserTest < ActiveSupport::TestCase
     user.password_confirmation = "secret"
 
     assert_predicate user, :valid?
+  end
+
+  test "a legacy user without a bcrypt digest stays valid and editable" do
+    user = make_legacy_user("oldsecret")
+
+    assert_predicate user, :valid?
+    user.email = "moved@example.com"
+
+    assert_predicate user, :valid?
+  end
+
+  test "setting a new password clears the legacy hash" do
+    user = make_legacy_user("oldsecret")
+    user.update!(password: "brandnew")
+
+    assert_nil user.salt
+    assert_nil user.hashed_password
+    assert_predicate user.password_digest, :present?
+  end
+
+  test "a user with reservations cannot be destroyed" do
+    user = create(:user)
+    create(:reservation, user: user)
+
+    assert_not user.destroy
+    assert User.exists?(user.id)
   end
 
   private

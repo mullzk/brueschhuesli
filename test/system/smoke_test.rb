@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "application_system_test_case"
 
 # Minimal smoke test that proves the system-test pipeline (headless Chrome +
@@ -5,7 +7,7 @@ require "application_system_test_case"
 # reachable without authentication. Real flow coverage follows in Phase 6.
 class SmokeTest < ApplicationSystemTestCase
   test "login page renders" do
-    visit login_login_path
+    visit new_session_path
 
     assert_text "Bitte einloggen"
   end

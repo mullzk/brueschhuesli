@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ApplicationController < ActionController::Base
   # Every authenticated user has full access. Role-based authorization was a
   # deliberate non-goal: the user base is a small, trusted family. Add roles
@@ -6,6 +8,5 @@ class ApplicationController < ActionController::Base
 
   layout "reservation"
 
-  helper :all # include all helpers, all the time
   protect_from_forgery # See ActionController::RequestForgeryProtection for details
 end

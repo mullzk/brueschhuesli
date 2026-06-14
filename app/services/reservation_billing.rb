@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ReservationBilling
   RATE_PER_BLOCK = 15
   FLAT_GROSSANLASS = 200

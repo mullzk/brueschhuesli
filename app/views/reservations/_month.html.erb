@@ -1,4 +1,4 @@
-<h2><%= month[:name] %></h2>
+<h2><%= month.name %></h2>
 <table class="calendar">
   <thead>
     <tr>
@@ -12,7 +12,7 @@
     </tr>
   </thead>
   <tbody>
-  <% for week in month[:weeks] %>
+  <% for week in month.weeks %>
     <tr>
       <% for day in week %>
         <% if day %>
@@ -25,5 +25,5 @@
   <% end %>
   </tbody>
 </table>
-<div data-prev-month-url="<%= url_for controller:"reservations", action:"month", date:(month[:first_of_month] - 1.month) %>"></div>
-<div data-next-month-url="<%= url_for controller:"reservations", action:"month", date:(month[:first_of_month] + 1.month) %>"></div>
+<div data-prev-month-url="<%= url_for controller: "reservations", action: "month", date: (month.first_of_month - 1.month) %>"></div>
+<div data-next-month-url="<%= url_for controller: "reservations", action: "month", date: (month.first_of_month + 1.month) %>"></div>
