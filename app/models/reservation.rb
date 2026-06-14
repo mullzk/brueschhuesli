@@ -77,7 +77,7 @@ class Reservation < ApplicationRecord
       type: classified_type,
       blocks: duration_in_8_hour_blocks,
       days: duration_in_days,
-      miteigentuemer: user.miteigentuemer?,
+      owner: user.owner?,
       exclusive: is_exclusive?
     )
   end

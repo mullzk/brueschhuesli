@@ -324,7 +324,7 @@ class ReservationTest < ActiveSupport::TestCase
 
   test "paid_blocks gives co-owners six free blocks on non-exclusive stays" do
     stefan = create(:user, name: "Stefan")
-    ruth   = create(:user, name: "Ruth", miteigentuemer: true)
+    ruth   = create(:user, name: "Ruth", role: :owner)
     seven_block_stay = lambda do |user, exclusive|
       Reservation.new(start: at("2010-06-01 14:00"), finish: at("2010-06-03 15:00"),
                       type_of_reservation: Reservation::KURZAUFENTHALT, user: user, is_exclusive: exclusive)
@@ -338,7 +338,7 @@ class ReservationTest < ActiveSupport::TestCase
 
   test "billed_fee depends on the reservation type" do
     stefan = create(:user, name: "Stefan")
-    ruth   = create(:user, name: "Ruth", miteigentuemer: true)
+    ruth   = create(:user, name: "Ruth", role: :owner)
 
     r = Reservation.new(start: at("2010-06-01 14:00"), finish: at("2010-06-03 14:00"),
                         type_of_reservation: Reservation::KURZAUFENTHALT, user: ruth, is_exclusive: false)
