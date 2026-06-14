@@ -188,6 +188,53 @@ class UserTest < ActiveSupport::TestCase
     assert User.exists?(user.id)
   end
 
+  # --- role model (Vorhaben #1, pending) -------------------------------------
+  # Spec: roles-spec.local.md §2, §3. Commented out until the role enum and
+  # responsible_user association exist; activate per Feinplanungs-Schritt.
+
+  # test "a new user defaults to the member role" do
+  #   assert_predicate build(:user), :member?
+  # end
+
+  # test "role predicates reflect the assigned role" do
+  #   assert_predicate build(:user, role: :owner), :owner?
+  #   assert_not build(:user, role: :owner).member?
+  # end
+
+  # test "role_label returns the German label" do
+  #   assert_equal "Miteigentümer/in", build(:user, role: :owner).role_label
+  #   assert_equal "Haus-Login", build(:user, role: :shared_account).role_label
+  # end
+
+  # test "ROLE_LABELS covers every enum role" do
+  #   assert_equal User.roles.keys.sort, User::ROLE_LABELS.keys.map(&:to_s).sort
+  # end
+
+  # test "an external user requires a responsible owner" do
+  #   external = build(:user, role: :external, responsible_user: nil)
+  #   assert_not external.valid?
+  #   assert_predicate external.errors[:responsible_user], :present?
+  # end
+
+  # test "the responsible user must itself be an owner" do
+  #   member = create(:user, role: :member)
+  #   external = build(:user, role: :external, responsible_user: member)
+  #   assert_not external.valid?
+  # end
+
+  # test "an external user with a responsible owner is valid" do
+  #   owner = create(:user, role: :owner)
+  #   external = build(:user, role: :external, responsible_user: owner)
+  #   assert_predicate external, :valid?
+  # end
+
+  # test "non-external roles must not have a responsible user" do
+  #   owner = create(:user, role: :owner)
+  #   member = build(:user, role: :member, responsible_user: owner)
+  #   assert_not member.valid?
+  #   assert_predicate member.errors[:responsible_user], :present?
+  # end
+
   private
 
   def make_legacy_user(password, salt: "legacy-salt")
