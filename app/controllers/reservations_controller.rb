@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class ReservationsController < ApplicationController
+  before_action :require_reservation_manager, only: %i[new create edit update destroy]
+  before_action :require_own_reservation, only: %i[edit update destroy]
   before_action :set_user_options, only: %i[new create edit update]
 
   def index
@@ -80,8 +82,20 @@ class ReservationsController < ApplicationController
 
   private
 
+  def require_reservation_manager
+    deny_access unless current_user.owner? || current_user.member?
+  end
+
+  # Owners may act on any reservation; members only on their own.
+  def require_own_reservation
+    return if current_user.owner?
+
+    deny_access unless Reservation.find(params.expect(:id)).user_id == current_user.id
+  end
+
   def set_user_options
-    @users = User.all.sort.map { |user| [ user.name, user.id ] }
+    users = current_user.owner? ? User.all.sort : [ current_user ]
+    @users = users.map { |user| [ user.name, user.id ] }
   end
 
   def month_and_year_as_time(string)
@@ -92,7 +106,10 @@ class ReservationsController < ApplicationController
   end
 
   def reservation_params
-    params.fetch(:reservation, {}).permit(:user_id, :start, :finish, :type_of_reservation, :is_exclusive, :comment)
+    permitted = params.fetch(:reservation, {}).permit(:user_id, :start, :finish, :type_of_reservation, :is_exclusive,
+                                                      :comment)
+    permitted[:user_id] = current_user.id unless current_user.owner?
+    permitted
   end
 
   def parse_date_param

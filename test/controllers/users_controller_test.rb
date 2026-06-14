@@ -17,14 +17,14 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "new renders the form" do
-    login_as_user
+    login_as_owner
     get new_user_path
 
     assert_response :success
   end
 
   test "create with invalid params re-renders the form" do
-    login_as_user
+    login_as_owner
     post users_path, params: { user: { name: "NoMail", password: "Password" } }
 
     assert_response :unprocessable_entity
@@ -32,7 +32,7 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "create adds a user that can then log in" do
-    login_as_user
+    login_as_owner
     post users_path, params: { user: { name: "ACB", email: "acb@example.com", password: "Password" } }
 
     assert_redirected_to users_path
@@ -42,7 +42,7 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "create persists miteigentuemer and telefon" do
-    login_as_user
+    login_as_owner
     post users_path, params: { user: { name: "Owner", email: "owner@example.com", telefon: "079", miteigentuemer: "1", password: "Password" } }
     owner = User.find_by(name: "Owner")
 
@@ -51,7 +51,7 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "edit renders the form" do
-    login_as_user
+    login_as_owner
     user = create(:user, name: "newuser", email: "email@mail.com", password: "password")
     get edit_user_path(user)
 
@@ -59,7 +59,7 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "update changes the user" do
-    login_as_user
+    login_as_owner
     user = create(:user, name: "newuser", email: "email@mail.com", password: "password")
     patch user_path(user), params: { user: { name: "NewName", email: "new@example.com", password: "NewPassword" } }
 
@@ -68,7 +68,7 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "update with blank password keeps the existing one" do
-    login_as_user
+    login_as_owner
     user = create(:user, name: "newuser", email: "email@mail.com", password: "password")
     patch user_path(user), params: { user: { email: "changed@example.com", password: "", password_confirmation: "" } }
 
@@ -78,7 +78,7 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "update a legacy user without a bcrypt digest and no new password" do
-    login_as_user
+    login_as_owner
     user = create(:user, name: "Legacy", email: "legacy@example.com", password: "temporary")
     user.update_columns(password_digest: nil, salt: "s", hashed_password: User.legacy_hash("oldsecret", "s"))
     patch user_path(user), params: { user: { email: "newmail@example.com", password: "", password_confirmation: "" } }
@@ -88,7 +88,7 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "destroy removes the user" do
-    login_as_user
+    login_as_owner
     user = create(:user, name: "newuser", email: "email@mail.com", password: "password")
     delete user_path(user)
 
@@ -97,7 +97,7 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "destroying a user with reservations is rejected gracefully" do
-    login_as_user
+    login_as_owner
     user = create(:user, name: "Owner", password: "password")
     create(:reservation, user: user)
 

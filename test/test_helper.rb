@@ -34,10 +34,15 @@ end
 
 class ActionDispatch::IntegrationTest
   # Creates a user and signs it in through the real login flow. Returns the
-  # user. Shared by the controller/integration tests (previously duplicated).
-  def login_as_user(name: "Session User", email: "session-user@example.com", password: "password")
-    user = create(:user, name: name, email: email, password: password)
+  # user. Defaults to a member; tests that need elevated rights call
+  # login_as_owner.
+  def login_as_user(name: "Session User", email: "session-user@example.com", password: "password", role: :member)
+    user = create(:user, name: name, email: email, password: password, role: role)
     post session_path, params: { name: name, password: password }
     user
+  end
+
+  def login_as_owner(**)
+    login_as_user(role: :owner, **)
   end
 end
