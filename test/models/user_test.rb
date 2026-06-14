@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: users
@@ -24,43 +26,48 @@ require "test_helper"
 
 class UserTest < ActiveSupport::TestCase
   test "Unknown User is not found" do
-    dbuser = User.find_by_name("rumpelstilzchen")
+    dbuser = User.find_by(name: "rumpelstilzchen")
+
     assert_not dbuser
   end
 
-  test "User gets created, Passwort is not stored in clear-text" do
+  test "a saved user stores its password hashed, not in clear text" do
     user = FactoryBot.build(:user, name: "Stefan", email: "test@mail.com")
-    user.password="test1234"
+    user.password = "test1234"
     user.save
-    dbuser = User.find_by_name("Stefan")
+    dbuser = User.find_by(name: "Stefan")
+
     assert dbuser
-    assert_not dbuser.password=="test1234"
+    assert_not dbuser.password == "test1234"
   end
 
-
-  test "authentication with correct password should pass" do
+  test "authentication with the correct password passes" do
     user = FactoryBot.build(:user, name: "Stefan", email: "test@mail.com")
-    user.password="test1234"
+    user.password = "test1234"
     user.save
+
     assert User.authenticate("Stefan", "test1234")
   end
 
-  test "authentifcation with wrong password should be rejected" do
+  test "authentication with a wrong password is rejected" do
     user = FactoryBot.build(:user, name: "Stefan", email: "test@mail.com")
-    user.password="test1234"
+    user.password = "test1234"
     user.save
+
     assert_not User.authenticate("Stefan", "test")
   end
 
-  test "authentification with no password should be rejected" do
+  test "authentication with no password is rejected" do
     user = FactoryBot.build(:user, name: "Stefan", email: "test@mail.com")
-    user.password="test1234"
+    user.password = "test1234"
     user.save
+
     assert_not User.authenticate("Stefan", "")
   end
 
   test "authenticate works by name or by email" do
     create(:user, name: "Dora", email: "dora@example.com", password: "secret123")
+
     assert User.authenticate("Dora", "secret123")
     assert User.authenticate("dora@example.com", "secret123")
     assert_not User.authenticate("Dora", "wrong")
@@ -71,7 +78,8 @@ class UserTest < ActiveSupport::TestCase
 
     assert User.authenticate("Legacy", "oldsecret")
     user.reload
-    assert user.password_digest.present?
+
+    assert_predicate user.password_digest, :present?
     assert_nil user.salt
     assert_nil user.hashed_password
     assert User.authenticate("Legacy", "oldsecret")
@@ -83,6 +91,7 @@ class UserTest < ActiveSupport::TestCase
 
     assert_not User.authenticate("Legacy", "wrong")
     user.reload
+
     assert_nil user.password_digest
     assert_equal "legacy-salt", user.salt
     assert_equal User.legacy_hash("oldsecret", "legacy-salt"), user.hashed_password
@@ -93,23 +102,26 @@ class UserTest < ActiveSupport::TestCase
   test "name must be unique" do
     create(:user, name: "Hans")
     duplicate = build(:user, name: "Hans")
+
     assert_not duplicate.valid?
-    assert duplicate.errors[:name].present?
+    assert_predicate duplicate.errors[:name], :present?
   end
 
   test "email must be unique" do
     create(:user, email: "shared@example.com")
     duplicate = build(:user, email: "shared@example.com")
+
     assert_not duplicate.valid?
-    assert duplicate.errors[:email].present?
+    assert_predicate duplicate.errors[:email], :present?
   end
 
   test "name, email and password are required" do
     user = User.new
+
     assert_not user.valid?
-    assert user.errors[:name].present?
-    assert user.errors[:email].present?
-    assert user.errors[:password].present?
+    assert_predicate user.errors[:name], :present?
+    assert_predicate user.errors[:email], :present?
+    assert_predicate user.errors[:password], :present?
   end
 
   # --- password --------------------------------------------------------------
@@ -117,32 +129,63 @@ class UserTest < ActiveSupport::TestCase
   test "blank password leaves no digest and is invalid" do
     user = User.new(name: "Blank", email: "blank@example.com")
     user.password = ""
+
     assert_nil user.password_digest
     assert_not user.valid?
-    assert user.errors[:password].present?
+    assert_predicate user.errors[:password], :present?
   end
 
   test "nil password leaves no digest" do
     user = User.new(name: "Nil", email: "nil@example.com")
     user.password = nil
+
     assert_nil user.password_digest
   end
 
   test "non-blank password populates the digest" do
     user = User.new(name: "Set", email: "set@example.com")
     user.password = "secret"
-    assert user.password_digest.present?
+
+    assert_predicate user.password_digest, :present?
   end
 
   test "password confirmation must match when present" do
     user = build(:user)
     user.password = "secret"
     user.password_confirmation = "different"
+
     assert_not user.valid?
-    assert user.errors[:password_confirmation].present?
+    assert_predicate user.errors[:password_confirmation], :present?
 
     user.password_confirmation = "secret"
-    assert user.valid?
+
+    assert_predicate user, :valid?
+  end
+
+  test "a legacy user without a bcrypt digest stays valid and editable" do
+    user = make_legacy_user("oldsecret")
+
+    assert_predicate user, :valid?
+    user.email = "moved@example.com"
+
+    assert_predicate user, :valid?
+  end
+
+  test "setting a new password clears the legacy hash" do
+    user = make_legacy_user("oldsecret")
+    user.update!(password: "brandnew")
+
+    assert_nil user.salt
+    assert_nil user.hashed_password
+    assert_predicate user.password_digest, :present?
+  end
+
+  test "a user with reservations cannot be destroyed" do
+    user = create(:user)
+    create(:reservation, user: user)
+
+    assert_not user.destroy
+    assert User.exists?(user.id)
   end
 
   private

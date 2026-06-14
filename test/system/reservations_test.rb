@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "application_system_test_case"
 
 class ReservationsTest < ApplicationSystemTestCase
@@ -38,7 +40,7 @@ class ReservationsTest < ApplicationSystemTestCase
   test "an overlapping reservation is rejected" do
     user = sign_in_as
     create(:reservation, user: user,
-      start: DateTime.new(2026, 7, 1, 0), finish: DateTime.new(2026, 7, 2, 0))
+                         start: DateTime.new(2026, 7, 1, 0), finish: DateTime.new(2026, 7, 2, 0))
 
     visit new_reservation_path(date: "2026-07-01")
     click_button "Speichern"

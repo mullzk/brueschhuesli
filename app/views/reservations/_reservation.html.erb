@@ -1,19 +1,19 @@
 <div class="reservation" data-controller="enter-href" data-enter-href-url-value="<%= url_for edit_reservation_path(reservation) %>">
-	<div><span>Wer:</span> <%= mail_to(reservation.user.email, reservation.user.name)%></div>
-	<div>
-		<span>Wann:</span> 
-		<% if reservation.start.day.equal? reservation.finish.day %>
-			<%= reservation.start.strftime("%d.%m., %H:%M")%> bis <%= reservation.finish.strftime("%H:%M")%>
-		<% else %>
-			<%= reservation.start.strftime("%d.%m., %H:%M")%> bis <%= reservation.finish.strftime("%d.%m., %H:%M")%></div>
-		<% end %>
-	<div><span>Wie:</span> <%= reservation.classified_type %>, <%= reservation.is_exclusive ? "exklusiv" : "offen" %></div>
-	<% unless reservation.comment.empty? %>
-		<div><span>Kommentar:</span> <%= reservation.comment %></div>
-	<% end %>
-	
+  <div><span>Wer:</span> <%= mail_to(reservation.user.email, reservation.user.name) %></div>
+  <div>
+    <span>Wann:</span>
+    <% if reservation.start.day.equal? reservation.finish.day %>
+      <%= reservation.start.strftime("%d.%m., %H:%M") %> bis <%= reservation.finish.strftime("%H:%M") %>
+    <% else %>
+      <%= reservation.start.strftime("%d.%m., %H:%M") %> bis <%= reservation.finish.strftime("%d.%m., %H:%M") %></div>
+    <% end %>
+  <div><span>Wie:</span> <%= reservation.classified_type %>, <%= reservation.is_exclusive ? "exklusiv" : "offen" %></div>
+  <% unless reservation.comment.empty? %>
+    <div><span>Kommentar:</span> <%= reservation.comment %></div>
+  <% end %>
+
     <div class="actions">
-		<%= link_to 'Bearbeiten', edit_reservation_path(reservation) %> - 
-    	<%= link_to 'Löschen', reservation, data: { turbo_method: :delete, turbo_confirm: 'Are you sure?' } %>
-	</div>
+    <%= link_to "Bearbeiten", edit_reservation_path(reservation) %> -
+      <%= link_to "Löschen", reservation, data: { turbo_method: :delete, turbo_confirm: "Are you sure?" } %>
+  </div>
 </div>

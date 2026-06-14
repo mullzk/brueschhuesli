@@ -1,3 +1,7 @@
+# frozen_string_literal: true
+
+require "English"
+require "fileutils"
 require "securerandom"
 require "shellwords"
 
@@ -6,18 +10,19 @@ module DbSync
 
   DEPLOY_PATHS = {
     "integration" => "/var/www/brueschhueslidev",
-    "production"  => "/var/www/brueschhuesliprod"
+    "production" => "/var/www/brueschhuesliprod"
   }.freeze
   REMOTE_STAGES = DEPLOY_PATHS.keys.freeze
 
   def require_stage!
-    stage = ENV["STAGE"] or abort "Usage: STAGE=integration rails db:pull / db:push"
+    stage = ENV.fetch("STAGE", nil) or abort "Usage: STAGE=integration rails db:pull / db:push"
     abort "Unknown stage: #{stage}. Known: #{REMOTE_STAGES.join(', ')}" unless REMOTE_STAGES.include?(stage)
     stage
   end
 
   def confirm_production!(stage)
     return unless stage == "production"
+
     print "Wirklich Production überschreiben? Tippe 'yes': "
     abort "Abgebrochen." unless $stdin.gets.to_s.strip == "yes"
   end
@@ -25,8 +30,8 @@ module DbSync
   def stage_credentials(stage)
     prefix = "DEPLOY_#{stage.upcase}_"
     {
-      host:     ENV.fetch("#{prefix}HOST")   { abort "#{prefix}HOST not set (lokal in .env)" },
-      user:     ENV.fetch("#{prefix}USER")   { abort "#{prefix}USER not set (lokal in .env)" },
+      host: ENV.fetch("#{prefix}HOST")   { abort "#{prefix}HOST not set (lokal in .env)" },
+      user: ENV.fetch("#{prefix}USER")   { abort "#{prefix}USER not set (lokal in .env)" },
       env_file: "#{DEPLOY_PATHS.fetch(stage)}/shared/config/env"
     }
   end
@@ -43,7 +48,7 @@ module DbSync
   end
 
   def dump_filename(label)
-    "brueschhuesli-#{label}-#{Time.now.strftime('%Y%m%d-%H%M%S')}-#{SecureRandom.hex(4)}.sql"
+    "brueschhuesli-#{label}-#{Time.zone.now.strftime('%Y%m%d-%H%M%S')}-#{SecureRandom.hex(4)}.sql"
   end
 
   def mysqldump_cmd(db)
@@ -111,7 +116,7 @@ module DbSync
   def scp_to_remote(local, ssh, remote)   = sh!("scp #{Shellwords.shellescape(local)} #{Shellwords.shellescape("#{ssh}:#{remote}")}")
 
   def remove_local_file(path)
-    File.delete(path) if File.exist?(path)
+    FileUtils.rm_f(path)
   end
 
   def remove_remote_file(ssh, path)
@@ -120,7 +125,7 @@ module DbSync
 
   def run_remote(ssh, script)
     IO.popen([ "ssh", ssh, "bash", "-l", "-s" ], "w") { |io| io.write(script) }
-    abort "Schritt fehlgeschlagen." unless $?.success?
+    abort "Schritt fehlgeschlagen." unless $CHILD_STATUS.success?
   end
 
   def step(label)
@@ -158,7 +163,7 @@ namespace :db do
 
   desc "Push local dev data to remote stage, replacing its DB. Usage: STAGE=integration rails db:push"
   task push: :environment do
-    stage      = DbSync.require_stage!
+    stage = DbSync.require_stage!
     DbSync.confirm_production!(stage)
     cfg        = DbSync.stage_credentials(stage)
     ssh_target = DbSync.ssh_target_for(stage)

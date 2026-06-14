@@ -2,8 +2,121 @@
 inherit_gem:
   rubocop-rails-omakase: rubocop.yml
 
+# Lint the Minitest suite (omakase does not load this plugin).
+plugins:
+  - rubocop-minitest
+
+# Our characterization tests deliberately group several boundary asserts per
+# test; do not force them apart.
+Minitest/MultipleAssertions:
+  Enabled: false
+
+# Phase 7 broad rollout: omakase disables whole departments and re-enables a
+# hand-picked subset. We turn the departments back on one at a time, fixing
+# their offenses per step. Performance/Security are clean; Lint/Naming had a
+# handful of findings, all fixed.
+Performance:
+  Enabled: true
+Security:
+  Enabled: true
+Lint:
+  Enabled: true
+Naming:
+  Enabled: true
+
+# Style department on. Generated/historical migrations are frozen, so they are
+# out of scope for restyling.
+Style:
+  Enabled: true
+  Exclude:
+    - "db/migrate/**/*"
+
+# House rule: comments explain non-obvious "why", never serve as class banners.
+Style/Documentation:
+  Enabled: false
+
+# Empty controller actions read as def/end, not the compact one-liner.
+Style/EmptyMethod:
+  EnforcedStyle: expanded
+
+# The duration helper uses plain %d/%i tokens; keep that simple style rather
+# than forcing verbose annotated tokens.
+Style/FormatStringToken:
+  EnforcedStyle: unannotated
+
+# test_helper reopens framework classes (ActiveSupport::TestCase); compact is
+# the idiomatic Rails form there.
+Style/ClassAndModuleChildren:
+  Exclude:
+    - "test/test_helper.rb"
+
+# Layout department on. Line length is enforced in production code only:
+# tests carry long descriptive data/German strings and generated/historical
+# migrations are frozen.
+Layout:
+  Enabled: true
+Layout/LineLength:
+  Exclude:
+    - "test/**/*"
+    - "db/migrate/**/*"
+    - "lib/tasks/**/*"
+
+# Length/complexity ceilings, tuned to this deliberately-shaped code rather
+# than rubocop's tight defaults: the controllers and the Reservation model
+# went through the earlier refactor phases and are idiomatic as they stand.
+# Test, migration and rake-DSL lengths are not a complexity signal here.
+Metrics:
+  Enabled: true
+  Exclude:
+    - "test/**/*"
+    - "db/migrate/**/*"
+Metrics/AbcSize:
+  Max: 23
+Metrics/MethodLength:
+  Max: 15
+Metrics/ClassLength:
+  Max: 130
+Metrics/BlockLength:
+  Exclude:
+    - "lib/tasks/**/*"
+Metrics/ModuleLength:
+  Exclude:
+    - "lib/tasks/**/*"
+
+# Rails department on (supersedes the narrow Rails/Date + Rails/TimeZone
+# enables from Phase 0.5, now covered by the department default). Historical
+# and generated migrations are frozen, so the migration-shape cops
+# (BulkChangeTable, ThreeStateBooleanColumn) and update_all-in-migration are
+# out of scope.
+Rails:
+  Enabled: true
+  Exclude:
+    - "db/migrate/**/*"
+
+# Single-locale German app with no i18n layer; inline German UI strings are the
+# documented, deliberate pattern.
+Rails/I18nLocaleTexts:
+  Enabled: false
+
+# The billing delegators (paid_blocks/billed_fee) are intentionally uniform
+# one-line methods; one renames (fee -> billed_fee) and cannot be a `delegate`,
+# so converting only its sibling would fragment the block.
+Rails/Delegate:
+  Enabled: false
+
+# Tests bypass validations on purpose to set up state (password digests,
+# session expiry); not a production smell. A cop-level Exclude replaces the
+# department's, so db/migrate is repeated here.
+Rails/SkipsModelValidations:
+  Exclude:
+    - "test/**/*"
+    - "db/migrate/**/*"
+
 # Overrides can be added below; keep this minimal.
 AllCops:
+  # Activate newly released cops in enabled departments (omakase keeps most
+  # departments off, so in practice this opts the Minitest cops in).
+  NewCops: enable
   Exclude:
     - "db/schema.rb"
     - "bin/**/*"

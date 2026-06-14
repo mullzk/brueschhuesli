@@ -14,6 +14,7 @@ before "deploy:starting", :load_shared_env do
     env_content.each_line do |line|
       line = line.strip
       next if line.empty? || line.start_with?("#")
+
       key, value = line.split("=", 2)
       env_vars[key.strip] = value.to_s.strip.gsub(/\A["']|["']\z/, "") if key
     end
@@ -27,6 +28,7 @@ namespace :deploy do
       state = shared_path.join("tmp/pids/puma.state")
       # First deploy before the control app exists: nothing to signal yet.
       next unless test :test, "-f", state
+
       within release_path do
         execute :bundle, :exec, :pumactl, "-S", state, "restart"
       end

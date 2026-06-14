@@ -1,10 +1,10 @@
-<% if day[:reservations].count.equal? 0 %>
-	<td class="free <%= day[:date]===Date.today ? 'today' : '' %>" data-controller="enter-href" data-enter-href-url-value="<%= url_for controller:'reservations', action:'new', date:day[:date] %>"><%= day[:date].day %></td>
+<% if day.free? %>
+  <td class="free <%= day.today? ? "today" : "" %>" data-controller="enter-href" data-enter-href-url-value="<%= url_for controller: "reservations", action: "new", date: day.date %>"><%= day.date.day %></td>
 <% else %>
-	<td class="occupied <%= day[:date]===Date.today ? 'today' : '' %>" data-controller="enter-href" data-enter-href-url-value="<%= url_for controller:'reservations', action:'on_day', date:day[:date] %>">
-		<%= day[:date].day %>
-		<% for reservation in day[:reservations] %>
-			<p class="<%= reservation.is_exclusive ? 'closed' : 'open' %>"><%= reservation.user.name %></p>
-		<% end %>	
-	</td>
+  <td class="occupied <%= day.today? ? "today" : "" %>" data-controller="enter-href" data-enter-href-url-value="<%= url_for controller: "reservations", action: "on_day", date: day.date %>">
+    <%= day.date.day %>
+    <% for reservation in day.reservations %>
+      <p class="<%= reservation.is_exclusive ? "closed" : "open" %>"><%= reservation.user.name %></p>
+    <% end %>
+  </td>
 <% end %>

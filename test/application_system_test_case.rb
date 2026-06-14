@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "test_helper"
 
 class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
@@ -16,10 +18,11 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
 
   def sign_in_as(name: "Resident", email: "resident@example.com", password: "secret-password")
     user = User.create!(name: name, email: email, password: password)
-    visit login_login_path
+    visit new_session_path
     fill_in "name", with: name
     fill_in "password", with: password
     click_button "Login"
+
     assert_selector "table.calendar" # wait for the post-login redirect to land
     user
   end

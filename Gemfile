@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 source "https://rubygems.org"
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
@@ -29,26 +31,28 @@ gem "bcrypt", "~> 3.1.7"
 # Reduces boot times through caching; required in config/boot.rb
 gem "bootsnap", ">= 1.1.0", require: false
 
-
-
-
 # Gems for this project, added by mullzk
 gem "will_paginate"
+# Real .xlsx export for the yearly billing reports
+gem "caxlsx"
+gem "caxlsx_rails"
 
 group :development do
   gem "annotaterb"
   # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase]
   gem "rubocop-rails-omakase", require: false
+  # Lint the Minitest test suite (not bundled by omakase)
+  gem "rubocop-minitest", require: false
+  # Lint ERB templates (RuboCop only sees .rb files)
+  gem "erb_lint", require: false
 end
 group :development, :test do
   gem "factory_bot_rails"
 end
 
-
-
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
-  gem "byebug", platforms: [ :mri, :mingw, :x64_mingw ]
+  gem "byebug", platforms: %i[mri mingw x64_mingw]
   gem "dotenv-rails"
 end
 
@@ -81,4 +85,4 @@ gem "brakeman", "~> 8.0"
 gem "bundler-audit"
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
-gem "tzinfo-data", platforms: [ :mingw, :mswin, :x64_mingw, :jruby ]
+gem "tzinfo-data", platforms: %i[mingw mswin x64_mingw jruby]

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: reservations
@@ -27,11 +29,5 @@ FactoryBot.define do
     start { DateTime.new(2019, 2, 1, 14, 0) }
     finish { DateTime.new(2019, 2, 1, 18, 0) }
     type_of_reservation { Reservation::KURZAUFENTHALT }
-
-    # Despite the name, the stored value is FERIENAUFENTHALT on purpose;
-    # reservation_test.rb depends on this.
-    factory :kurzaufenthalt_for_testuser do
-      type_of_reservation { Reservation::FERIENAUFENTHALT }
-    end
   end
 end

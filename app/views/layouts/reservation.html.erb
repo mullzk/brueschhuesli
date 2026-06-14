@@ -1,47 +1,45 @@
 <!DOCTYPE html PUBLIC "-//W3C/DTD HTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 <head>
-	<title><%= @page_title || "Brüschhüsli-Reservierungen"%></title>
+  <title><%= @page_title || "Brüschhüsli-Reservierungen" %></title>
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
-	<link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
-	<meta name="viewport" content="width=device-width, initial-scale=0.75" />
-    <%= stylesheet_link_tag    'application', media: 'all' %>
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=0.75">
+    <%= stylesheet_link_tag "application", media: "all" %>
     <%= javascript_importmap_tags %>
 
 </head>
 <body id="brueschhuesli-app" data-controller="body-scroll" data-action="scroll@window->body-scroll#check">
 
-	<header class="site-header" data-controller="navbar-toggle">
-		<nav class="site-nav">
-			<a class="site-nav__brand" href="/">Brüschhüsli</a>
-			<% if authenticated? %>
-			<button class="site-nav__toggle" type="button" aria-expanded="false" aria-label="Navigation umschalten" data-action="click->navbar-toggle#toggle">
-				<span class="site-nav__toggle-icon"></span>
-			</button>
-			<ul class="site-nav__menu" data-navbar-toggle-target="menu">
-				<li><%= link_to "Reservationen", {:controller => "reservations", :action => "index"}, :class => "site-nav__link" %></li>
-				<li><%= link_to "Abrechnung", {:controller => "abrechnung", :action => "jahresstatistik"}, :class => "site-nav__link" %></li>
-				<li><%= link_to "Reservations- und Entschädigungsregelgung", "/reservationsregelung.pdf", :class => "site-nav__link" %></li>
-				<li><%= link_to "Hausordnung", "/hausordnung.pdf", :class => "site-nav__link" %></li>
-				<li><%= link_to "Benutzer", {:controller=>"login", :action=>"list_users"}, :class => "site-nav__link" %></li>
-				<li><%= link_to "Passwort ändern", {:controller => "login", :action => "change_password"}, :class => "site-nav__link" %></li>
-				<li><%= link_to "Abmelden", {:controller => "login", :action => "logout"}, :class => "site-nav__link" %></li>
-			</ul>
-			<% end %>
-		</nav>
-	</header>
+  <header class="site-header" data-controller="navbar-toggle">
+    <nav class="site-nav">
+      <a class="site-nav__brand" href="/">Brüschhüsli</a>
+      <% if authenticated? %>
+      <button class="site-nav__toggle" type="button" aria-expanded="false" aria-label="Navigation umschalten" data-action="click->navbar-toggle#toggle">
+        <span class="site-nav__toggle-icon"></span>
+      </button>
+      <ul class="site-nav__menu" data-navbar-toggle-target="menu">
+        <li><%= link_to "Reservationen", { controller: "reservations", action: "index" }, class: "site-nav__link" %></li>
+        <li><%= link_to "Abrechnung", { controller: "abrechnung", action: "jahresstatistik" }, class: "site-nav__link" %></li>
+        <li><%= link_to "Reservations- und Entschädigungsregelgung", "/reservationsregelung.pdf", class: "site-nav__link" %></li>
+        <li><%= link_to "Hausordnung", "/hausordnung.pdf", class: "site-nav__link" %></li>
+        <li><%= link_to "Benutzer", users_path, class: "site-nav__link" %></li>
+        <li><%= link_to "Passwort ändern", edit_password_path, class: "site-nav__link" %></li>
+        <li><%= link_to "Abmelden", session_path, data: { turbo_method: :delete }, class: "site-nav__link" %></li>
+      </ul>
+      <% end %>
+    </nav>
+  </header>
 
-	<main class="page">
-		<% if flash[:notice] -%>
-			<div id="notice">
-				<%= flash[:notice] %>
-			</div>
-		<% end -%>
-		<%= yield %>
-	</main>
-
-
+  <main class="page">
+    <% if flash[:notice] -%>
+      <div id="notice">
+        <%= flash[:notice] %>
+      </div>
+    <% end -%>
+    <%= yield %>
+  </main>
 
 </body>
