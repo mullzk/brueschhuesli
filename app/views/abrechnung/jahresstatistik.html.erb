@@ -9,17 +9,17 @@
   </tr>
   <% for line in @statement.lines -%>
     <tr>
-      <td><%= link_to line.user.name, :action => "benutzer", :id => line.user, :year => @listed_year.year %></td>
+      <td><%= link_to line.user.name, action: "benutzer", id: line.user, year: @listed_year.year %></td>
       <td align="right"><%= line.reservation_count %></td>
-      <td align="right"><%= "%i.-" % line.fee %></td>
+      <td align="right"><%= format("%i.-", line.fee) %></td>
     </tr>
   <% end -%>
 </table>
 <p style="text-align:right; font-size:xx-small;">
-  <%= link_to "Excel", :year => @listed_year.year, :format => :xlsx %> -
-  Alle Daten gemäss DB-Stand vom <%= Date.today.strftime("%d.%m.%Y") %>
+  <%= link_to "Excel", year: @listed_year.year, format: :xlsx %> -
+  Alle Daten gemäss DB-Stand vom <%= Date.current.strftime("%d.%m.%Y") %>
 </p>
 <hr>
-<%= link_to "Vorheriges Jahr", :action => "jahresstatistik", :year => @listed_year.year-1 %> -
-<%= link_to "Detailansicht", :action => "detailliste", :year => @listed_year.year %> -
-<%= link_to "Nächstes Jahr", :action => "jahresstatistik", :year => @listed_year.year+1 %>
+<%= link_to "Vorheriges Jahr", action: "jahresstatistik", year: @listed_year.year - 1 %> -
+<%= link_to "Detailansicht", action: "detailliste", year: @listed_year.year %> -
+<%= link_to "Nächstes Jahr", action: "jahresstatistik", year: @listed_year.year + 1 %>

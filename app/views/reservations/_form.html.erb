@@ -19,33 +19,33 @@
   <div class="page-row datebox">
     <div class="datebox_left">
           <label class="legend">Von:</label>
-          <div>Tag: <%= date_select("reservation", "start", :order => [:day, :month, :year]) %></div>
-          <div>Zeit: <%= time_select("reservation", "start", {:minute_step => 60, :ignore_date => true}) %></div>
+          <div>Tag: <%= date_select("reservation", "start", order: %i[day month year]) %></div>
+          <div>Zeit: <%= time_select("reservation", "start", { minute_step: 60, ignore_date: true }) %></div>
     </div>
     <div class="datebox_right">
           <label class="legend">Bis:</label>
-          <div>Tag: <%= date_select("reservation", "finish", :order => [:day, :month, :year]) %></div>
-          <div>Zeit: <%= time_select("reservation", "finish", {:minute_step => 60, :ignore_date => true}) %></div>
+          <div>Tag: <%= date_select("reservation", "finish", order: %i[day month year]) %></div>
+          <div>Zeit: <%= time_select("reservation", "finish", { minute_step: 60, ignore_date: true }) %></div>
     </div>
   </div>
   <div class="page-row">
     <label class="legend">Reservations-Typ: </label>
     <div>
         <%= form.select :type_of_reservation, Reservation.reservation_types, prompt: "Type", selected: form.object.classified_type %>&nbsp;
-      <%= form.select :is_exclusive, [["Exklusiv", true],["Offen", false]] %>
+      <%= form.select :is_exclusive, [ [ "Exklusiv", true ], [ "Offen", false ] ] %>
     </div>
   </div>
   <div class="page-row" style="vertical-align:top;">
-    <label style="vertical-align:top;" class="legend">Kommentar: </label><%= form.text_area :comment, :size => "40x3" %>
+    <label style="vertical-align:top;" class="legend">Kommentar: </label><%= form.text_area :comment, size: "40x3" %>
   </div>
   <div class="page-row">
-    <%= submit_tag "Speichern", :class => "submit" %>
+    <%= submit_tag "Speichern", class: "submit" %>
   </div>
 <% end %>
   <div class="page-row">
-    <%= button_to 'Zurück zum Kalender', {controller:"reservations", action:"index"}, method: :get %>&nbsp;
+    <%= button_to "Zurück zum Kalender", { controller: "reservations", action: "index" }, method: :get %>&nbsp;
     <% unless reservation.id.nil? %>
-      <%= button_to 'Reservation Löschen', reservation, method: :delete, form: { data: { turbo_confirm: 'Are you sure?' } } %>
+      <%= button_to "Reservation Löschen", reservation, method: :delete, form: { data: { turbo_confirm: "Are you sure?" } } %>
     <% end %>
   </div>
 </div>

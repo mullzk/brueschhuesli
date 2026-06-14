@@ -12,22 +12,22 @@
     <tr>
       <td><%= reservation.start.strftime("%d.%m.%Y %H:%M") %> - <%= reservation.finish.strftime("%d.%m.%Y %H:%M") %></td>
       <td align="right"><%= time_component_string_of(reservation.duration_rounded_to_hours) %></td>
-      <td align="right"><%= reservation.classified_type %><%= ", exklusiv" if reservation.is_exclusive? && (reservation.classified_type==Reservation::FERIENAUFENTHALT || reservation.classified_type==Reservation::KURZAUFENTHALT) %></td>
+      <td align="right"><%= reservation.classified_type %><%= ", exklusiv" if reservation.is_exclusive? && [ Reservation::FERIENAUFENTHALT, Reservation::KURZAUFENTHALT ].include?(reservation.classified_type) %></td>
       <td align="right"><%= reservation.billed_fee.to_i %>.-</td>
       <td style="text-align:left; font-size:0.6em;"><%= h reservation.comment %></td>
     </tr>
   <% end -%>
   <tr>
     <td>Total <%= pluralize @reservations.size, "Reservation", "Reservationen" %></td>
-    <td align="right"><%= time_component_string_of(@reservations.inject(0) {|sum, res| sum + res.duration_rounded_to_hours}) %></td>
+    <td align="right"><%= time_component_string_of(@reservations.inject(0) { |sum, res| sum + res.duration_rounded_to_hours }) %></td>
     <td></td>
-    <td align="right"><%= @reservations.inject(0) {|sum, res| sum + res.billed_fee} %>.-</td>
+    <td align="right"><%= @reservations.inject(0) { |sum, res| sum + res.billed_fee } %>.-</td>
 </table>
 <p style="text-align:right; font-size:xx-small;">
-  <%= link_to "Excel", :id => @user, :year => @listed_year.year, :format => :xlsx %> -
-  Alle Daten gemäss DB-Stand vom <%= Date.today.strftime("%d.%m.%Y") %>
+  <%= link_to "Excel", id: @user, year: @listed_year.year, format: :xlsx %> -
+  Alle Daten gemäss DB-Stand vom <%= Date.current.strftime("%d.%m.%Y") %>
 </p>
 <hr>
-<%= link_to "Vorheriges Jahr", :action => "benutzer", :id => @user, :year => @listed_year.year-1 %> -
-<%= link_to "Übersicht", :action => "jahresstatistik", :year => @listed_year.year %> -
-<%= link_to "Nächstes Jahr", :action => "benutzer", :id => @user, :year => @listed_year.year+1 %>
+<%= link_to "Vorheriges Jahr", action: "benutzer", id: @user, year: @listed_year.year - 1 %> -
+<%= link_to "Übersicht", action: "jahresstatistik", year: @listed_year.year %> -
+<%= link_to "Nächstes Jahr", action: "benutzer", id: @user, year: @listed_year.year + 1 %>

@@ -25,5 +25,5 @@
   <% end %>
   </tbody>
 </table>
-<div data-prev-month-url="<%= url_for controller:"reservations", action:"month", date:(month.first_of_month - 1.month) %>"></div>
-<div data-next-month-url="<%= url_for controller:"reservations", action:"month", date:(month.first_of_month + 1.month) %>"></div>
+<div data-prev-month-url="<%= url_for controller: "reservations", action: "month", date: (month.first_of_month - 1.month) %>"></div>
+<div data-next-month-url="<%= url_for controller: "reservations", action: "month", date: (month.first_of_month + 1.month) %>"></div>

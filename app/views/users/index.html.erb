@@ -6,7 +6,7 @@
       <small><i>
       <%= link_to "[Bearbeiten]", edit_user_path(user) %>
       <%= link_to "[Löschen]", user_path(user), data: { turbo_method: :delete, turbo_confirm: "#{user.name} wirklich löschen?" } %>
-      <%= link_to "[Reservationen]", :controller => "abrechnung", :action => "benutzer", :id => user %>
+      <%= link_to "[Reservationen]", controller: "abrechnung", action: "benutzer", id: user %>
       </small></i>
     </li>
   <% end %>
