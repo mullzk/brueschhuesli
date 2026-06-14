@@ -19,5 +19,8 @@ Rails.application.routes.draw do
   get "abrechnung/detailliste"
   get "abrechnung/benutzer"
 
+  get "admin" => "admin#index", as: :admin
+  post "admin/test_email" => "admin#test_email", as: :admin_test_email
+
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 end

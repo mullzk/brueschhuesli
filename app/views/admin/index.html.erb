@@ -1,0 +1,9 @@
+<h1>Administration</h1>
+
+<fieldset>
+  <legend>Test-Mail versenden</legend>
+  <%= form_with url: admin_test_email_path, method: :post do |form| %>
+    <%= form.email_field :email, placeholder: "empfaenger@example.com", size: 40 %>
+    <%= form.submit "Test-Mail senden", class: "submit" %>
+  <% end %>
+</fieldset>
