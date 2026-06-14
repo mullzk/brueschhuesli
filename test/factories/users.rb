@@ -8,7 +8,6 @@
 #  email                  :string(255)
 #  has_to_change_password :boolean
 #  hashed_password        :string(255)
-#  miteigentuemer         :boolean
 #  name                   :string(255)
 #  password_digest        :string(255)
 #  role                   :string(255)      default("member"), not null

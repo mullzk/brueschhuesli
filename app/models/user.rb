@@ -8,7 +8,6 @@
 #  email                  :string(255)
 #  has_to_change_password :boolean
 #  hashed_password        :string(255)
-#  miteigentuemer         :boolean
 #  name                   :string(255)
 #  password_digest        :string(255)
 #  role                   :string(255)      default("member"), not null
@@ -37,8 +36,8 @@ class User < ApplicationRecord
     "shared_account" => "Haus-Login"
   }.freeze
 
-  # external is only assignable once the responsible_user flow exists
-  # (Vorhaben #5); until then it is not offered as a selectable role.
+  # external is only assignable once externals can be created together with
+  # their responsible owner; until then it is not offered as a selectable role.
   ASSIGNABLE_ROLE_LABELS = ROLE_LABELS.except("external").freeze
 
   enum :role, ROLE_LABELS.keys.index_with(&:itself), default: "member"
