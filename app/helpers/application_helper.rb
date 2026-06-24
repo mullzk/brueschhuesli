@@ -1,6 +1,12 @@
 # frozen_string_literal: true
 
 module ApplicationHelper
+  # Renders an icon from the shared sprite (app/views/shared/_icon_sprite).
+  # The icon is decorative; the interactive parent carries the accessible name.
+  def icon(name)
+    content_tag(:svg, tag.use(href: "#icon-#{name}"), class: "icon", "aria-hidden": "true")
+  end
+
   def time_components_of(numeric)
     (reminder, secs) = numeric.divmod(60)
     (reminder, mins) = reminder.divmod(60)

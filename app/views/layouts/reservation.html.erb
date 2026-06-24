@@ -7,11 +7,12 @@
 
   <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-    <%= stylesheet_link_tag "base", "layout", "calendar", "reservation", "overlay", "state", media: "all" %>
+    <%= stylesheet_link_tag "base", "layout", "calendar", "reservation", "overlay", "users", "state", media: "all" %>
     <%= javascript_importmap_tags %>
 
 </head>
 <body id="brueschhuesli-app">
+  <%= render "shared/icon_sprite" %>
 
   <header class="site-header" data-controller="navbar-toggle">
     <nav class="site-nav">

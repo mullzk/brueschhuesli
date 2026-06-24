@@ -1,15 +1,35 @@
 <h1>Benutzer</h1>
-<ul>
-  <% for user in @all_users %>
-    <li>
-      <%= h(user.name) %> 	(<%= user.role_label %>, <%= mail_to user.email %>, <%= user.telefon %>)
-      <small><i>
-      <%= link_to "[Bearbeiten]", edit_user_path(user) %>
-      <%= link_to "[Löschen]", user_path(user), data: { turbo_method: :delete, turbo_confirm: "#{user.name} wirklich löschen?" } %>
-      <%= link_to "[Reservationen]", controller: "abrechnung", action: "benutzer", id: user %>
-      </small></i>
-    </li>
-  <% end %>
-</ul>
-<%= link_to "Benutzer hinzufügen", new_user_path %><br>
-<%= link_to "Mein Passwort ändern", edit_password_path %>
+
+<table class="user-table">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Rolle</th>
+      <th>E-Mail</th>
+      <th>Telefon</th>
+      <th class="user-table__actions">Aktionen</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @all_users.each do |user| %>
+      <tr>
+        <td class="user-table__name"><%= h(user.name) %></td>
+        <td class="user-table__role"><%= user.role_label %></td>
+        <td><%= mail_to user.email %></td>
+        <td><%= user.telefon %></td>
+        <td class="user-table__actions-cell">
+          <div class="user-actions">
+            <%= link_to icon(:edit), edit_user_path(user), class: "icon-btn", title: "Bearbeiten", aria: { label: "#{user.name} bearbeiten" } %>
+            <%= link_to icon(:delete), user_path(user), class: "icon-btn icon-btn--danger", title: "Löschen", aria: { label: "#{user.name} löschen" }, data: { turbo_method: :delete, turbo_confirm: "#{user.name} wirklich löschen?" } %>
+            <%= link_to icon(:reservations), { controller: "abrechnung", action: "benutzer", id: user }, class: "icon-btn", title: "Reservationen", aria: { label: "Reservationen von #{user.name}" } %>
+          </div>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<div class="user-table__footer">
+  <%= link_to "Benutzer hinzufügen", new_user_path %>
+  <%= link_to "Mein Passwort ändern", edit_password_path %>
+</div>
