@@ -23,33 +23,33 @@ class ReservationsOverhaulControllerTest < ActionDispatch::IntegrationTest
     assert_select "a[href*='/reservations/new'][href*='2026-07-01']"
   end
 
-  # --- Schritt 5: natives datetime-local statt date_select/time_select (komm.) -
-  #
-  #   test "new renders native datetime-local fields for start and finish" do
-  #     login_as_user
-  #     get new_reservation_path
-  #
-  #     assert_select "input[type=datetime-local][name='reservation[start]']"
-  #     assert_select "input[type=datetime-local][name='reservation[finish]']"
-  #     assert_select "select#reservation_start_1i", false
-  #   end
-  #
-  #   test "create accepts an ISO string from a datetime-local field" do
-  #     user = login_as_user
-  #     assert_difference -> { Reservation.count }, 1 do
-  #       post reservations_path, params: { reservation: {
-  #         user_id: user.id,
-  #         start: "2026-07-01T14:00",
-  #         finish: "2026-07-01T18:00",
-  #         type_of_reservation: Reservation::KURZAUFENTHALT,
-  #         is_exclusive: true,
-  #         comment: ""
-  #       } }
-  #     end
-  #     assert_response :redirect
-  #     assert_equal at("2026-07-01 14:00"), Reservation.last.start
-  #   end
-  #
+  # --- Schritt 5: natives datetime-local statt date_select/time_select --------
+
+  test "new renders native datetime-local fields for start and finish" do
+    login_as_user
+    get new_reservation_path
+
+    assert_select "input[type=datetime-local][name='reservation[start]']"
+    assert_select "input[type=datetime-local][name='reservation[finish]']"
+    assert_select "select#reservation_start_1i", false
+  end
+
+  test "create accepts an ISO string from a datetime-local field" do
+    user = login_as_user
+    assert_difference -> { Reservation.count }, 1 do
+      post reservations_path, params: { reservation: {
+        user_id: user.id,
+        start: "2026-07-01T14:00",
+        finish: "2026-07-01T18:00",
+        type_of_reservation: Reservation::KURZAUFENTHALT,
+        is_exclusive: true,
+        comment: ""
+      } }
+    end
+    assert_response :redirect
+    assert_equal at("2026-07-01 14:00"), Reservation.last.start
+  end
+
   # --- Schritt 6: Delete-Redirect (Roadmap #4) (kommentiert) ------------------
   #
   #   test "destroy redirects to the calendar, never to the deleted record" do

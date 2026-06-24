@@ -4,7 +4,7 @@
       <% if day.in_month? %>
         <% today_class = day.today? ? " calendar__cell--today" : "" %>
         <% if day.free? %>
-          <%= link_to url_for(controller: "reservations", action: "new", date: day.date), class: "calendar__cell calendar__cell--free#{today_class}", data: { date: day.date.iso8601 } do %>
+          <%= link_to url_for(controller: "reservations", action: "new", date: day.date), class: "calendar__cell calendar__cell--free#{today_class}", data: { turbo_frame: "modal", date: day.date.iso8601 } do %>
             <span class="calendar__num"><%= day.date.day %></span>
           <% end %>
         <% else %>

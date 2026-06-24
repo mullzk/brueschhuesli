@@ -65,22 +65,23 @@ class ReservationsOverhaulSystemTest < ApplicationSystemTestCase
     end
   end
 
-  # --- Schritt 5: Formular-Overlay (auskommentiert) ---------------------------
-  #
-  #   test "reserving a free gap saves and closes the overlay" do
-  #     travel_to Time.zone.local(2026, 6, 1, 10) do
-  #       user = sign_in_as
-  #       create(:reservation, user: user,
-  #              start: at("2026-06-10 10:00"), finish: at("2026-06-10 14:00"))
-  #
-  #       find("[data-date='2026-06-10']").click
-  #       within "dialog[open], .overlay.is-open" do
-  #         click_link "reservieren", match: :first
-  #         click_button "Speichern"
-  #       end
-  #
-  #       assert_text "Reservation wurde gespeichert"
-  #       assert_no_selector "dialog[open], .overlay.is-open"
-  #     end
-  #   end
+  # --- Schritt 5: Formular-Overlay --------------------------------------------
+
+  test "reserving a free gap saves and closes the overlay" do
+    travel_to Time.zone.local(2026, 6, 1, 10) do
+      resident = User.create!(name: "Toni Bernhard", email: "toni@example.com", password: "secret-password")
+      create(:reservation, user: resident,
+                           start: at("2026-06-10 10:00"), finish: at("2026-06-10 14:00"))
+      sign_in_as
+
+      find("[data-date='2026-06-10']").click
+      within ".overlay:not([hidden])" do
+        click_link "reservieren", match: :first
+        click_button "Speichern"
+      end
+
+      assert_text "Reservation wurde gespeichert"
+      assert_no_selector ".overlay:not([hidden])"
+    end
+  end
 end

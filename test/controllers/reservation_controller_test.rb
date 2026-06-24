@@ -47,14 +47,14 @@ class ReservationControllerTest < ActionDispatch::IntegrationTest
   end
 
   # Verifies the Date.current/Time.current injection: with time frozen, new
-  # prefills the form with the current date (year select shows the frozen year).
+  # prefills the native datetime-local field with the current date.
   test "new defaults to the current date" do
     travel_to Time.zone.local(2021, 7, 15, 10) do
       login_as_user
       get new_reservation_path
 
       assert_response :success
-      assert_select "select#reservation_start_1i option[selected='selected']", text: "2021"
+      assert_select "input[type=datetime-local][name='reservation[start]'][value^='2021-07-15']"
     end
   end
 

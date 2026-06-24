@@ -1,6 +1,4 @@
-/* Reservation module — day detail overlay + the reservation form.
-   The form gets native datetime-local fields and loses the colour bands in
-   Schritt 5; that part is still the interim styling. */
+/* Reservation module — day detail overlay + the reservation form. */
 
 /* ---- Day detail (overlay content) ---- */
 
@@ -8,6 +6,7 @@
 	display: flex;
 	align-items: flex-start;
 	gap: 0.6rem;
+	margin-top: 0.5rem;
 	margin-bottom: 0.9rem;
 }
 
@@ -124,23 +123,77 @@ div.reservation div.actions {
 	padding-left: 4em;
 }
 
-div.reservationform label.legend {
+.reservationform label.legend {
 	font-weight: bold;
-	margin-bottom: 0;
-	margin-right: 1em;
 }
 
-div.reservationform div.page-row {
-	margin-bottom: 2em;
+.reservationform .page-row {
+	margin-bottom: 1.1rem;
 }
 
-div.reservationform div.datebox_left {
-	background-color: rgb(184, 252, 185);
-	margin-right: 2em;
-	margin-bottom: 1em;
+.reservationform .field {
+	display: flex;
+	align-items: center;
+	gap: 0.6rem;
 }
 
-div.reservationform div.datebox_right {
-	background-color: rgb(254, 216, 164);
-	margin-bottom: 1em;
+.reservationform .field .legend {
+	flex: 0 0 auto;
+}
+
+.reservationform .field select,
+.reservationform .field input[type="datetime-local"] {
+	flex: 1 1 auto;
+	min-width: 0;
+}
+
+.reservationform .datebox {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.8rem 1rem;
+}
+
+.reservationform .datebox .field {
+	flex: 1 1 14rem;
+}
+
+.reservationform .type-row {
+	display: flex;
+	gap: 0.6rem;
+	margin-top: 0.35rem;
+}
+
+.reservationform textarea {
+	display: block;
+	width: 100%;
+	margin-top: 0.35rem;
+}
+
+.reservationform .submit {
+	background: var(--green);
+	border-color: var(--green);
+	color: #fff;
+	font-weight: 600;
+	padding: 0.55rem 1.5rem;
+}
+
+.reservationform .submit:hover {
+	background: var(--green-d);
+}
+
+.reservationform__actions {
+	display: flex;
+	gap: 0.8rem;
+	margin-top: 1rem;
+	padding-top: 0.9rem;
+	border-top: 1px solid var(--line);
+}
+
+.reservationform__actions form {
+	flex: 1 1 0;
+}
+
+.reservationform__actions button {
+	width: 100%;
+	font-size: 0.9rem;
 }

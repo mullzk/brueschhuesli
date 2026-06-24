@@ -31,7 +31,7 @@ class ReservationsTest < ApplicationSystemTestCase
     reservation = create(:reservation, user: user)
 
     visit edit_reservation_path(reservation)
-    accept_confirm { click_button "Reservation Löschen" }
+    accept_confirm { click_button "Reservation löschen" }
 
     assert_text "Reservierung gelöscht"
     assert_not Reservation.exists?(reservation.id)

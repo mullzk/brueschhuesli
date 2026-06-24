@@ -1,49 +1,54 @@
 <div class="reservationform">
-  <%= form_with(model: reservation, local: true) do |form| %>
+  <%= form_with(model: reservation, data: { turbo_frame: "_top" }) do |form| %>
     <% if reservation.errors.any? %>
-        <div class="page-row" id="error_explanation">
-           <h2><%= pluralize(reservation.errors.count, "error") %> verhinderte, dass die Reservation gesichert werden konnte:</h2>
-             <ul>
-              <% reservation.errors.full_messages.each do |message| %>
+      <div class="page-row" id="error_explanation">
+        <h2><%= pluralize(reservation.errors.count, "error") %> verhinderte, dass die Reservation gesichert werden konnte:</h2>
+        <ul>
+          <% reservation.errors.full_messages.each do |message| %>
             <li><%= message %></li>
-              <% end %>
-            </ul>
-        </div>
-      <% end %>
-  <div class="page-row">
-      <label class="legend">Wer:</label> <%= form.select :user_id, @users %>
-  </div>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
 
-  <div class="page-row datebox">
-    <div class="datebox_left">
-          <label class="legend">Von:</label>
-          <div>Tag: <%= date_select("reservation", "start", order: %i[day month year]) %></div>
-          <div>Zeit: <%= time_select("reservation", "start", { minute_step: 60, ignore_date: true }) %></div>
+    <div class="page-row field">
+      <label class="legend" for="reservation_user_id">Wer:</label>
+      <%= form.select :user_id, @users %>
     </div>
-    <div class="datebox_right">
-          <label class="legend">Bis:</label>
-          <div>Tag: <%= date_select("reservation", "finish", order: %i[day month year]) %></div>
-          <div>Zeit: <%= time_select("reservation", "finish", { minute_step: 60, ignore_date: true }) %></div>
+
+    <div class="page-row datebox">
+      <div class="field">
+        <label class="legend" for="reservation_start">Von:</label>
+        <%= form.datetime_local_field :start %>
+      </div>
+      <div class="field">
+        <label class="legend" for="reservation_finish">Bis:</label>
+        <%= form.datetime_local_field :finish %>
+      </div>
     </div>
-  </div>
-  <div class="page-row">
-    <label class="legend">Reservations-Typ: </label>
-    <div>
-        <%= form.select :type_of_reservation, Reservation.reservation_types, prompt: "Type", selected: form.object.classified_type %>&nbsp;
-      <%= form.select :is_exclusive, [ [ "Exklusiv", true ], [ "Offen", false ] ] %>
+
+    <div class="page-row">
+      <label class="legend">Reservations-Typ:</label>
+      <div class="type-row">
+        <%= form.select :type_of_reservation, Reservation.reservation_types, prompt: "Type", selected: form.object.classified_type %>
+        <%= form.select :is_exclusive, [ [ "Exklusiv", true ], [ "Offen", false ] ] %>
+      </div>
     </div>
-  </div>
-  <div class="page-row" style="vertical-align:top;">
-    <label style="vertical-align:top;" class="legend">Kommentar: </label><%= form.text_area :comment, size: "40x3" %>
-  </div>
-  <div class="page-row">
-    <%= submit_tag "Speichern", class: "submit" %>
-  </div>
-<% end %>
-  <div class="page-row">
-    <%= button_to "Zurück zum Kalender", { controller: "reservations", action: "index" }, method: :get %>&nbsp;
+
+    <div class="page-row">
+      <label class="legend" for="reservation_comment">Kommentar:</label>
+      <%= form.text_area :comment, rows: 3 %>
+    </div>
+
+    <div class="page-row">
+      <%= submit_tag "Speichern", class: "submit" %>
+    </div>
+  <% end %>
+
+  <div class="reservationform__actions">
+    <%= button_to "Zurück zum Kalender", { controller: "reservations", action: "index" }, method: :get, form: { data: { turbo_frame: "_top" } } %>
     <% unless reservation.id.nil? %>
-      <%= button_to "Reservation Löschen", reservation, method: :delete, form: { data: { turbo_confirm: "Are you sure?" } } %>
+      <%= button_to "Reservation löschen", reservation, method: :delete, form: { data: { turbo_frame: "_top", turbo_confirm: "Are you sure?" } } %>
     <% end %>
   </div>
 </div>
