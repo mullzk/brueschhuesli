@@ -44,10 +44,11 @@ class CalendarWeek
     (date - date.beginning_of_week).to_i + 1
   end
 
-  # First-fit packing: shorter-or-later segments drop into the first lane whose
-  # last segment has already ended before this one starts.
+  # First-fit packing: segments drop into the first lane whose last segment has
+  # already ended before this one starts. Within a column the earlier-starting
+  # reservation takes the upper lane, so lanes read chronologically.
   def assign_lanes(segments)
-    segments.sort_by! { |segment| [ segment.start_col, segment.start_col - segment.end_col ] }
+    segments.sort_by! { |segment| [ segment.start_col, segment.reservation.start ] }
     lane_ends = []
     segments.each do |segment|
       lane = lane_ends.index { |end_col| end_col < segment.start_col } || lane_ends.size

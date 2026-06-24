@@ -80,6 +80,17 @@ class CalendarWeekTest < ActiveSupport::TestCase
     assert_equal 1, segment_for(week, b).lane
   end
 
+  test "lanes follow the start time within a column" do
+    early = create(:reservation, user: @user,
+                                 start: at("2026-06-10 00:00"), finish: at("2026-06-10 14:00"))
+    spanning = create(:reservation, user: @user,
+                                    start: at("2026-06-10 14:00"), finish: at("2026-06-11 09:00"))
+    week = june_week(1)
+
+    assert_equal 0, segment_for(week, early).lane
+    assert_equal 1, segment_for(week, spanning).lane
+  end
+
   test "non-overlapping reservations share a lane" do
     a = create(:reservation, user: @user,
                              start: at("2026-06-08 10:00"), finish: at("2026-06-09 12:00")) # Mo–Di
