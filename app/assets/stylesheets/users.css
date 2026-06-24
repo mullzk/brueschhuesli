@@ -1,0 +1,131 @@
+/* Users module — the account list table and its row actions. */
+
+.user-table {
+	width: 100%;
+	border-collapse: collapse;
+	background: var(--card);
+	border: 1px solid var(--line);
+	border-radius: var(--radius);
+	overflow: hidden;
+}
+
+.user-table th,
+.user-table td {
+	padding: 0.6rem 0.85rem;
+	text-align: left;
+	border-bottom: 1px solid var(--line);
+	vertical-align: middle;
+	overflow-wrap: anywhere;
+}
+
+.user-table thead th {
+	background: #f4efe7;
+	font-size: 0.74rem;
+	font-weight: 600;
+	letter-spacing: 0.03em;
+	text-transform: uppercase;
+	color: var(--muted);
+}
+
+.user-table tbody tr:last-child td {
+	border-bottom: none;
+}
+
+.user-table tbody tr:hover {
+	background: var(--paper);
+}
+
+.user-table__actions {
+	width: 1%;
+	white-space: nowrap;
+}
+
+.user-actions {
+	display: flex;
+	gap: 0.35rem;
+}
+
+.icon-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 2rem;
+	height: 2rem;
+	border-radius: 8px;
+	color: var(--muted);
+	text-decoration: none;
+}
+
+.icon-btn:hover {
+	background: #f0ece4;
+	color: var(--ink);
+	text-decoration: none;
+}
+
+.icon-btn--danger:hover {
+	background: #fce8e6;
+	color: #b3261e;
+}
+
+.icon-btn .icon {
+	width: 18px;
+	height: 18px;
+}
+
+.user-table__footer {
+	display: flex;
+	gap: 1.2rem;
+	margin-top: 1rem;
+}
+
+/* The flat table starts to break around 1000px; below that each row becomes a
+   card (capped narrow so it does not stretch empty on mid-size viewports):
+   name on top, the action icons in the top-right corner, the rest below. */
+@media (max-width: 1000px) {
+	.user-table {
+		max-width: 450px;
+	}
+
+	.user-table thead {
+		display: none;
+	}
+
+	.user-table tbody,
+	.user-table tr,
+	.user-table td {
+		display: block;
+	}
+
+	.user-table tr {
+		position: relative;
+		padding: 0.7rem 0.9rem;
+		border-bottom: 1px solid var(--line);
+	}
+
+	.user-table tbody tr:last-child {
+		border-bottom: none;
+	}
+
+	.user-table td {
+		padding: 0;
+		border: none;
+	}
+
+	.user-table__name {
+		font-weight: 600;
+		font-size: 1.05rem;
+		padding-right: 7rem;
+	}
+
+	.user-table__role {
+		color: var(--muted);
+		font-size: 0.86rem;
+		margin-bottom: 0.2rem;
+	}
+
+	.user-table__actions-cell {
+		position: absolute;
+		top: 0.6rem;
+		right: 0.7rem;
+	}
+}
