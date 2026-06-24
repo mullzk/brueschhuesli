@@ -1,29 +1,15 @@
 <h2><%= month.name %></h2>
-<table class="calendar">
-  <thead>
-    <tr>
-      <th>Mo</th>
-      <th>Di</th>
-      <th>Mi</th>
-      <th>Do</th>
-      <th>Fr</th>
-      <th>Sa</th>
-      <th>So</th>
-    </tr>
-  </thead>
-  <tbody>
-  <% for week in month.weeks %>
-    <tr>
-      <% for day in week %>
-        <% if day %>
-          <%= render partial: "day", locals: { day: day } %>
-        <% else %>
-          <td class="empty"></td>
-        <% end %>
-      <% end %>
-    </tr>
-  <% end %>
-  </tbody>
-</table>
+<div class="calendar">
+  <div class="calendar__dow">
+    <div>Mo</div>
+    <div>Di</div>
+    <div>Mi</div>
+    <div>Do</div>
+    <div>Fr</div>
+    <div>Sa</div>
+    <div>So</div>
+  </div>
+  <%= render partial: "week", collection: month.weeks, as: :week %>
+</div>
 <div data-prev-month-url="<%= url_for controller: "reservations", action: "month", date: (month.first_of_month - 1.month) %>"></div>
 <div data-next-month-url="<%= url_for controller: "reservations", action: "month", date: (month.first_of_month + 1.month) %>"></div>

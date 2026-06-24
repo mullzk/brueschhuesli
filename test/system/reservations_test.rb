@@ -6,7 +6,7 @@ class ReservationsTest < ApplicationSystemTestCase
   test "create a reservation from the calendar" do
     sign_in_as
     day = Date.current.beginning_of_month + 14
-    find("td.free[data-enter-href-url-value$='new?date=#{day.iso8601}']").click
+    find(".calendar__cell--free[data-enter-href-url-value$='new?date=#{day.iso8601}']").click
 
     click_button "Speichern"
 

@@ -20,22 +20,26 @@ class CalendarMonth
     I18n.l(first_of_month, format: :month_year)
   end
 
+  # The grid runs from the Monday before the 1st to the Sunday after the last
+  # day, so neighbouring-month days fill the corners (shown dimmed).
   def weeks
-    cells.in_groups_of(7)
+    grid_dates.each_slice(7).map do |week_dates|
+      CalendarWeek.new(week_dates.map { |date| day_for(date) })
+    end
   end
 
   private
 
-  # Blank cells before the 1st and after the last day keep each day under its
-  # weekday column.
-  def cells
-    last_of_month = first_of_month.end_of_month
-    leading = (first_of_month - first_of_month.beginning_of_week).to_i
-    trailing = (last_of_month.end_of_week - last_of_month).to_i
+  def grid_dates
+    (first_of_month.beginning_of_week..first_of_month.end_of_month.end_of_week).to_a
+  end
 
-    ([ nil ] * leading) +
-      (first_of_month..last_of_month).map { |date| CalendarDay.new(date, reservations_on(date)) } +
-      ([ nil ] * trailing)
+  def day_for(date)
+    CalendarDay.new(date: date, reservations: reservations_on(date), in_month: in_month?(date))
+  end
+
+  def in_month?(date)
+    date.between?(first_of_month, first_of_month.end_of_month)
   end
 
   def reservations_on(date)
