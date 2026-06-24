@@ -50,14 +50,14 @@ class ReservationsOverhaulControllerTest < ActionDispatch::IntegrationTest
     assert_equal at("2026-07-01 14:00"), Reservation.last.start
   end
 
-  # --- Schritt 6: Delete-Redirect (Roadmap #4) (kommentiert) ------------------
-  #
-  #   test "destroy redirects to the calendar, never to the deleted record" do
-  #     user = login_as_user
-  #     reservation = create(:reservation, user: user)
-  #     delete reservation_path(reservation)
-  #
-  #     assert_response :redirect
-  #     assert_no_match %r{/reservations/#{reservation.id}\b}, @response.redirect_url
-  #   end
+  # --- Schritt 6: Delete-Redirect (Roadmap #4) --------------------------------
+
+  test "destroy redirects to the calendar, never to the deleted record" do
+    user = login_as_user
+    reservation = create(:reservation, user: user)
+    delete reservation_path(reservation)
+
+    assert_response :redirect
+    assert_no_match %r{/reservations/#{reservation.id}\b}, @response.redirect_url
+  end
 end
