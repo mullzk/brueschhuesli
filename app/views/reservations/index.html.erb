@@ -1,4 +1,4 @@
-<div data-controller="calendar" data-action="scroll@window->calendar#onScroll">
+<div data-controller="calendar" data-action="scroll@window->calendar#onScroll" data-calendar-new-url-value="<%= new_reservation_path %>">
   <div class="cal-toolbar">
     <%= link_to "‹ Früher", { controller: "reservations", action: "index", date: (@months.first.first_of_month - 1.month) }, class: "cal-toolbar__btn", data: { action: "click->calendar#earlier" } -%>
     <button type="button" class="cal-toolbar__btn cal-toolbar__today" data-calendar-target="today" data-action="click->calendar#today" hidden>Heute</button>

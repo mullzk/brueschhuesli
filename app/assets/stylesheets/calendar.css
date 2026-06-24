@@ -80,6 +80,8 @@ a.calendar__cell:hover {
 .calendar__cell--free,
 .calendar__cell--occupied {
 	cursor: pointer;
+	touch-action: pan-y;
+	user-select: none;
 }
 
 .calendar__cell--free:hover,

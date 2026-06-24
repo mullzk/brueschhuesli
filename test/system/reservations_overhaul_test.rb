@@ -84,4 +84,34 @@ class ReservationsOverhaulSystemTest < ApplicationSystemTestCase
       assert_no_selector ".overlay:not([hidden])"
     end
   end
+
+  # --- Schritt 7: Multi-Tag-Drag → Neue Reservation ---------------------------
+
+  test "dragging across several days opens the new form for that range" do
+    travel_to Time.zone.local(2026, 6, 1, 10) do
+      sign_in_as
+
+      from = find("[data-date='2026-06-10']")
+      to   = find("[data-date='2026-06-13']")
+      page.driver.browser.action.click_and_hold(from.native)
+          .move_to(to.native).release.perform
+
+      within ".overlay:not([hidden])" do
+        assert_field "reservation[start]", with: /^2026-06-10/
+        assert_field "reservation[finish]", with: /^2026-06-13|^2026-06-14/
+      end
+    end
+  end
+
+  test "a plain click is not treated as a drag" do
+    travel_to Time.zone.local(2026, 6, 1, 10) do
+      sign_in_as
+      find("[data-date='2026-06-10']").click
+
+      within ".overlay:not([hidden])" do
+        assert_field "reservation[start]", with: /^2026-06-10/
+        assert_field "reservation[finish]", with: /^2026-06-11/
+      end
+    end
+  end
 end
