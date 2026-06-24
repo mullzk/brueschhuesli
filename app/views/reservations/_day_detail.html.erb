@@ -1,0 +1,35 @@
+<div class="day-detail">
+  <header class="day-detail__head">
+    <h2><%= l(@day, format: :long) %></h2>
+    <button type="button" class="day-detail__close" data-action="overlay#close" aria-label="Schliessen">×</button>
+  </header>
+
+  <% @schedule.slots.each do |slot| %>
+    <% if slot.free? %>
+      <div class="free-slot">
+        <span>frei <%= day_time(slot.from, @day) %>–<%= day_time(slot.to, @day) %></span>
+        <%= link_to "reservieren", new_reservation_path(date: @day, start: slot.from.iso8601, finish: slot.to.iso8601), class: "btn-reserve", data: { turbo_frame: "_top" } -%>
+      </div>
+    <% else %>
+      <% reservation = slot.reservation %>
+      <div class="res-item <%= reservation.is_exclusive ? "res-item--exclusive" : "res-item--open" %>">
+        <div class="res-item__who"><%= reservation.user.name %></div>
+        <div class="res-item__meta"><%= reservation_span(reservation) %> · <%= reservation.classified_type %> · <%= reservation.is_exclusive ? "exklusiv" : "offen" %></div>
+        <% unless reservation.comment.blank? %>
+          <div class="res-item__comment"><%= reservation.comment %></div>
+        <% end %>
+        <% if reservation.editable_by?(current_user) %>
+          <div class="res-item__actions">
+            <%= link_to "Bearbeiten", edit_reservation_path(reservation), data: { turbo_frame: "_top" } %>
+            <%= link_to "Löschen", reservation, data: { turbo_method: :delete, turbo_frame: "_top", turbo_confirm: "Reservation wirklich löschen?" } %>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+  <% end %>
+
+  <div class="day-detail__footer">
+    <%= link_to "+ Neue Reservation", new_reservation_path(date: @day), class: "btn-reserve", data: { turbo_frame: "_top" } %>
+    <%= link_to "Zurück zum Kalender", { controller: "reservations", action: "index", date: @day }, class: "day-detail__back", data: { turbo_frame: "_top" } %>
+  </div>
+</div>

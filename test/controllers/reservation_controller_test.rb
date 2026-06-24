@@ -152,11 +152,11 @@ class ReservationControllerTest < ActionDispatch::IntegrationTest
                                      start: at("2019-03-10 14:00"), finish: at("2019-03-12 18:00")))
     get "/reservations/month/2019-03-01"
 
-    assert_select ".calendar__cell--occupied[data-enter-href-url-value$='on_day/2019-03-10']"
-    assert_select ".calendar__cell--occupied[data-enter-href-url-value$='on_day/2019-03-11']"
-    assert_select ".calendar__cell--occupied[data-enter-href-url-value$='on_day/2019-03-12']"
-    assert_select ".calendar__cell--free[data-enter-href-url-value*='date=2019-03-09']"
-    assert_select ".calendar__cell--free[data-enter-href-url-value*='date=2019-03-13']"
+    assert_select ".calendar__cell--occupied[href$='on_day/2019-03-10']"
+    assert_select ".calendar__cell--occupied[href$='on_day/2019-03-11']"
+    assert_select ".calendar__cell--occupied[href$='on_day/2019-03-12']"
+    assert_select ".calendar__cell--free[href*='date=2019-03-09']"
+    assert_select ".calendar__cell--free[href*='date=2019-03-13']"
   end
 
   test "month shows the days of the month plus dimmed neighbouring days" do

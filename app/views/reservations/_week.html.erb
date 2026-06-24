@@ -2,12 +2,16 @@
   <div class="calendar__cells">
     <% week.days.each do |day| %>
       <% if day.in_month? %>
-        <% modifier = day.free? ? "free" : "occupied" %>
-        <% target = day.free? ? url_for(controller: "reservations", action: "new", date: day.date) : url_for(controller: "reservations", action: "on_day", date: day.date) %>
-        <div class="calendar__cell calendar__cell--<%= modifier %><%= " calendar__cell--today" if day.today? %>"
-             data-controller="enter-href" data-enter-href-url-value="<%= target %>">
-          <span class="calendar__num"><%= day.date.day %></span>
-        </div>
+        <% today_class = day.today? ? " calendar__cell--today" : "" %>
+        <% if day.free? %>
+          <%= link_to url_for(controller: "reservations", action: "new", date: day.date), class: "calendar__cell calendar__cell--free#{today_class}", data: { date: day.date.iso8601 } do %>
+            <span class="calendar__num"><%= day.date.day %></span>
+          <% end %>
+        <% else %>
+          <%= link_to url_for(controller: "reservations", action: "on_day", date: day.date), class: "calendar__cell calendar__cell--occupied#{today_class}", data: { turbo_frame: "modal", date: day.date.iso8601 } do %>
+            <span class="calendar__num"><%= day.date.day %></span>
+          <% end %>
+        <% end %>
       <% else %>
         <div class="calendar__cell calendar__cell--out">
           <span class="calendar__num"><%= day.date.day %></span>

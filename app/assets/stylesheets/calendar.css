@@ -60,10 +60,17 @@
 }
 
 .calendar__cell {
+	display: block;
 	height: var(--cal-cell-h);
 	border-right: 1px solid var(--line);
 	padding: 0.3rem 0.45rem;
 	overflow: hidden;
+	color: inherit;
+	text-decoration: none;
+}
+
+a.calendar__cell:hover {
+	text-decoration: none;
 }
 
 .calendar__cell:nth-child(7) {

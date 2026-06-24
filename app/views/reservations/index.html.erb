@@ -10,3 +10,7 @@
 
   <div id="loadinghint" data-calendar-target="hint">lädt …</div>
 </div>
+
+<div class="overlay" data-controller="overlay" data-action="keydown@window->overlay#closeOnEscape click->overlay#closeOnBackdrop" hidden>
+  <%= turbo_frame_tag "modal", class: "overlay__sheet", data: { overlay_target: "frame" } %>
+</div>

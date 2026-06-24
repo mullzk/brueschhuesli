@@ -1,5 +1,4 @@
 <div class="reservationform">
-  <div class="page-row">
   <%= form_with(model: reservation, local: true) do |form| %>
     <% if reservation.errors.any? %>
         <div class="page-row" id="error_explanation">
@@ -11,7 +10,6 @@
             </ul>
         </div>
       <% end %>
-  </div>
   <div class="page-row">
       <label class="legend">Wer:</label> <%= form.select :user_id, @users %>
   </div>

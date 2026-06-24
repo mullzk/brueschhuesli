@@ -2,7 +2,7 @@
 
 require "application_system_test_case"
 
-class ReservationsOverhaulTest < ApplicationSystemTestCase
+class ReservationsOverhaulSystemTest < ApplicationSystemTestCase
   # --- Schritt 3: Navigation / Infinite-Scroll --------------------------------
 
   test "scrolling to the bottom appends the following month" do
@@ -50,20 +50,22 @@ class ReservationsOverhaulTest < ApplicationSystemTestCase
     end
   end
 
-  # --- Schritt 4/5: Tagesdetail- und Formular-Overlay (auskommentiert) --------
-  #
-  #   test "clicking a day opens the detail overlay" do
-  #     travel_to Time.zone.local(2026, 6, 1, 10) do
-  #       user = sign_in_as
-  #       create(:reservation, user: user,
-  #              start: at("2026-06-10 14:00"), finish: at("2026-06-10 18:00"))
-  #
-  #       find("[data-date='2026-06-10']").click
-  #
-  #       assert_selector "dialog[open], .overlay.is-open"
-  #       assert_text "10."
-  #     end
-  #   end
+  # --- Schritt 4: Tagesdetail-Overlay -----------------------------------------
+
+  test "clicking an occupied day opens the detail overlay" do
+    travel_to Time.zone.local(2026, 6, 1, 10) do
+      resident = User.create!(name: "Toni Bernhard", email: "toni@example.com", password: "secret-password")
+      create(:reservation, user: resident,
+                           start: at("2026-06-10 14:00"), finish: at("2026-06-10 18:00"))
+      sign_in_as
+
+      find("[data-date='2026-06-10']").click
+
+      assert_selector ".overlay__sheet", text: "Toni Bernhard"
+    end
+  end
+
+  # --- Schritt 5: Formular-Overlay (auskommentiert) ---------------------------
   #
   #   test "reserving a free gap saves and closes the overlay" do
   #     travel_to Time.zone.local(2026, 6, 1, 10) do
