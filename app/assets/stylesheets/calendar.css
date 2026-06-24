@@ -183,36 +183,39 @@
 	line-height: 1;
 }
 
-/* Month navigation + loader — replaced by a single controller in Schritt 3. */
-div.month-navigation {
+/* Calendar toolbar (earlier / today) + infinite-scroll loader. */
+.cal-toolbar {
+	display: flex;
+	gap: 0.5rem;
 	max-width: 820px;
+	margin-bottom: 0.8rem;
 }
 
-div.month-navigation p {
-	margin-bottom: 0;
-	padding-bottom: 0;
-}
-
-div.month-navigation p:first-child {
-	float: left;
-}
-
-div.month-navigation p:last-child {
-	text-align: right;
-}
-
-div.month-navigation::after {
-	content: "";
-	display: block;
-	clear: both;
-}
-
-div.month-navigation a {
+.cal-toolbar__btn {
+	font: inherit;
+	cursor: pointer;
+	border: 1px solid var(--line-2);
+	border-radius: 8px;
+	background: var(--card);
 	color: var(--ink);
+	padding: 0.4rem 0.8rem;
+	text-decoration: none;
 }
 
-div.month-navigation-js {
-	display: none;
+.cal-toolbar__btn:hover {
+	background: #f0ece4;
+	text-decoration: none;
+}
+
+.cal-toolbar__today {
+	background: var(--green);
+	border-color: var(--green-d);
+	color: #fff;
+	font-weight: 600;
+}
+
+.cal-toolbar__today:hover {
+	background: var(--green-d);
 }
 
 #loadinghint {
