@@ -17,13 +17,13 @@ class ReservationsController < ApplicationController
   end
 
   def on_day
-    if params[:date]
-      @day = Date.parse(params[:date])
-    else
+    unless params[:date]
       flash[:notice] = "Etwas ist schief gelaufen, on_day benötigt einen Datums-Parameter"
-      redirect_to action: "index"
+      return redirect_to action: "index"
     end
+    @day = Date.parse(params[:date])
     @reservations = Reservation.find_reservations_on_date @day
+    @schedule = DaySchedule.for(@day, @reservations)
   end
 
   def show
@@ -31,17 +31,9 @@ class ReservationsController < ApplicationController
   end
 
   def new
-    day = if params[:date]
-      Date.parse(params[:date])
-    else
-      Date.current
-    end
-    start_date_time = DateTime.new(day.year, day.month, day.day, Time.current.hour)
-    finish_date_time = start_date_time + 1.day
-
+    day = params[:date] ? Date.parse(params[:date]) : Date.current
     @reservation = Reservation.new(
-      start: start_date_time,
-      finish: finish_date_time,
+      **prefilled_period(day),
       user_id: Current.user.id,
       type_of_reservation: Reservation::KURZAUFENTHALT,
       is_exclusive: true
@@ -100,6 +92,18 @@ class ReservationsController < ApplicationController
   rescue ArgumentError, TypeError => e
     Rails.logger.debug { "Unparseable month param #{string.inspect}: #{e.message}" }
     nil
+  end
+
+  def parse_time(value)
+    Time.zone.parse(value) if value.present?
+  rescue ArgumentError
+    nil
+  end
+
+  def prefilled_period(day)
+    start_at = parse_time(params[:start]) || DateTime.new(day.year, day.month, day.day, Time.current.hour)
+    finish_at = parse_time(params[:finish]) || (start_at + 1.day)
+    { start: start_at, finish: finish_at }
   end
 
   def reservation_params

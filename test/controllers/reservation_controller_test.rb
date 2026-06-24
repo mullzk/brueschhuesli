@@ -47,14 +47,14 @@ class ReservationControllerTest < ActionDispatch::IntegrationTest
   end
 
   # Verifies the Date.current/Time.current injection: with time frozen, new
-  # prefills the form with the current date (year select shows the frozen year).
+  # prefills the native datetime-local field with the current date.
   test "new defaults to the current date" do
     travel_to Time.zone.local(2021, 7, 15, 10) do
       login_as_user
       get new_reservation_path
 
       assert_response :success
-      assert_select "select#reservation_start_1i option[selected='selected']", text: "2021"
+      assert_select "input[type=datetime-local][name='reservation[start]'][value^='2021-07-15']"
     end
   end
 
@@ -152,19 +152,19 @@ class ReservationControllerTest < ActionDispatch::IntegrationTest
                                      start: at("2019-03-10 14:00"), finish: at("2019-03-12 18:00")))
     get "/reservations/month/2019-03-01"
 
-    assert_select "td.occupied[data-enter-href-url-value$='on_day/2019-03-10']"
-    assert_select "td.occupied[data-enter-href-url-value$='on_day/2019-03-11']"
-    assert_select "td.occupied[data-enter-href-url-value$='on_day/2019-03-12']"
-    assert_select "td.free[data-enter-href-url-value*='date=2019-03-09']"
-    assert_select "td.free[data-enter-href-url-value*='date=2019-03-13']"
+    assert_select ".calendar__cell--occupied[href$='on_day/2019-03-10']"
+    assert_select ".calendar__cell--occupied[href$='on_day/2019-03-11']"
+    assert_select ".calendar__cell--occupied[href$='on_day/2019-03-12']"
+    assert_select ".calendar__cell--free[href*='date=2019-03-09']"
+    assert_select ".calendar__cell--free[href*='date=2019-03-13']"
   end
 
-  test "month shows only the days of the month" do
+  test "month shows the days of the month plus dimmed neighbouring days" do
     login_as_user
     get "/reservations/month/2019-03-01"
 
-    assert_select "td.free, td.occupied", count: 31 # March has 31 days, no adjacent-month days
-    assert_select "td.empty", minimum: 1
+    assert_select ".calendar__cell--free, .calendar__cell--occupied", count: 31 # March has 31 days
+    assert_select ".calendar__cell--out", minimum: 1 # neighbouring-month corners
   end
 
   test "on_day lists reservations for a date" do

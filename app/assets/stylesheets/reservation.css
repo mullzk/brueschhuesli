@@ -1,0 +1,199 @@
+/* Reservation module — day detail overlay + the reservation form. */
+
+/* ---- Day detail (overlay content) ---- */
+
+.day-detail__head {
+	display: flex;
+	align-items: flex-start;
+	gap: 0.6rem;
+	margin-top: 0.5rem;
+	margin-bottom: 0.9rem;
+}
+
+.day-detail__head h2 {
+	margin: 0;
+	font-size: 1.15rem;
+}
+
+.day-detail__close {
+	margin-left: auto;
+	border: none;
+	background: none;
+	font-size: 1.5rem;
+	line-height: 1;
+	color: var(--muted);
+	cursor: pointer;
+	padding: 0 0.2rem;
+}
+
+.res-item {
+	border: 1px solid var(--line);
+	border-left: 4px solid var(--wood);
+	border-radius: 9px;
+	padding: 0.6rem 0.75rem;
+	margin-bottom: 0.6rem;
+}
+
+.res-item--open {
+	border-left-color: var(--green);
+}
+
+.res-item__who {
+	font-weight: 600;
+}
+
+.res-item__meta {
+	color: var(--muted);
+	font-size: 0.86rem;
+	margin-top: 0.15rem;
+}
+
+.res-item__comment {
+	font-size: 0.88rem;
+	margin-top: 0.3rem;
+}
+
+.res-item__actions {
+	margin-top: 0.45rem;
+	display: flex;
+	gap: 0.9rem;
+	font-size: 0.88rem;
+}
+
+.free-slot {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.6rem;
+	background: #eef6f0;
+	border: 1px dashed var(--green);
+	border-radius: 9px;
+	padding: 0.5rem 0.7rem;
+	margin-bottom: 0.6rem;
+}
+
+.btn-reserve {
+	border: none;
+	background: var(--green);
+	color: #fff;
+	border-radius: 7px;
+	padding: 0.35rem 0.7rem;
+	font: inherit;
+	cursor: pointer;
+	text-decoration: none;
+}
+
+.btn-reserve:hover {
+	background: var(--green-d);
+	color: #fff;
+	text-decoration: none;
+}
+
+.day-detail__footer {
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+	margin-top: 1rem;
+	padding-top: 0.8rem;
+	border-top: 1px solid var(--line);
+}
+
+.day-detail__back {
+	margin-left: auto;
+}
+
+/* ---- Reservation list (used on the standalone show page) ---- */
+
+div.reservation {
+	padding: 1em 0 2em;
+	border-bottom: 1px dotted var(--line-2);
+}
+
+div.reservation span {
+	font-weight: bold;
+	min-width: 38em;
+}
+
+div.reservation div {
+	background-color: #f3efe8;
+}
+
+div.reservation div.actions {
+	background-color: transparent;
+	padding-left: 4em;
+}
+
+.reservationform label.legend {
+	font-weight: bold;
+}
+
+.reservationform .page-row {
+	margin-bottom: 1.1rem;
+}
+
+.reservationform .field {
+	display: flex;
+	align-items: center;
+	gap: 0.6rem;
+}
+
+.reservationform .field .legend {
+	flex: 0 0 auto;
+}
+
+.reservationform .field select,
+.reservationform .field input[type="datetime-local"] {
+	flex: 1 1 auto;
+	min-width: 0;
+}
+
+.reservationform .datebox {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.8rem 1rem;
+}
+
+.reservationform .datebox .field {
+	flex: 1 1 14rem;
+}
+
+.reservationform .type-row {
+	display: flex;
+	gap: 0.6rem;
+	margin-top: 0.35rem;
+}
+
+.reservationform textarea {
+	display: block;
+	width: 100%;
+	margin-top: 0.35rem;
+}
+
+.reservationform .submit {
+	background: var(--green);
+	border-color: var(--green);
+	color: #fff;
+	font-weight: 600;
+	padding: 0.55rem 1.5rem;
+}
+
+.reservationform .submit:hover {
+	background: var(--green-d);
+}
+
+.reservationform__actions {
+	display: flex;
+	gap: 0.8rem;
+	margin-top: 1rem;
+	padding-top: 0.9rem;
+	border-top: 1px solid var(--line);
+}
+
+.reservationform__actions form {
+	flex: 1 1 0;
+}
+
+.reservationform__actions button {
+	width: 100%;
+	font-size: 0.9rem;
+}

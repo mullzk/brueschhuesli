@@ -31,3 +31,7 @@
 .env
 .env.test
 roadmap.md
+
+# Throwaway UI prototypes and local design docs.
+/prototypes/
+*.local.md

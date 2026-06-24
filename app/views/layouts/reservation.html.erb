@@ -1,23 +1,23 @@
-<!DOCTYPE html PUBLIC "-//W3C/DTD HTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html>
+<!DOCTYPE html>
+<html lang="de">
 <head>
   <title><%= @page_title || "Brüschhüsli-Reservierungen" %></title>
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
   <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
-  <meta name="viewport" content="width=device-width, initial-scale=0.75">
-    <%= stylesheet_link_tag "application", media: "all" %>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+    <%= stylesheet_link_tag "base", "layout", "calendar", "reservation", "overlay", "state", media: "all" %>
     <%= javascript_importmap_tags %>
 
 </head>
-<body id="brueschhuesli-app" data-controller="body-scroll" data-action="scroll@window->body-scroll#check">
+<body id="brueschhuesli-app">
 
   <header class="site-header" data-controller="navbar-toggle">
     <nav class="site-nav">
       <a class="site-nav__brand" href="/">Brüschhüsli</a>
       <% if authenticated? %>
-      <button class="site-nav__toggle" type="button" aria-expanded="false" aria-label="Navigation umschalten" data-action="click->navbar-toggle#toggle">
+      <button class="site-nav__toggle" type="button" aria-expanded="false" aria-label="Navigation umschalten" data-navbar-toggle-target="button" data-action="click->navbar-toggle#toggle">
         <span class="site-nav__toggle-icon"></span>
       </button>
       <ul class="site-nav__menu" data-navbar-toggle-target="menu">

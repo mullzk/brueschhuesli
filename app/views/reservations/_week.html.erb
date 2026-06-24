@@ -1,0 +1,35 @@
+<div class="calendar__week">
+  <div class="calendar__cells">
+    <% week.days.each do |day| %>
+      <% if day.in_month? %>
+        <% today_class = day.today? ? " calendar__cell--today" : "" %>
+        <% if day.free? %>
+          <%= link_to url_for(controller: "reservations", action: "new", date: day.date), class: "calendar__cell calendar__cell--free#{today_class}", data: { turbo_frame: "modal", date: day.date.iso8601 } do %>
+            <span class="calendar__num"><%= day.date.day %></span>
+          <% end %>
+        <% else %>
+          <%= link_to url_for(controller: "reservations", action: "on_day", date: day.date), class: "calendar__cell calendar__cell--occupied#{today_class}", data: { turbo_frame: "modal", date: day.date.iso8601 } do %>
+            <span class="calendar__num"><%= day.date.day %></span>
+          <% end %>
+        <% end %>
+      <% else %>
+        <div class="calendar__cell calendar__cell--out">
+          <span class="calendar__num"><%= day.date.day %></span>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+  <% if week.segments.any? %>
+    <div class="calendar__bars">
+      <% week.segments.each do |segment| %>
+        <div class="calendar__bar calendar__bar--<%= segment.exclusive? ? "exclusive" : "open" %><%= " calendar__bar--narrow" if segment.single_column? %><%= " calendar__bar--day" if segment.single_day? %><%= " calendar__bar--cont-l" if segment.continues_left? %><%= " calendar__bar--cont-r" if segment.continues_right? %>"
+             style="grid-column: <%= segment.start_col %> / <%= segment.end_col + 1 %>; grid-row: <%= segment.lane + 1 %>;">
+          <span class="calendar__bar-name"><%= segment.reservation.user.name %></span>
+          <% if segment.single_day? %>
+            <span class="calendar__bar-time"><%= segment.reservation.start.strftime("%H:%M") %>–<%= segment.reservation.finish.strftime("%H:%M") %></span>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+</div>

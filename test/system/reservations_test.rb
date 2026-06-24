@@ -6,7 +6,7 @@ class ReservationsTest < ApplicationSystemTestCase
   test "create a reservation from the calendar" do
     sign_in_as
     day = Date.current.beginning_of_month + 14
-    find("td.free[data-enter-href-url-value$='new?date=#{day.iso8601}']").click
+    find(".calendar__cell--free[href$='new?date=#{day.iso8601}']").click
 
     click_button "Speichern"
 
@@ -31,7 +31,7 @@ class ReservationsTest < ApplicationSystemTestCase
     reservation = create(:reservation, user: user)
 
     visit edit_reservation_path(reservation)
-    accept_confirm { click_button "Reservation Löschen" }
+    accept_confirm { click_button "Reservation löschen" }
 
     assert_text "Reservierung gelöscht"
     assert_not Reservation.exists?(reservation.id)
