@@ -27,7 +27,15 @@ class CalendarSegment
     reservation.is_exclusive
   end
 
+  # Occupies a single column — as narrow as a one-day bar, so it gets the
+  # taller, two-line treatment regardless of whether it continues elsewhere.
+  def single_column?
+    start_col == end_col
+  end
+
+  # A genuine within-one-day reservation: only these show a time, since a
+  # month/week-boundary slice would report a misleading partial time.
   def single_day?
-    start_col == end_col && !continues_left? && !continues_right?
+    single_column? && !continues_left? && !continues_right?
   end
 end

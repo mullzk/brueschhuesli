@@ -16,9 +16,9 @@
     <% end %>
   </div>
   <% if week.segments.any? %>
-    <div class="calendar__bars" style="grid-template-rows: repeat(<%= week.lane_count %>, var(--bar-h));">
+    <div class="calendar__bars">
       <% week.segments.each do |segment| %>
-        <div class="calendar__bar calendar__bar--<%= segment.exclusive? ? "exclusive" : "open" %><%= " calendar__bar--cont-l" if segment.continues_left? %><%= " calendar__bar--cont-r" if segment.continues_right? %>"
+        <div class="calendar__bar calendar__bar--<%= segment.exclusive? ? "exclusive" : "open" %><%= " calendar__bar--narrow" if segment.single_column? %><%= " calendar__bar--day" if segment.single_day? %><%= " calendar__bar--cont-l" if segment.continues_left? %><%= " calendar__bar--cont-r" if segment.continues_right? %>"
              style="grid-column: <%= segment.start_col %> / <%= segment.end_col + 1 %>; grid-row: <%= segment.lane + 1 %>;">
           <span class="calendar__bar-name"><%= segment.reservation.user.name %></span>
           <% if segment.single_day? %>

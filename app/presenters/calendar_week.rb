@@ -13,12 +13,6 @@ class CalendarWeek
     @segments ||= build_segments
   end
 
-  def lane_count
-    return 0 if segments.empty?
-
-    segments.map(&:lane).max + 1
-  end
-
   private
 
   def in_month_days
