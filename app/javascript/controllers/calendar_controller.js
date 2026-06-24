@@ -109,7 +109,7 @@ export default class extends Controller {
 
   earlier(event) {
     event.preventDefault()
-    this.loadPrevious()
+    this.loadPrevious(3)
   }
 
   today(event) {
@@ -123,23 +123,25 @@ export default class extends Controller {
     if (url) this.insert("beforeend", url)
   }
 
-  loadPrevious() {
-    const link = this.monthsTarget.querySelector("[data-prev-month-url]")
-    if (link) this.insert("afterbegin", link.dataset.prevMonthUrl)
+  async loadPrevious(count = 1) {
+    for (let i = 0; i < count; i++) {
+      const link = this.monthsTarget.querySelector("[data-prev-month-url]")
+      if (!link) break
+      await this.insert("afterbegin", link.dataset.prevMonthUrl)
+    }
   }
 
   insert(position, url) {
-    if (this.loading) return
+    if (this.loading) return Promise.resolve()
     this.loading = true
     this.showHint()
-    const heightBefore = document.body.scrollHeight
-    fetch(url, { credentials: "same-origin" })
+    const anchor = position === "afterbegin" ? this.monthsTarget.firstElementChild : null
+    const anchorTop = anchor?.getBoundingClientRect().top
+    return fetch(url, { credentials: "same-origin" })
       .then((response) => response.text())
       .then((html) => {
         this.monthsTarget.insertAdjacentHTML(position, html)
-        if (position === "afterbegin") {
-          window.scrollBy(0, document.body.scrollHeight - heightBefore)
-        }
+        if (anchor) window.scrollBy(0, anchor.getBoundingClientRect().top - anchorTop)
       })
       .finally(() => {
         this.hideHint()

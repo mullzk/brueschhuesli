@@ -19,7 +19,7 @@ class ReservationsOverhaulSystemTest < ApplicationSystemTestCase
     end
   end
 
-  test "the earlier link prepends the previous month" do
+  test "the earlier link prepends the previous three months" do
     travel_to Time.zone.local(2026, 6, 1, 10) do
       sign_in_as
 
@@ -28,6 +28,25 @@ class ReservationsOverhaulSystemTest < ApplicationSystemTestCase
       click_link "‹ Früher"
 
       assert_text "Mai 2026"
+      assert_text "April 2026"
+      assert_text "März 2026"
+    end
+  end
+
+  test "the earlier link keeps the viewport anchored on the current month" do
+    travel_to Time.zone.local(2026, 6, 1, 10) do
+      sign_in_as
+
+      juni = find("h2", text: "Juni 2026")
+      before = juni.native.rect.y - page.evaluate_script("window.scrollY")
+
+      click_link "‹ Früher"
+
+      assert_text "März 2026"
+
+      after = juni.native.rect.y - page.evaluate_script("window.scrollY")
+
+      assert_in_delta before, after, 5, "calendar jumped by #{(after - before).round}px"
     end
   end
 

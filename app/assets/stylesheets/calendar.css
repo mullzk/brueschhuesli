@@ -243,9 +243,17 @@ a.calendar__cell:hover {
 
 @media (max-width: 480px) {
 	:root {
-		--cal-cell-h: 84px;
-		--bar-h: 20px;
-		--bar-h-single: 30px;
+		--cal-cell-h: 68px;
+		--bar-h: 16px;
+		--bar-h-single: 26px;
+	}
+	.calendar__cell {
+		padding-top: 0;
+		padding-bottom: 0;
+	}
+	.calendar__bars {
+		top: 22px;
+		gap: 1px 0;
 	}
 	.calendar__bar {
 		font-size: 0.68rem;
