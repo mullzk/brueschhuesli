@@ -1,0 +1,16 @@
+/* State — cross-cutting UI states and flash messages. */
+
+#notice {
+	max-width: 1200px;
+	margin: 0 auto 1rem;
+	padding: 0.6rem 0.9rem;
+	border: 1px solid var(--line-2);
+	border-left: 4px solid var(--green);
+	border-radius: var(--radius);
+	background: #eef6f0;
+	color: var(--ink);
+}
+
+.is-hidden {
+	display: none;
+}

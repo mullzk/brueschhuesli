@@ -1,0 +1,141 @@
+/* Calendar module — month grid + month navigation.
+   Interim form; the spanning-bar grid replaces it in Schritt 2. */
+
+div.month-navigation {
+	max-width: 780px;
+}
+
+div.month-navigation p {
+	margin-bottom: 0;
+	padding-bottom: 0;
+}
+
+div.month-navigation p:first-child {
+	float: left;
+}
+
+div.month-navigation p:last-child {
+	text-align: right;
+}
+
+div.month-navigation::after {
+	content: "";
+	display: block;
+	clear: both;
+}
+
+div.month-navigation-js {
+	display: none;
+}
+
+#loadinghint {
+	box-shadow: 0 2px 12px rgba(0, 0, 0, 0.18);
+	background: var(--green);
+	border-radius: 10px;
+	border: 1px solid var(--green-d);
+	color: #ffffff;
+	font-size: 0.9rem;
+	padding: 0.5rem 2rem;
+	position: fixed;
+	bottom: 1rem;
+	right: 1rem;
+	display: none;
+}
+
+#reservationskalender {
+	padding: 0;
+}
+
+#reservationskalender h2 {
+	margin: 1em 0 0.25em 0.15em;
+}
+
+#reservationskalender h2:first-child {
+	margin: 0 0 0.25em 0.15em;
+}
+
+#reservationskalender table {
+	width: 100%;
+	max-width: 800px;
+	table-layout: fixed;
+	border-collapse: collapse;
+	border: 1px solid var(--line);
+	background: var(--card);
+	border-radius: var(--radius);
+	overflow: hidden;
+}
+
+#reservationskalender tr {
+	vertical-align: top;
+	height: 3.5em;
+}
+
+#reservationskalender thead tr {
+	height: unset;
+	background-color: #f4efe7;
+}
+
+#reservationskalender td.occupied {
+	background-color: var(--light-gray);
+}
+
+#reservationskalender td.today {
+	background-color: var(--today);
+}
+
+#reservationskalender th,
+#reservationskalender td {
+	width: 14%;
+	text-align: center;
+	border: 1px solid var(--line);
+	padding: 0;
+}
+
+#reservationskalender th {
+	font-size: 0.75rem;
+	font-weight: 600;
+	color: var(--muted);
+	text-transform: uppercase;
+	letter-spacing: 0.03em;
+	padding: 0.4rem 0;
+}
+
+#reservationskalender td.empty {
+	background-color: #f6f2ea;
+}
+
+#reservationskalender th p,
+#reservationskalender td p {
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	margin: 0;
+	font-size: 0.7em;
+}
+
+#reservationskalender td p.open {
+	background-color: var(--light-red);
+}
+
+#reservationskalender td p.closed {
+	background-color: var(--dark-red);
+	color: white;
+}
+
+#reservationskalender .month-navigation {
+	width: 100%;
+	max-width: 800px;
+	overflow: hidden;
+}
+
+#reservationskalender .month-navigation p:first-child {
+	float: left;
+}
+
+#reservationskalender .month-navigation p:last-child {
+	float: right;
+}
+
+#reservationskalender .month-navigation a {
+	color: var(--ink);
+}

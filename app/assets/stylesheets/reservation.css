@@ -1,0 +1,43 @@
+/* Reservation module — day detail list and the reservation form.
+   The form gets native datetime-local fields and loses the colour bands in
+   Schritt 5; this is the interim styling. */
+
+div.reservation {
+	padding: 1em 0 2em;
+	border-bottom: 1px dotted var(--line-2);
+}
+
+div.reservation span {
+	font-weight: bold;
+	min-width: 38em;
+}
+
+div.reservation div {
+	background-color: #f3efe8;
+}
+
+div.reservation div.actions {
+	background-color: transparent;
+	padding-left: 4em;
+}
+
+div.reservationform label.legend {
+	font-weight: bold;
+	margin-bottom: 0;
+	margin-right: 1em;
+}
+
+div.reservationform div.page-row {
+	margin-bottom: 2em;
+}
+
+div.reservationform div.datebox_left {
+	background-color: rgb(184, 252, 185);
+	margin-right: 2em;
+	margin-bottom: 1em;
+}
+
+div.reservationform div.datebox_right {
+	background-color: rgb(254, 216, 164);
+	margin-bottom: 1em;
+}
