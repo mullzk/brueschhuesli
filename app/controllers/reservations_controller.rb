@@ -50,7 +50,6 @@ class ReservationsController < ApplicationController
       flash[:notice] = "Reservation wurde gespeichert"
       redirect_to action: "index", date: @reservation.start
     else
-      flash.now[:notice] = "Reservation konnte nicht gespeichert werden"
       render :new, status: :unprocessable_content
     end
   end
@@ -61,7 +60,6 @@ class ReservationsController < ApplicationController
       flash[:notice] = "Änderungen gespeichert."
       redirect_to action: "index", date: @reservation.start
     else
-      flash.now[:notice] = "Änderungen konnten nicht gespeichert werden."
       render :edit, status: :unprocessable_content
     end
   end
