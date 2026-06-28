@@ -45,6 +45,6 @@ class ReservationsTest < ApplicationSystemTestCase
     visit new_reservation_path(date: "2026-07-01")
     click_button "Speichern"
 
-    assert_text "überlappt"
+    assert_text "Überlappt mit der Reservation von"
   end
 end

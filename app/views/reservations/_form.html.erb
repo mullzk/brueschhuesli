@@ -40,15 +40,15 @@
       <%= form.text_area :comment, rows: 3 %>
     </div>
 
-    <div class="page-row">
+    <div class="page-row reservationform__submit">
       <%= submit_tag "Speichern", class: "submit" %>
+      <%= link_to "Abbrechen", { controller: "reservations", action: "index" }, class: "cancel", data: { turbo_frame: "_top" } %>
     </div>
   <% end %>
 
-  <div class="reservationform__actions">
-    <%= button_to "Zurück zum Kalender", { controller: "reservations", action: "index" }, method: :get, form: { data: { turbo_frame: "_top" } } %>
-    <% unless reservation.id.nil? %>
+  <% unless reservation.id.nil? %>
+    <div class="reservationform__actions">
       <%= button_to "Reservation löschen", reservation, method: :delete, form: { data: { turbo_frame: "_top", turbo_confirm: "Are you sure?" } } %>
-    <% end %>
-  </div>
+    </div>
+  <% end %>
 </div>
