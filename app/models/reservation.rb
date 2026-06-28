@@ -24,6 +24,8 @@
 #
 
 class Reservation < ApplicationRecord
+  extend Forwardable
+
   KURZAUFENTHALT = "Kurzaufenthalt"
   FERIENAUFENTHALT = "Ferienaufenthalt"
   GROSSANLASS = "Grossanlass"
@@ -41,27 +43,10 @@ class Reservation < ApplicationRecord
     TYPES.sort
   end
 
-  def duration
-    finish - start
-  end
+  def_delegators :period, :duration, :duration_in_days, :duration_rounded_to_hours, :duration_in_8_hour_blocks
 
-  def duration_in_days
-    # Billed per calendar day touched. A reservation ending exactly at midnight
-    # does not count the following day (it only touches that day's first instant).
-    last_day = finish == finish.beginning_of_day ? finish.to_date - 1 : finish.to_date
-    (last_day - start.to_date).to_i + 1
-  end
-
-  def duration_rounded_to_hours
-    floor_to_hour(finish) - floor_to_hour(start)
-  end
-
-  def floor_to_hour(time)
-    DateTime.new(time.year, time.month, time.day, time.hour, 0).in_time_zone
-  end
-
-  def duration_in_8_hour_blocks
-    (duration_rounded_to_hours / 8.hours.to_i).ceil
+  def period
+    ReservationPeriod.new(start: start, finish: finish)
   end
 
   def paid_blocks
@@ -178,13 +163,11 @@ class Reservation < ApplicationRecord
   end
 
   def timeslot_must_not_overlap
-    conflicting_reservations = Reservation.find_reservations_in_timeslot(start, finish).to_a
-    conflicting_reservations.delete(self) # Needed for validation on Updates, otherwise we conflict with our old version
-    return if conflicting_reservations.empty?
-
-    message = "Dieser Zeitabschnitt überlappt mit einer bestehenden Reservation"
-    errors.add(:start, message)
-    errors.add(:finish, message)
+    conflicts = Reservation.find_reservations_in_timeslot(start, finish).to_a
+    conflicts.delete(self) # Needed for validation on Updates, otherwise we conflict with our old version
+    conflicts.each do |conflict|
+      errors.add(:base, "Überlappt mit der Reservation von #{conflict.user.name} (#{conflict.period})")
+    end
   end
 
   def finish_must_be_after_start

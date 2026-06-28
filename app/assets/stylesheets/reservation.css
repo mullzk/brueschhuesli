@@ -169,6 +169,12 @@ div.reservation div.actions {
 	margin-top: 0.35rem;
 }
 
+.reservationform__submit {
+	display: flex;
+	align-items: center;
+	gap: 1.2rem;
+}
+
 .reservationform .submit {
 	background: var(--green);
 	border-color: var(--green);
@@ -179,6 +185,15 @@ div.reservation div.actions {
 
 .reservationform .submit:hover {
 	background: var(--green-d);
+}
+
+.reservationform .cancel {
+	color: var(--muted);
+	text-decoration: none;
+}
+
+.reservationform .cancel:hover {
+	text-decoration: underline;
 }
 
 .reservationform__actions {

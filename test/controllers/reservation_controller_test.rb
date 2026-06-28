@@ -79,7 +79,7 @@ class ReservationControllerTest < ActionDispatch::IntegrationTest
       }
     end
     assert_response :unprocessable_entity
-    assert_equal "Reservation konnte nicht gespeichert werden", flash[:notice]
+    assert_match "muss zeitlich hinter dem Reservations-Beginn sein", response.body
   end
 
   # --- edit / update ---------------------------------------------------------
@@ -122,7 +122,7 @@ class ReservationControllerTest < ActionDispatch::IntegrationTest
     }
 
     assert_response :unprocessable_entity
-    assert_equal "Änderungen konnten nicht gespeichert werden.", flash[:notice]
+    assert_match "muss zeitlich hinter dem Reservations-Beginn sein", response.body
   end
 
   # --- destroy ---------------------------------------------------------------
