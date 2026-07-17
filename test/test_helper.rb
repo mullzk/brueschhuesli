@@ -5,8 +5,8 @@
 require "simplecov"
 SimpleCov.start "rails" do
   enable_coverage :branch
-  add_filter "/test/"
-  add_filter "/config/"
+  skip "/test/"
+  skip "/config/"
 end
 
 ENV["RAILS_ENV"] ||= "test"
