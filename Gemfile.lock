@@ -353,7 +353,7 @@ GEM
       rexml (~> 3.2, >= 3.2.5)
       rubyzip (>= 1.2.2, < 4.0)
       websocket (~> 1.0)
-    simplecov (1.1.0)
+    simplecov (1.1.1)
     smart_properties (1.17.0)
     spring (4.7.0)
     sshkit (1.25.0)
