@@ -146,8 +146,8 @@ class ReservationTest < ActiveSupport::TestCase
   end
 
   test "a reservation lasting exactly a week is valid, an hour more is not" do
-    assert_predicate     build(:reservation, user: @user, start: at("2010-06-01 12:00"), finish: at("2010-06-08 11:00")), :valid?
-    assert_predicate     build(:reservation, user: @user, start: at("2010-06-01 12:00"), finish: at("2010-06-08 12:00")), :valid?
+    assert_predicate build(:reservation, user: @user, start: at("2010-06-01 12:00"), finish: at("2010-06-08 11:00")), :valid?
+    assert_predicate build(:reservation, user: @user, start: at("2010-06-01 12:00"), finish: at("2010-06-08 12:00")), :valid?
     assert_not build(:reservation, user: @user, start: at("2010-06-01 12:00"), finish: at("2010-06-08 13:00")).valid?
   end
 

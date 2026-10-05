@@ -30,8 +30,8 @@ module DbSync
   def stage_credentials(stage)
     prefix = "DEPLOY_#{stage.upcase}_"
     {
-      host: ENV.fetch("#{prefix}HOST")   { abort "#{prefix}HOST not set (lokal in .env)" },
-      user: ENV.fetch("#{prefix}USER")   { abort "#{prefix}USER not set (lokal in .env)" },
+      host: ENV.fetch("#{prefix}HOST") { abort "#{prefix}HOST not set (lokal in .env)" },
+      user: ENV.fetch("#{prefix}USER") { abort "#{prefix}USER not set (lokal in .env)" },
       env_file: "#{DEPLOY_PATHS.fetch(stage)}/shared/config/env"
     }
   end
