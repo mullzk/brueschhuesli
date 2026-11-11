@@ -19,7 +19,7 @@
 }
 
 .user-table thead th {
-	background: #f4efe7;
+	background: var(--tint);
 	font-size: 0.74rem;
 	font-weight: 600;
 	letter-spacing: 0.03em;
@@ -57,7 +57,7 @@
 }
 
 .icon-btn:hover {
-	background: #f0ece4;
+	background: var(--tint-2);
 	color: var(--ink);
 	text-decoration: none;
 }
