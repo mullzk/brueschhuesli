@@ -4,19 +4,19 @@ class ReservationBilling
   RATE_PER_BLOCK = 15
   FLAT_GROSSANLASS = 200
   RATE_PER_DAY_EXTERN = 100
-  FREE_BLOCKS_MITEIGENTUEMER = 6
+  FREE_BLOCKS_OWNER = 6
 
-  def initialize(type:, blocks:, days:, miteigentuemer:, exclusive:)
+  def initialize(type:, blocks:, days:, owner:, exclusive:)
     @type = type
     @blocks = blocks
     @days = days
-    @miteigentuemer = miteigentuemer
+    @owner = owner
     @exclusive = exclusive
   end
 
   def paid_blocks
-    if @miteigentuemer && !@exclusive
-      [ @blocks - FREE_BLOCKS_MITEIGENTUEMER, 0 ].max
+    if @owner && !@exclusive
+      [ @blocks - FREE_BLOCKS_OWNER, 0 ].max
     else
       @blocks
     end

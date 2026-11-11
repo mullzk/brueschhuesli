@@ -1,17 +1,16 @@
-<div class="page-row">
-   <div class="month-navigation">
-  <p><%= link_to ">#{l(@months.first.first_of_month - 1.month, format: :month_year)}", { controller: "reservations", action: "index", date: (@months.first.first_of_month - 1.month) } -%></p>
-  <p><%= link_to ">#{l(@months.first.first_of_month + 1.month, format: :month_year)}", { controller: "reservations", action: "index", date: (@months.first.first_of_month + 1.month) } -%></p>
+<div data-controller="calendar" data-action="scroll@window->calendar#onScroll" data-calendar-new-url-value="<%= new_reservation_path %>">
+  <div class="cal-toolbar">
+    <%= link_to "‹ Früher", { controller: "reservations", action: "index", date: (@months.first.first_of_month - 1.month) }, class: "cal-toolbar__btn", data: { action: "click->calendar#earlier" } -%>
+    <button type="button" class="cal-toolbar__btn cal-toolbar__today" data-calendar-target="today" data-action="click->calendar#today" hidden>Heute</button>
   </div>
+
+  <div class="page-row" id="reservationskalender" data-calendar-target="months">
+    <%= render partial: "month", collection: @months, as: :month %>
+  </div>
+
+  <div id="loadinghint" data-calendar-target="hint">lädt …</div>
 </div>
 
-<div class="page-row" id="reservationskalender">
-  <%= render partial: "month", collection: @months, as: :month %>
+<div class="overlay" data-controller="overlay" data-action="keydown@window->overlay#closeOnEscape click->overlay#closeOnBackdrop" hidden>
+  <%= turbo_frame_tag "modal", class: "overlay__sheet", data: { overlay_target: "frame" } %>
 </div>
-
-<div class="month-navigation-js">
-  <p><%= link_to "", { controller: "reservations", action: "month", date: (@months.first.first_of_month - 1.month) }, "data-loading-preceding-month-link" => "false" -%></p>
-  <p><%= link_to "", { controller: "reservations", action: "month", date: (@months.last.first_of_month + 1.month) }, "data-loading-succeeding-month-link" => "false" -%></p>
-</div>
-
-<div id="loadinghint">loading...</div>

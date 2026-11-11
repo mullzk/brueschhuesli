@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_05_140000) do
+ActiveRecord::Schema[8.1].define(version: 2026_06_14_130000) do
   create_table "active_storage_attachments", charset: "utf8mb4", collation: "utf8mb4_uca1400_ai_ci", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
@@ -65,18 +65,21 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_05_140000) do
     t.string "email"
     t.boolean "has_to_change_password"
     t.string "hashed_password"
-    t.boolean "miteigentuemer"
     t.string "name"
     t.string "password_digest"
+    t.bigint "responsible_user_id"
+    t.string "role", default: "member", null: false
     t.string "salt"
     t.string "telefon"
     t.datetime "updated_at", null: false
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["name"], name: "index_users_on_name", unique: true
+    t.index ["responsible_user_id"], name: "index_users_on_responsible_user_id"
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "reservations", "users"
   add_foreign_key "sessions", "users"
+  add_foreign_key "users", "users", column: "responsible_user_id"
 end

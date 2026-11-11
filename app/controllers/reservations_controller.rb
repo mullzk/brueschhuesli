@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class ReservationsController < ApplicationController
+  before_action :require_reservation_manager, only: %i[new create edit update destroy]
+  before_action :require_own_reservation, only: %i[edit update destroy]
   before_action :set_user_options, only: %i[new create edit update]
 
   def index
@@ -15,13 +17,13 @@ class ReservationsController < ApplicationController
   end
 
   def on_day
-    if params[:date]
-      @day = Date.parse(params[:date])
-    else
+    unless params[:date]
       flash[:notice] = "Etwas ist schief gelaufen, on_day benötigt einen Datums-Parameter"
-      redirect_to action: "index"
+      return redirect_to action: "index"
     end
+    @day = Date.parse(params[:date])
     @reservations = Reservation.find_reservations_on_date @day
+    @schedule = DaySchedule.for(@day, @reservations)
   end
 
   def show
@@ -29,17 +31,9 @@ class ReservationsController < ApplicationController
   end
 
   def new
-    day = if params[:date]
-      Date.parse(params[:date])
-    else
-      Date.current
-    end
-    start_date_time = DateTime.new(day.year, day.month, day.day, Time.current.hour)
-    finish_date_time = start_date_time + 1.day
-
+    day = params[:date] ? Date.parse(params[:date]) : Date.current
     @reservation = Reservation.new(
-      start: start_date_time,
-      finish: finish_date_time,
+      **prefilled_period(day),
       user_id: Current.user.id,
       type_of_reservation: Reservation::KURZAUFENTHALT,
       is_exclusive: true
@@ -56,7 +50,6 @@ class ReservationsController < ApplicationController
       flash[:notice] = "Reservation wurde gespeichert"
       redirect_to action: "index", date: @reservation.start
     else
-      flash.now[:notice] = "Reservation konnte nicht gespeichert werden"
       render :new, status: :unprocessable_content
     end
   end
@@ -67,7 +60,6 @@ class ReservationsController < ApplicationController
       flash[:notice] = "Änderungen gespeichert."
       redirect_to action: "index", date: @reservation.start
     else
-      flash.now[:notice] = "Änderungen konnten nicht gespeichert werden."
       render :edit, status: :unprocessable_content
     end
   end
@@ -80,8 +72,17 @@ class ReservationsController < ApplicationController
 
   private
 
+  def require_reservation_manager
+    deny_access unless current_user.may_reserve?
+  end
+
+  def require_own_reservation
+    deny_access unless Reservation.find(params.expect(:id)).editable_by?(current_user)
+  end
+
   def set_user_options
-    @users = User.all.sort.map { |user| [ user.name, user.id ] }
+    users = current_user.owner? ? User.all.sort : [ current_user ]
+    @users = users.map { |user| [ user.name, user.id ] }
   end
 
   def month_and_year_as_time(string)
@@ -91,8 +92,23 @@ class ReservationsController < ApplicationController
     nil
   end
 
+  def parse_time(value)
+    Time.zone.parse(value) if value.present?
+  rescue ArgumentError
+    nil
+  end
+
+  def prefilled_period(day)
+    start_at = parse_time(params[:start]) || DateTime.new(day.year, day.month, day.day, Time.current.hour)
+    finish_at = parse_time(params[:finish]) || (start_at + 1.day)
+    { start: start_at, finish: finish_at }
+  end
+
   def reservation_params
-    params.fetch(:reservation, {}).permit(:user_id, :start, :finish, :type_of_reservation, :is_exclusive, :comment)
+    permitted = params.fetch(:reservation, {}).permit(:user_id, :start, :finish, :type_of_reservation, :is_exclusive,
+                                                      :comment)
+    permitted[:user_id] = current_user.id unless current_user.owner?
+    permitted
   end
 
   def parse_date_param

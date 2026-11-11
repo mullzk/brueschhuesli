@@ -1,0 +1,32 @@
+/* Overlay — the sheet shown for the day detail and the reservation form. */
+
+.overlay {
+	position: fixed;
+	inset: 0;
+	z-index: 50;
+	background: rgba(40, 35, 28, 0.45);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 1rem;
+}
+
+.overlay[hidden] {
+	display: none;
+}
+
+.overlay__sheet {
+	display: block;
+	width: min(480px, 100%);
+	max-height: 88vh;
+	overflow: auto;
+	background: var(--card);
+	border-radius: 14px;
+	box-shadow: 0 8px 40px rgba(0, 0, 0, 0.28);
+	padding: 1.2rem;
+}
+
+/* An empty frame (before any content loads) must not show as a blank box. */
+.overlay__sheet:empty {
+	display: none;
+}

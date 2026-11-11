@@ -1,0 +1,104 @@
+/* Layout — app shell: header, navigation, page container. */
+
+.site-header {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	z-index: 1000;
+	background: var(--nav-bg);
+	color: var(--nav-fg);
+	padding: 0.5rem 1rem;
+	box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+}
+
+.site-nav {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 0.25rem 1rem;
+}
+
+.site-nav__brand {
+	display: inline-block;
+	color: var(--nav-brand);
+	font-size: 1.25rem;
+	font-weight: 700;
+	line-height: inherit;
+	margin-right: 1rem;
+	padding: 0.3125rem 0;
+	text-decoration: none;
+	white-space: nowrap;
+}
+
+.site-nav__brand:hover {
+	color: var(--nav-brand);
+	text-decoration: none;
+}
+
+.site-nav__toggle {
+	display: none;
+	background: transparent;
+	border: 1px solid rgba(255, 255, 255, 0.18);
+	border-radius: 6px;
+	padding: 0.25rem 0.75rem;
+	cursor: pointer;
+	color: var(--nav-fg);
+}
+
+.site-nav__toggle-icon {
+	display: block;
+	width: 1.5em;
+	height: 2px;
+	background: var(--nav-fg);
+	box-shadow: 0 -6px 0 var(--nav-fg), 0 6px 0 var(--nav-fg);
+}
+
+.site-nav__menu {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0 0.5rem;
+	margin-right: auto;
+}
+
+.site-nav__link {
+	display: block;
+	color: var(--nav-fg);
+	text-decoration: none;
+	padding: 0.5rem;
+	border-radius: 6px;
+}
+
+.site-nav__link:hover,
+.site-nav__link:focus {
+	color: var(--nav-fg-hover);
+	text-decoration: none;
+	background: rgba(255, 255, 255, 0.08);
+}
+
+@media (max-width: 768px) {
+	.site-nav__toggle {
+		display: inline-block;
+	}
+	.site-nav__menu {
+		flex-basis: 100%;
+		flex-direction: column;
+		display: none;
+	}
+	.site-nav__menu.is-open {
+		display: flex;
+	}
+}
+
+.page {
+	padding: 4em 1rem 1rem;
+	max-width: 1200px;
+	margin: 0 auto;
+}
+
+.page-row {
+	margin-bottom: 1em;
+}

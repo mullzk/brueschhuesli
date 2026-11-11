@@ -1,3 +1,9 @@
-<h1>Neue Reservation</h1>
+<%= turbo_frame_tag "modal" do %>
+  <div class="reservation-sheet">
+    <header class="day-detail__head">
+      <h2>Neue Reservation</h2>
+    </header>
 
-<%= render "form", reservation: @reservation %>
+    <%= render "form", reservation: @reservation %>
+  </div>
+<% end %>

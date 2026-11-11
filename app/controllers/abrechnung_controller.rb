@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class AbrechnungController < ApplicationController
+  before_action :require_abrechnung_access
+
   def index
     redirect_to action: "jahresstatistik"
   end
@@ -25,6 +27,10 @@ class AbrechnungController < ApplicationController
   end
 
   private
+
+  def require_abrechnung_access
+    deny_access if current_user.external?
+  end
 
   def respond_to_html_and_excel(filename)
     respond_to do |format|

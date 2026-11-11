@@ -23,7 +23,7 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
     fill_in "password", with: password
     click_button "Login"
 
-    assert_selector "table.calendar" # wait for the post-login redirect to land
+    assert_selector ".calendar" # wait for the post-login redirect to land
     user
   end
 end

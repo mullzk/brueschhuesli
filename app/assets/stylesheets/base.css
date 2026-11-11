@@ -1,0 +1,139 @@
+/* Base — reset, design tokens, typography, element defaults. */
+
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+}
+
+html {
+	-webkit-text-size-adjust: 100%;
+	-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+	scrollbar-gutter: stable;
+}
+
+:root {
+	--green: #2f7d57;
+	--green-d: #245f42;
+	--wood: #9a6336;
+	--wood-d: #7a4d28;
+	--ink: #2b2b2b;
+	--muted: #857c71;
+	--line: #e6ddd0;
+	--line-2: #d8cdbf;
+	--paper: #faf7f1;
+	--card: #ffffff;
+	--today: #fff6da;
+	--radius: 10px;
+
+	/* Legacy calendar accents — superseded in the calendar module (Schritt 2). */
+	--light-red: rgb(237, 205, 204);
+	--dark-red: rgb(152, 24, 24);
+	--light-gray: rgb(240, 240, 240);
+	--light-yellow: var(--today);
+
+	--nav-bg: #2f3437;
+	--nav-fg: rgba(255, 255, 255, 0.62);
+	--nav-fg-hover: #ffffff;
+	--nav-brand: #ffffff;
+}
+
+body {
+	margin: 0;
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif;
+	font-size: 1rem;
+	font-weight: 400;
+	line-height: 1.5;
+	color: var(--ink);
+	background-color: var(--paper);
+	text-align: left;
+	overflow-anchor: none;
+}
+
+h1, h2, h3, h4, h5, h6 {
+	margin-top: 0;
+	margin-bottom: 0.5rem;
+	font-weight: 600;
+	line-height: 1.2;
+}
+
+p {
+	margin-top: 0;
+	margin-bottom: 1rem;
+}
+
+ul, ol {
+	margin-top: 0;
+	margin-bottom: 1rem;
+}
+
+a {
+	color: var(--green-d);
+	text-decoration: none;
+	background-color: transparent;
+}
+
+a:hover {
+	color: var(--green);
+	text-decoration: underline;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+button, input, select, textarea {
+	margin: 0;
+	font-family: inherit;
+	font-size: inherit;
+	line-height: inherit;
+}
+
+input, select, textarea {
+	border: 1px solid var(--line-2);
+	border-radius: 8px;
+	padding: 0.4rem 0.5rem;
+	background: var(--card);
+	color: var(--ink);
+}
+
+button,
+input[type="submit"],
+input[type="button"] {
+	cursor: pointer;
+	border: 1px solid var(--line-2);
+	border-radius: 8px;
+	padding: 0.45rem 0.85rem;
+	background: var(--card);
+	color: var(--ink);
+}
+
+button:hover,
+input[type="submit"]:hover,
+input[type="button"]:hover {
+	background: #f0ece4;
+}
+
+fieldset {
+	min-width: 0;
+	padding: 0;
+	margin: 0;
+	border: 0;
+}
+
+legend {
+	display: block;
+	width: 100%;
+	max-width: 100%;
+	padding: 0;
+	margin-bottom: 0.5rem;
+	font-size: 1.5rem;
+	line-height: inherit;
+	color: inherit;
+	white-space: normal;
+}
+
+.welcomepicture {
+	max-width: 100%;
+	height: auto;
+}

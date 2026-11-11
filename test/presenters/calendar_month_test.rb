@@ -7,19 +7,19 @@ class CalendarMonthTest < ActiveSupport::TestCase
     @user = create(:user)
   end
 
-  test "lays out the days under their weekday with leading and trailing blanks" do
+  test "lays out a Monday-first grid with neighbouring-month days in the corners" do
     month = CalendarMonth.new(Date.new(2019, 3, 1), [])
 
     assert_equal "März 2019", month.name
     assert_equal Date.new(2019, 3, 1), month.first_of_month
-    assert_equal 5, month.weeks.size
-    assert(month.weeks.all? { |week| week.size == 7 })
+    assert(month.weeks.all? { |week| week.days.size == 7 })
 
     first_week = month.weeks.first
 
-    assert_equal [ nil, nil, nil, nil ], first_week.first(4)
-    assert_equal 1, first_week[4].date.day
-    assert_equal 31, month.weeks.flatten.compact.size
+    assert first_week.days.first(4).none?(&:in_month?) # Fr 1. März steht in Spalte 5
+    assert_equal Date.new(2019, 3, 1), first_week.days[4].date
+    assert_predicate first_week.days[4], :in_month?
+    assert_equal 31, month.weeks.flat_map(&:days).select(&:in_month?).size
   end
 
   test "classifies each day as free, occupied or today" do
@@ -48,6 +48,6 @@ class CalendarMonthTest < ActiveSupport::TestCase
   private
 
   def days_by_date(month)
-    month.weeks.flatten.compact.index_by(&:date)
+    month.weeks.flat_map(&:days).index_by(&:date)
   end
 end
