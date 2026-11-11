@@ -31,7 +31,7 @@
 .calendar__dow {
 	display: grid;
 	grid-template-columns: repeat(7, 1fr);
-	background: #f4efe7;
+	background: var(--tint);
 	border-bottom: 1px solid var(--line);
 }
 
@@ -86,19 +86,19 @@ a.calendar__cell:hover {
 
 .calendar__cell--free:hover,
 .calendar__cell--occupied:hover {
-	background: #faf6ee;
+	background: var(--tint);
 }
 
 .calendar__cell--occupied {
-	background: #fbf8f3;
+	background: var(--tint);
 }
 
 .calendar__cell--out {
-	background: #f6f2ea;
+	background: var(--out);
 }
 
 .calendar__cell--out .calendar__num {
-	color: #c7bdae;
+	color: var(--out-num);
 }
 
 .calendar__cell--today {
@@ -111,7 +111,7 @@ a.calendar__cell:hover {
 }
 
 .calendar__cell--today .calendar__num {
-	color: var(--wood-d);
+	color: var(--res-exclusive-d);
 	font-weight: 700;
 }
 
@@ -146,11 +146,11 @@ a.calendar__cell:hover {
 }
 
 .calendar__bar--exclusive {
-	background: var(--wood);
+	background: var(--res-exclusive);
 }
 
 .calendar__bar--open {
-	background: var(--green);
+	background: var(--res-open);
 }
 
 .calendar__bar--narrow {
@@ -212,26 +212,26 @@ a.calendar__cell:hover {
 }
 
 .cal-toolbar__btn:hover {
-	background: #f0ece4;
+	background: var(--tint-2);
 	text-decoration: none;
 }
 
 .cal-toolbar__today {
-	background: var(--green);
-	border-color: var(--green-d);
+	background: var(--accent);
+	border-color: var(--accent-d);
 	color: #fff;
 	font-weight: 600;
 }
 
 .cal-toolbar__today:hover {
-	background: var(--green-d);
+	background: var(--accent-d);
 }
 
 #loadinghint {
 	box-shadow: 0 2px 12px rgba(0, 0, 0, 0.18);
-	background: var(--green);
+	background: var(--accent);
 	border-radius: 10px;
-	border: 1px solid var(--green-d);
+	border: 1px solid var(--accent-d);
 	color: #ffffff;
 	font-size: 0.9rem;
 	padding: 0.5rem 2rem;

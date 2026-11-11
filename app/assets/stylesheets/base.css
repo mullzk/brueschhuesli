@@ -13,24 +13,25 @@ html {
 }
 
 :root {
-	--green: #2f7d57;
-	--green-d: #245f42;
-	--wood: #9a6336;
-	--wood-d: #7a4d28;
-	--ink: #2b2b2b;
-	--muted: #857c71;
-	--line: #e6ddd0;
-	--line-2: #d8cdbf;
-	--paper: #faf7f1;
+	--accent: #1f63b4;
+	--accent-d: #174c8a;
+	--res-exclusive: #1b3a66;
+	--res-exclusive-d: #12294a;
+	--res-open: #3c80cc;
+	--ink: #1b2838;
+	--muted: #5b6e85;
+	--line: #dbe4ee;
+	--line-2: #c5d3e3;
+	--paper: #ffffff;
 	--card: #ffffff;
-	--today: #fff6da;
+	--tint: #f2f6fb;
+	--tint-2: #e8eff8;
+	--tint-accent: #e3eefa;
+	--out: #eef2f7;
+	--out-num: #a7b6c8;
+	--today: #dcebfb;
+	--backdrop: rgba(12, 28, 50, 0.45);
 	--radius: 10px;
-
-	/* Legacy calendar accents — superseded in the calendar module (Schritt 2). */
-	--light-red: rgb(237, 205, 204);
-	--dark-red: rgb(152, 24, 24);
-	--light-gray: rgb(240, 240, 240);
-	--light-yellow: var(--today);
 
 	--nav-bg: #2f3437;
 	--nav-fg: rgba(255, 255, 255, 0.62);
@@ -68,13 +69,13 @@ ul, ol {
 }
 
 a {
-	color: var(--green-d);
+	color: var(--accent-d);
 	text-decoration: none;
 	background-color: transparent;
 }
 
 a:hover {
-	color: var(--green);
+	color: var(--accent);
 	text-decoration: underline;
 }
 
@@ -111,7 +112,7 @@ input[type="button"] {
 button:hover,
 input[type="submit"]:hover,
 input[type="button"]:hover {
-	background: #f0ece4;
+	background: var(--tint-2);
 }
 
 fieldset {
