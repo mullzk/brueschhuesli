@@ -18,9 +18,7 @@ module Brueschhuesli
 
     config.autoload_lib(ignore: %w[assets tasks])
 
-    # Framework strings like validation messages are not translated in
-    # config/locales, so they fall back to English.
     config.i18n.default_locale = :de
-    config.i18n.fallbacks = [ :en ]
+    config.i18n.available_locales = [ :de ]
   end
 end

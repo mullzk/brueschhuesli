@@ -33,5 +33,6 @@ Rails.application.configure do
   config.action_dispatch.verbose_redirect_logs = true
   config.assets.quiet = true
   config.action_view.annotate_rendered_view_with_filenames = true
+  config.i18n.raise_on_missing_translations = true
   config.action_controller.raise_on_missing_callback_actions = true
 end
