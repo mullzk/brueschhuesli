@@ -22,6 +22,18 @@ before "deploy:starting", :load_shared_env do
   end
 end
 
+namespace :mise do
+  task :install do
+    on roles(:all) do
+      within release_path do
+        execute :mise, :install, :ruby
+      end
+    end
+  end
+end
+
+before "bundler:install", "mise:install"
+
 namespace :deploy do
   task :restart do
     on roles(:app) do
