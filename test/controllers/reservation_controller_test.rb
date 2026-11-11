@@ -82,6 +82,15 @@ class ReservationControllerTest < ActionDispatch::IntegrationTest
     assert_match "muss zeitlich hinter dem Reservations-Beginn sein", response.body
   end
 
+  test "create without a start re-renders the form" do
+    user = login_as_user
+    assert_no_difference -> { Reservation.count } do
+      post reservations_path, params: { reservation: valid_params(user, start: "") }
+    end
+    assert_response :unprocessable_entity
+    assert_match "Von muss ausgefüllt werden", response.body
+  end
+
   # --- edit / update ---------------------------------------------------------
 
   test "edit renders" do
