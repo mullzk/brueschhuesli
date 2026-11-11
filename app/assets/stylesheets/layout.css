@@ -1,10 +1,8 @@
 /* Layout — app shell: header, navigation, page container. */
 
 .site-header {
-	position: fixed;
+	position: sticky;
 	top: 0;
-	left: 0;
-	right: 0;
 	z-index: 1000;
 	background: var(--nav-bg);
 	color: var(--nav-fg);
@@ -94,7 +92,7 @@
 }
 
 .page {
-	padding: 4em 1rem 1rem;
+	padding: 1rem;
 	max-width: 1200px;
 	margin: 0 auto;
 }

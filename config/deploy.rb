@@ -2,7 +2,7 @@
 
 set :application, "brueschhuesli"
 set :repo_url, "git@github.com:mullzk/brueschhuesli.git"
-set :linked_dirs, %w[log tmp/pids public/system storage]
+set :linked_dirs, %w[log tmp/pids]
 set :keep_releases, 5
 
 set :default_env, { path: "/home/deploy-app/.local/share/mise/shims:$PATH" }

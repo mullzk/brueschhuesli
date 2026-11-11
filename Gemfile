@@ -1,84 +1,51 @@
 # frozen_string_literal: true
 
 source "https://rubygems.org"
-git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
 ruby file: ".tool-versions"
 
-# Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem "rails", "~> 8.1"
-# Use trilogy as the MySQL adapter for Active Record
 gem "trilogy"
-# Use Puma as the app server
 gem "puma", ">= 6.0"
-# Asset pipeline (Propshaft) + Hotwire (Turbo + Stimulus) loaded via Importmap.
-gem "propshaft"
-gem "turbo-rails"
-gem "stimulus-rails"
-gem "importmap-rails"
-# Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
-# gem 'jbuilder', '~> 2.5'         ## Commented out by Mullzk. Mensajasser is HTML only.
-# Use Redis adapter to run Action Cable in production
-# gem 'redis', '~> 4.0'
-# Use ActiveModel has_secure_password
-gem "bcrypt", "~> 3.1.7"
-
-# Use ActiveStorage variant
-# gem 'mini_magick', '~> 4.8'
-
-# Use Capistrano for deployment
-
-# Reduces boot times through caching; required in config/boot.rb
 gem "bootsnap", ">= 1.1.0", require: false
 
-# Gems for this project, added by mullzk
+gem "propshaft"
+gem "importmap-rails"
+gem "turbo-rails"
+gem "stimulus-rails"
+
+gem "bcrypt", "~> 3.1.7"
 gem "will_paginate"
-# Real .xlsx export for the yearly billing reports
 gem "caxlsx"
 gem "caxlsx_rails"
-
-group :development do
-  gem "annotaterb"
-  # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase]
-  gem "rubocop-rails-omakase", require: false
-  # Lint the Minitest test suite (not bundled by omakase)
-  gem "rubocop-minitest", require: false
-  # Lint ERB templates (RuboCop only sees .rb files)
-  gem "erb_lint", require: false
-end
-group :development, :test do
-  gem "factory_bot_rails"
-end
 
 group :development, :test do
   gem "debug", require: "debug/prelude"
   gem "dotenv-rails"
+  gem "factory_bot_rails"
+  gem "brakeman", "~> 8.0", require: false
+  gem "bundler-audit", require: false
 end
 
 group :development do
-  # Access an interactive console on exception pages or by calling 'console' anywhere in the code.
   gem "web-console", ">= 3.3.0"
-  gem "listen"
-  # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
-  gem "spring"
+  gem "annotaterb"
+  gem "rubocop-rails-omakase", require: false
+  gem "rubocop-minitest", require: false
+  gem "erb_lint", require: false
+
   gem "capistrano", "~> 3.18"
   gem "capistrano-rails"
   gem "capistrano-bundler"
-  # Required by net-ssh to authenticate with ED25519 SSH keys.
+  # net-ssh needs these to authenticate with ED25519 SSH keys.
   gem "ed25519", "~> 1.2"
   gem "bcrypt_pbkdf", "~> 1.0"
 end
 
 group :test do
-  # Adds support for Capybara system testing and selenium driver
+  gem "minitest", "~> 6.0"
   gem "capybara", ">= 2.15"
   gem "selenium-webdriver"
-  # Mocking/stubbing for Minitest
   gem "mocha"
-  # Test coverage reporting
   gem "simplecov", require: false
 end
-
-gem "minitest", "~> 6.0"
-gem "brakeman", "~> 8.0"
-gem "bundler-audit"

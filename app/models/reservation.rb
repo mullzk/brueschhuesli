@@ -37,7 +37,8 @@ class Reservation < ApplicationRecord
   belongs_to :user
   validates :start, :finish, :type_of_reservation, presence: true
   validates :type_of_reservation, inclusion: { in: TYPES }, allow_blank: true
-  validate :timeslot_must_not_overlap, :finish_must_be_after_start, :duration_must_not_exceed_a_week
+  validate :timeslot_must_not_overlap, :finish_must_be_after_start, :duration_must_not_exceed_a_week,
+           if: :period_given?
 
   def self.reservation_types
     TYPES.sort
@@ -57,6 +58,10 @@ class Reservation < ApplicationRecord
     billing.fee
   end
 
+  def external_use?
+    self[:type_of_reservation] == EXTERNE_NUTZUNG
+  end
+
   def editable_by?(user)
     user.owner? || user_id == user.id
   end
@@ -74,6 +79,8 @@ class Reservation < ApplicationRecord
 
   def classified_type
     saved = self[:type_of_reservation]
+    return saved unless period_given?
+
     if saved == KURZAUFENTHALT && duration > LONG_STAY_THRESHOLD
       FERIENAUFENTHALT
     elsif saved == FERIENAUFENTHALT && duration < LONG_STAY_THRESHOLD
@@ -160,6 +167,10 @@ class Reservation < ApplicationRecord
 
   def <=>(other)
     start <=> other.start
+  end
+
+  def period_given?
+    start.present? && finish.present?
   end
 
   def timeslot_must_not_overlap

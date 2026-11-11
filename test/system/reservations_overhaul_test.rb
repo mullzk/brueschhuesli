@@ -19,7 +19,7 @@ class ReservationsOverhaulSystemTest < ApplicationSystemTestCase
     end
   end
 
-  test "the earlier link prepends the previous three months" do
+  test "the earlier link prepends the previous twelve months" do
     travel_to Time.zone.local(2026, 6, 1, 10) do
       sign_in_as
 
@@ -27,9 +27,9 @@ class ReservationsOverhaulSystemTest < ApplicationSystemTestCase
 
       click_link "‹ Früher"
 
+      assert_text "Juni 2025"
       assert_text "Mai 2026"
-      assert_text "April 2026"
-      assert_text "März 2026"
+      assert_no_text "Mai 2025"
     end
   end
 
@@ -42,7 +42,7 @@ class ReservationsOverhaulSystemTest < ApplicationSystemTestCase
 
       click_link "‹ Früher"
 
-      assert_text "März 2026"
+      assert_text "Juni 2025"
 
       after = juni.native.rect.y - page.evaluate_script("window.scrollY")
 
@@ -59,10 +59,7 @@ class ReservationsOverhaulSystemTest < ApplicationSystemTestCase
 
       click_link "‹ Früher"
 
-      assert_text "Mai 2026"
-      click_link "‹ Früher"
-
-      assert_text "April 2026"
+      assert_text "Juni 2025"
       page.execute_script("window.scrollTo(0, 0)") # today now far below the fold
 
       assert_button "Heute"
@@ -130,6 +127,42 @@ class ReservationsOverhaulSystemTest < ApplicationSystemTestCase
       within ".overlay:not([hidden])" do
         assert_field "reservation[start]", with: /^2026-06-10/
         assert_field "reservation[finish]", with: /^2026-06-11/
+      end
+    end
+  end
+
+  test "dragging within a week across the month boundary opens the new form for that range" do
+    travel_to Time.zone.local(2026, 6, 1, 10) do
+      sign_in_as
+
+      from = find(".calendar__cell--out[data-date='2026-06-30']")
+      to   = find(".calendar__cell--free[data-date='2026-07-01']")
+      page.driver.browser.action.click_and_hold(from.native)
+          .move_to(to.native).release.perform
+
+      within ".overlay:not([hidden])" do
+        assert_field "reservation[start]", with: /^2026-06-30/
+        assert_field "reservation[finish]", with: /^2026-07-01/
+      end
+    end
+  end
+
+  test "an external use shows as Extern in the calendar and names the user in the detail" do
+    travel_to Time.zone.local(2026, 6, 1, 10) do
+      tenant = create(:user, name: "Mieterin")
+      create(:reservation, user: tenant, type_of_reservation: Reservation::EXTERNE_NUTZUNG,
+                           start: Time.zone.local(2026, 6, 10, 10), finish: Time.zone.local(2026, 6, 11, 10),
+                           comment: "Firmenanlass")
+      sign_in_as
+
+      within(".calendar__bar") { assert_text "Extern" }
+      assert_no_selector ".calendar__bar", text: "Mieterin"
+
+      find("[data-date='2026-06-10']").click
+
+      within ".overlay:not([hidden])" do
+        assert_text "Mieterin"
+        assert_text "Firmenanlass"
       end
     end
   end

@@ -109,7 +109,7 @@ export default class extends Controller {
 
   earlier(event) {
     event.preventDefault()
-    this.loadPrevious(3)
+    this.loadPrevious(12)
   }
 
   today(event) {

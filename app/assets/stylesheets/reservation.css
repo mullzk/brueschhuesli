@@ -28,14 +28,14 @@
 
 .res-item {
 	border: 1px solid var(--line);
-	border-left: 4px solid var(--wood);
+	border-left: 4px solid var(--res-exclusive);
 	border-radius: 9px;
 	padding: 0.6rem 0.75rem;
 	margin-bottom: 0.6rem;
 }
 
 .res-item--open {
-	border-left-color: var(--green);
+	border-left-color: var(--res-open);
 }
 
 .res-item__who {
@@ -65,8 +65,8 @@
 	align-items: center;
 	justify-content: space-between;
 	gap: 0.6rem;
-	background: #eef6f0;
-	border: 1px dashed var(--green);
+	background: var(--tint-accent);
+	border: 1px dashed var(--accent);
 	border-radius: 9px;
 	padding: 0.5rem 0.7rem;
 	margin-bottom: 0.6rem;
@@ -74,7 +74,7 @@
 
 .btn-reserve {
 	border: none;
-	background: var(--green);
+	background: var(--accent);
 	color: #fff;
 	border-radius: 7px;
 	padding: 0.35rem 0.7rem;
@@ -84,7 +84,7 @@
 }
 
 .btn-reserve:hover {
-	background: var(--green-d);
+	background: var(--accent-d);
 	color: #fff;
 	text-decoration: none;
 }
@@ -115,7 +115,7 @@ div.reservation span {
 }
 
 div.reservation div {
-	background-color: #f3efe8;
+	background-color: var(--tint);
 }
 
 div.reservation div.actions {
@@ -176,15 +176,15 @@ div.reservation div.actions {
 }
 
 .reservationform .submit {
-	background: var(--green);
-	border-color: var(--green);
+	background: var(--accent);
+	border-color: var(--accent);
 	color: #fff;
 	font-weight: 600;
 	padding: 0.55rem 1.5rem;
 }
 
 .reservationform .submit:hover {
-	background: var(--green-d);
+	background: var(--accent-d);
 }
 
 .reservationform .cancel {
