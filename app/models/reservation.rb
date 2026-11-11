@@ -58,6 +58,10 @@ class Reservation < ApplicationRecord
     billing.fee
   end
 
+  def external_use?
+    self[:type_of_reservation] == EXTERNE_NUTZUNG
+  end
+
   def editable_by?(user)
     user.owner? || user_id == user.id
   end

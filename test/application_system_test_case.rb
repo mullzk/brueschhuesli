@@ -5,7 +5,7 @@ require "test_helper"
 class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
   driven_by :selenium, using: :headless_chrome, screen_size: [ 1400, 1400 ]
 
-  SCREEN_SIZES = { mobile: [ 390, 844 ], desktop: [ 1400, 1400 ] }.freeze
+  SCREEN_SIZES = { mobile: [ 390, 844 ], tablet: [ 800, 1000 ], desktop: [ 1400, 1400 ] }.freeze
 
   # The browser session is reused across tests, so a mobile resize would leak
   # into later tests. Reset to desktop before each; mobile tests opt in.
