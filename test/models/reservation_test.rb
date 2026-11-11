@@ -42,6 +42,13 @@ class ReservationTest < ActiveSupport::TestCase
     assert_not reservation.valid?
   end
 
+  test "a reservation without start and finish reports both as missing" do
+    reservation = build(:reservation, user: @user, start: nil, finish: nil)
+
+    assert_not reservation.valid?
+    assert_equal [ "Von muss ausgefüllt werden", "Bis muss ausgefüllt werden" ], reservation.errors.full_messages
+  end
+
   test "a reservation longer than a week is invalid" do
     reservation = build(:reservation, user: @user, start: at("2010-02-01 10:00"), finish: at("2010-02-10 08:00"))
 
