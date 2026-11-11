@@ -13,9 +13,6 @@
 !/log/.keep
 !/tmp/.keep
 
-/node_modules
-/yarn-error.log
-
 /public/assets
 
 # Ignore SimpleCov coverage reports.
@@ -30,3 +27,5 @@ roadmap.md
 # Throwaway UI prototypes and local design docs.
 /prototypes/
 *.local.md
+
+.DS_Store
