@@ -37,6 +37,14 @@ class UserTest < ActiveSupport::TestCase
     assert_not dbuser
   end
 
+  test "validation messages are German" do
+    user = User.new(password: "geheim", password_confirmation: "anders")
+    user.valid?
+
+    assert_includes user.errors.full_messages, "Name muss ausgefüllt werden"
+    assert_includes user.errors.full_messages, "Passwort-Bestätigung stimmt nicht mit Passwort überein"
+  end
+
   test "a saved user stores its password hashed, not in clear text" do
     user = FactoryBot.build(:user, name: "Stefan", email: "test@mail.com")
     user.password = "test1234"

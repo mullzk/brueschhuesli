@@ -12,3 +12,29 @@ de:
       default: "%d.%m.%Y"
       long: "%A, %d. %B %Y"
       month_year: "%B %Y"
+  errors:
+    format: "%{attribute} %{message}"
+    messages:
+      blank: muss ausgefüllt werden
+      confirmation: stimmt nicht mit %{attribute} überein
+      inclusion: ist kein gültiger Wert
+      invalid: ist nicht gültig
+      present: muss leer sein
+      required: muss ausgewählt werden
+      taken: ist bereits vergeben
+  activerecord:
+    attributes:
+      user:
+        name: Name
+        email: eMail
+        telefon: Natel
+        password: Passwort
+        password_confirmation: Passwort-Bestätigung
+        responsible_user: Verantwortliche Person
+        role: Rolle
+      reservation:
+        user: Wer
+        start: Von
+        finish: Bis
+        type_of_reservation: Reservations-Typ
+        comment: Kommentar
