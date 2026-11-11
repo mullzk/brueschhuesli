@@ -13,7 +13,6 @@ Brüschhüsli — Rails 8 reservation system for a family weekend cabin. Solo-ma
 - Hotwire (turbo-rails + stimulus-rails) via **importmap-rails**, **Propshaft** asset pipeline, plain CSS (no Sass/jQuery/CoffeeScript)
 - Testing: Rails Minitest + FactoryBot + Capybara/Selenium
 - Linting/security: `brakeman`, `bundler-audit` (binstubs under `bin/`)
-- Active Storage on local disk (`storage/` is in `linked_dirs` on the server)
 
 ## Common commands
 
