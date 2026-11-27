@@ -8,7 +8,7 @@ Brüschhüsli — Rails 8 reservation system for a family weekend cabin. Solo-ma
 
 ## Stack
 
-- Ruby 4.0.9 (`.tool-versions`, managed via mise; the deploy installs it on the servers)
+- Ruby 4.0.10 (`.tool-versions`, managed via mise; the deploy installs it on the servers)
 - Rails 8.x, Puma, MySQL via **trilogy**
 - Hotwire (turbo-rails + stimulus-rails) via **importmap-rails**, **Propshaft** asset pipeline, plain CSS (no Sass/jQuery/CoffeeScript)
 - Testing: Rails Minitest + FactoryBot + Capybara/Selenium
