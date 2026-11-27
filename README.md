@@ -4,7 +4,7 @@ Although publicly accessible, the Brueschhuesli-Project is taylored for a single
 
 ## Stack
 
-- Ruby 4.0.9, Rails 8.1, Puma
+- Ruby 4.0.10, Rails 8.1, Puma
 - MySQL via `trilogy`
 - Hotwire (Turbo + Stimulus), Importmap, Propshaft
 - Minitest + FactoryBot + Capybara
