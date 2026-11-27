@@ -23,7 +23,7 @@ group :development, :test do
   gem "debug", require: "debug/prelude"
   gem "dotenv-rails"
   gem "factory_bot_rails"
-  gem "brakeman", "~> 8.0", require: false
+  gem "brakeman", "~> 8.1", require: false
   gem "bundler-audit", require: false
 end
 
